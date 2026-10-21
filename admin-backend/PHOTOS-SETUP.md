@@ -1,7 +1,8 @@
 # 写真投稿・管理者承認の有効化（Cloudflareダッシュボード）
 
 この機能のコードはGitHubに準備済みです。**既存のお知らせ機能を残したまま**有効化します。
-順番は **D1 → 非公開R2 → 生徒用Secret → Workerのコード更新 → 動作確認** です。
+順番は **D1 → 非公開R2 → Turnstile → Workerのコード更新 → 動作確認** です。
+**生徒用の投稿コードは不要です。**
 
 ## 1. 既存D1に写真テーブルを追加
 
@@ -25,20 +26,31 @@ Workers & Pages → 既存Worker **hokkaido-trip-news-api** → Settings → Bin
 
 大文字小文字を含めて名前を一致させて保存する。
 
-## 3. 生徒用の投稿コードをSecretで登録
+## 3. Cloudflare Turnstileで自動投稿を防ぐ（生徒用コードなし）
 
-同じWorkerの Settings → Runtime variables and secrets → Add variable。
+**Cloudflareダッシュボード → Turnstile → Add widget / Create widget**。
 
-- Type: **Secret**
-- Key: **`STUDENT_UPLOAD_CODE`**
-- Value: **ランダムな12文字以上の新しい文字列**
+- 表示名：`hokkaido-trip-photos`（好きな名前でも構いません）
+- 対象Hostname：**`ban-ikura.github.io`**（`/hokkaido-trip` のようなパスは不要）
+- ウィジェットの種類：**Managed（推奨）**
+- 作成後の**Site key（公開キー）**と**Secret key（秘密キー）**を区別する
 
-**ADMIN_PASSWORD（管理者用）やSESSION_SECRETとは別の文字列**にする。コードの中やGitHub、チャットには書かない。
-管理者用の既存Secret **ADMIN_PASSWORD / SESSION_SECRET** はそのまま残す。
+Site keyは公開してよいものです。GitHubの **[../photos-config.js](../photos-config.js)** の
+`window.HOKKAIDO_PHOTO_TURNSTILE_SITE_KEY = '';`
+の空欄に **Site keyだけ** を入力してGitHubに保存します。
 
-学生に共有するのは **写真ページのURLとSTUDENT_UPLOAD_CODEだけ**。
-この共通コードは厳密な本人確認ではないため、学校の関係者だけに配布し、漏えい時は変更する。
-悪用防止のためIPあたりの送信試行を1時間20回までに制限している。学校で同じネットワークを使う場合は複数人にこの制限が共有されることがある。
+Secret key は絶対にGitHubやチャットに書かないでください。
+同じWorkerの Settings → Runtime variables and secrets → Add variable から登録します。
+
+- Type：**Secret**
+- Key：**`TURNSTILE_SECRET`**
+- Value：先ほどの **Secret key**
+
+既存の **ADMIN_PASSWORD / SESSION_SECRET** は**変更不要**です。
+写真は生徒用コード無しで送信できますが、毎回Cloudflareの安全確認を通過する必要があります。
+バックエンドはTurnstileのSiteverifyで成功／hostname／actionを検証します。
+IPごとの送信上限（1時間20回）も残しています。学校Wi-Fiでは複数の生徒に同じ上限が適用されることがあります。
+**投稿の身元を特定するものではなく、写真の内容は管理者が審査する必要があります。**
 
 ## 4. Workerのプログラムを更新
 
@@ -53,14 +65,17 @@ GitHubの [src/index.js](src/index.js) のコード**全体**で、現在の `wo
 
 1. `https://hokkaido-trip-news-api.banse-oji.workers.dev/api/announcements` → 既存のお知らせが表示される。
 2. `https://hokkaido-trip-news-api.banse-oji.workers.dev/api/photos` → `{"items":[]}`（まだ写真がない場合）。
-3. `https://ban-ikura.github.io/hokkaido-trip/photos.html` → 生徒用コードで写真投稿。「承認待ち」になる。
+3. `https://ban-ikura.github.io/hokkaido-trip/photos.html` → コードを入力せず、Turnstileの安全確認後に写真投稿。「承認待ち」になる。
 4. `https://ban-ikura.github.io/hokkaido-trip/admin.html` → 既存の管理者共通パスワードでログイン → 「生徒の写真を承認」から承認。
 5. `photos.html` を再読み込みして、**承認済みの写真だけ**表示されることを確認。
 6. テスト写真を「掲載取り消し」したら一覧から消えることを確認。
 
-**重要な運用上の注意**
+**投稿ルール／重要な運用上の注意**
 - 公開サイトはURLを知る人以外にも閲覧可能。検索エンジン向けのnoindexはアクセス制御ではない。
-- 未成年者が写る写真の公開には、学校の方針と本人等の許可を必ず確認する。
+- **顔が写っている写真は一切投稿・承認しない。** 自撮り・集合写真・鏡や窓の反射も同様。
+- 名札、制服で本人を特定できるもの、氏名、学生証、連絡先、住所、部屋番号、車のナンバーなどの個人情報を掲載しない。
+- いじめ、差別、誹謗中傷、無断撮影、危険・迷惑行為、他人の写真の無断転載、著作権侵害は投稿禁止。
+- **顔の自動検出機能はありません。** 管理者は承認前に写真とコメントを1件ずつ確認する。
 - 投稿者の本名、学籍情報、連絡先などは入力させない。
 - 投稿写真はブラウザ側でリサイズしてメタデータを除去したWebP形式に変換し、サーバーでは追加のWebPチェックを行う。画像の内容そのものの安全性・著作権・個人情報は管理者が判断する必要がある。
 - R2バケットは必ず非公開のままにする。公開・却下の判定はWorker経由でのみ行う。
