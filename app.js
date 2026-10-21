@@ -82,12 +82,13 @@ async function loadAnnouncements(){
     const response=await fetch('announcements.json',{cache:'no-store',credentials:'same-origin'});
     if(!response.ok)throw new Error('HTTP '+response.status);
     const data=await response.json();
-    const items=Array.isArray(data.items)?data.items.filter(item=>item&&typeof item==='object'&&!Array.isArray(item)).slice(0,30):[];
+    // 同じ日付の場合はJSONに登録した順（新しいものを先頭）を維持する。
+    const items=Array.isArray(data.items)?data.items.filter(item=>item&&typeof item==='object'&&!Array.isArray(item)).slice(0,100):[];
     items.sort((a,b)=>String(b?.date??'').localeCompare(String(a?.date??'')));
     host.replaceChildren();
     if(count)count.textContent=items.length+'件';
     if(!items.length){host.append(node('p','news-empty','現在のお知らせはありません。'));return}
-    items.forEach(item=>{
+    const renderItem=(item)=>{
       const row=node('article','news-item'+(item.important===true?' important':''));
       const date=node('time','news-date',/^\d{4}-\d{2}-\d{2}$/.test(String(item.date))?item.date:'日付未設定');
       if(/^\d{4}-\d{2}-\d{2}$/.test(String(item.date)))date.dateTime=item.date;
@@ -97,21 +98,34 @@ async function loadAnnouncements(){
       body.append(h);
       const message=String(item.body??'').slice(0,2000);
       if(message)body.append(node('p','',message));
-      row.append(date,body);host.append(row);
-    });
+      row.append(date,body);
+      return row;
+    };
+    const current=node('div','news-current');
+    current.append(renderItem(items[0]));
+    host.append(current);
+    const history=node('details','news-history');
+    const summary=node('summary','news-history-toggle','過去のお知らせの履歴（'+(items.length-1)+'件）を見る');
+    const older=node('div','news-history-list');
+    items.slice(1).forEach(item=>older.append(renderItem(item)));
+    if(items.length===1)older.append(node('p','news-empty','過去のお知らせはまだありません。'));
+    history.append(summary,older);
+    host.append(history);
   }catch(_){
     if(count)count.textContent='';
     host.replaceChildren(node('p','news-empty','お知らせを読み込めませんでした。しばらくしてから再読み込みしてください。'));
   }
 }
-
 // 日本時間（UTC+09:00）固定。閲覧端末のタイムゾーンに左右されません。
 const dateOf=(dayIndex,time)=>Date.parse(dateStrings[dayIndex]+'T'+time+':00+09:00');
 const timelineRate=2.5; // 30分 = 75px
 // 移動手段は最新行程表の表記に従う。便名・貸切種別は推測しない。
 function transportFor(event){
   if(event.type!=='travel')return null;
-  if(/飛行機|航空機|ANA53|ANA68/.test(event.title))return {label:'飛行機（便名要確認）',icon:'✈'};
+  if(/飛行機|航空機|ANA53|ANA68/.test(event.title)){
+    const flight=event.title.match(/ANA\s*(53|68)\b/);
+    return {label:flight?'航空機 ANA'+flight[1]:'飛行機（便名要確認）',icon:'✈'};
+  }
   if(/バス|移動/.test(event.title))return {label:'バス',icon:'▰'};
   return {label:'移動手段 要確認',icon:'↗'};
 }
@@ -454,7 +468,7 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   const clamp=x=>Math.min(1,Math.max(0,x));
   function render(){
     scheduled=false;
-    const distance=Math.max(380,Math.min(740,window.innerHeight*.85));
+    const distance=Math.max(175,Math.min(330,window.innerHeight*.36));
     const progress=clamp(window.scrollY/distance);
     // The final character disappears first; scrolling upward redraws in reading order.
     glyphs.forEach((glyph,index)=>{
@@ -476,4 +490,34 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   window.addEventListener('resize',schedule,{passive:true});
   window.addEventListener('pageshow',schedule);
   render();
+})();
+
+
+/* A persistent icy progress rail complements native page scrollbars on touch devices. */
+(function initPageScrollRail(){
+  if(document.querySelector('.page-scroll-rail'))return;
+  const rail=node('div','page-scroll-rail');
+  rail.setAttribute('aria-hidden','true');
+  rail.title='ページのスクロール位置';
+  const thumb=node('span','page-scroll-thumb');
+  rail.append(thumb);
+  document.body.append(rail);
+  let scheduled=false;
+  const update=()=>{
+    scheduled=false;
+    const max=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);
+    const percent=max?Math.max(0,Math.min(1,window.scrollY/max)):0;
+    thumb.style.top=Math.round(percent*Math.max(0,rail.clientHeight-thumb.offsetHeight))+'px';
+    rail.classList.toggle('at-bottom',percent>.98);
+  };
+  const schedule=()=>{
+    if(scheduled)return;
+    scheduled=true;
+    requestAnimationFrame(update);
+  };
+  window.addEventListener('scroll',schedule,{passive:true});
+  window.addEventListener('resize',schedule,{passive:true});
+  window.addEventListener('pageshow',schedule);
+  if('ResizeObserver' in window)new ResizeObserver(schedule).observe(document.body);
+  update();
 })();
