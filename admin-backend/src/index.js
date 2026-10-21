@@ -147,6 +147,265 @@ async function postAnnouncement(request,env){
   ).bind(id,date,title,body,data.important?1:0,createdAt).run();
   return json({ok:true,id,date,title},201,request);
 }
+
+/* --- 生徒写真: 非公開R2、承認制、投稿コード、サーバー側のアクセス制御 --- */
+const PHOTO_LIMIT_BYTES = 5 * 1024 * 1024;
+const PHOTO_WINDOW_SECONDS = 60 * 60;
+const PHOTO_MAX_ATTEMPTS = 20;
+const PHOTO_ID_PATTERN = '[0-9a-f-]{36}';
+
+function photoReady(env) {
+  return !!(env.DB && env.PHOTOS && typeof env.STUDENT_UPLOAD_CODE === 'string' &&
+    env.STUDENT_UPLOAD_CODE.length >= 12 && env.SESSION_SECRET && env.SESSION_SECRET.length >= 32);
+}
+function photoError(request) {
+  return json({error:'写真投稿機能は準備中です。'},503,request);
+}
+async function adminAuthorized(request,env) {
+  const authorization=request.headers.get('Authorization')||'';
+  return !!(env.SESSION_SECRET && authorization.startsWith('Bearer ') &&
+    await verifySession(authorization.slice(7),env.SESSION_SECRET));
+}
+function photoListRow(x) {
+  return {
+    id:x.id, nickname:x.nickname, caption:x.caption,
+    created_at:x.created_at, reviewed_at:x.reviewed_at||null,
+    image_url:'/api/photos/'+x.id+'/image'
+  };
+}
+function photoId(pathname, admin) {
+  const prefix=admin?'/api/admin/photos/':'/api/photos/';
+  if(!pathname.startsWith(prefix))return null;
+  const rest=pathname.slice(prefix.length);
+  const match=rest.match(new RegExp('^('+PHOTO_ID_PATTERN+')(?:/(image|approve|reject|unpublish))?
+  async fetch(request,env){
+    const pathname=new URL(request.url).pathname;
+    const origin=request.headers.get('Origin');
+    if(request.method==='OPTIONS'){
+      if(origin!==SITE_ORIGIN)return json({error:'Forbidden'},403,request);
+      return new Response(null,{status:204,headers:{
+        'Access-Control-Allow-Origin':SITE_ORIGIN,
+        'Access-Control-Allow-Methods':'GET,POST,OPTIONS',
+        'Access-Control-Allow-Headers':'Content-Type,Authorization',
+        'Access-Control-Max-Age':'300',
+        'Vary':'Origin'
+      }});
+    }
+
+    // 写真: GETの一覧は承認済みのみ。画像もD1の承認状態を都度確認する。
+    if(pathname==='/api/photos'&&request.method==='GET'){
+      try{return await publicPhotos(request,env)}
+      catch{return json({error:'写真を取得できません。'},503,request)}
+    }
+    const studentPhoto=photoId(pathname,false);
+    if(studentPhoto && studentPhoto.action==='image' && request.method==='GET'){
+      try{return await photoImage(request,env,studentPhoto.id,false)}
+      catch{return json({error:'写真を取得できません。'},503,request)}
+    }
+    if(pathname==='/api/photos/submissions'&&request.method==='POST'){
+      if(origin!==SITE_ORIGIN)return json({error:'Forbidden'},403,request);
+      try{return await submitPhoto(request,env)}
+      catch{return json({error:'写真の送信に失敗しました。'},503,request)}
+    }
+    if(pathname==='/api/admin/photos'&&request.method==='GET'){
+      if(origin!==SITE_ORIGIN)return json({error:'Forbidden'},403,request);
+      try{return await adminPhotos(request,env,new URL(request.url).searchParams.get('status')||'pending')}
+      catch{return json({error:'写真を取得できません。'},503,request)}
+    }
+    const adminPhoto=photoId(pathname,true);
+    if(adminPhoto && origin===SITE_ORIGIN){
+      try{
+        if(adminPhoto.action==='image'&&request.method==='GET'){
+          return await photoImage(request,env,adminPhoto.id,true);
+        }
+        if(['approve','reject','unpublish'].includes(adminPhoto.action)&&request.method==='POST'){
+          return await moderatePhoto(request,env,adminPhoto.id,adminPhoto.action);
+        }
+      }catch{return json({error:'写真の処理に失敗しました。'},503,request)}
+    }
+
+    if(pathname==='/api/announcements'&&request.method==='GET'){
+      try{
+        if(!env.DB)return json({error:'データベース未設定'},503,request);
+        return await getAnnouncements(request,env);
+      }catch{return json({error:'お知らせを取得できません。'},503,request)}
+    }
+    if(pathname==='/api/login'&&request.method==='POST'||
+       pathname==='/api/announcements'&&request.method==='POST'){
+      if(origin!==SITE_ORIGIN)return json({error:'Forbidden'},403,request);
+      if(!env.DB)return json({error:'データベース未設定'},503,request);
+      try{
+        return pathname==='/api/login'?await login(request,env):await postAnnouncement(request,env);
+      }catch{return json({error:'サーバー処理に失敗しました。'},503,request)}
+    }
+    if(pathname==='/api/login'||pathname==='/api/announcements'){
+      return json({error:'この操作は許可されていません。'},405,request,{Allow:pathname==='/api/login'?'POST':'GET, POST'});
+    }
+    return json({error:'Not found'},404,request);
+  }
+};
+));
+  return match?{id:match[1],action:match[2]||''}:null;
+}
+async function publicPhotos(request,env) {
+  if(!photoReady(env))return photoError(request);
+  const result=await env.DB.prepare(
+    "SELECT id,nickname,caption,created_at,reviewed_at FROM photo_submissions "+
+    "WHERE status='approved' ORDER BY reviewed_at DESC LIMIT 60"
+  ).all();
+  return json({items:(result.results||[]).map(photoListRow)},200,request);
+}
+async function photoImage(request,env,id,requiresAdmin) {
+  if(!photoReady(env))return photoError(request);
+  if(requiresAdmin && !await adminAuthorized(request,env)){
+    return json({error:'ログインが必要です。'},401,request);
+  }
+  const row=await env.DB.prepare(
+    'SELECT object_key,status FROM photo_submissions WHERE id=?'
+  ).bind(id).first();
+  if(!row || (requiresAdmin?row.status==='rejected':row.status!=='approved')){
+    return json({error:'Not found'},404,request);
+  }
+  const object=await env.PHOTOS.get(row.object_key);
+  if(!object || !object.body)return json({error:'Not found'},404,request);
+  const headers=new Headers({
+    'Content-Type':'image/webp', 'X-Content-Type-Options':'nosniff',
+    'Content-Security-Policy':"default-src 'none'; sandbox",
+    'Cache-Control':'no-store', 'Referrer-Policy':'no-referrer',
+    'Content-Disposition':'inline'
+  });
+  if(request.headers.get('Origin')===SITE_ORIGIN){
+    headers.set('Access-Control-Allow-Origin',SITE_ORIGIN);
+    headers.set('Vary','Origin');
+  }
+  return new Response(object.body,{status:200,headers});
+}
+async function adminPhotos(request,env,status) {
+  if(!photoReady(env))return photoError(request);
+  if(!await adminAuthorized(request,env)){
+    return json({error:'ログインが必要です。'},401,request);
+  }
+  if(status!=='pending' && status!=='approved'){
+    return json({error:'不正な状態です。'},400,request);
+  }
+  const result=await env.DB.prepare(
+    'SELECT id,nickname,caption,created_at,reviewed_at FROM photo_submissions '+
+    'WHERE status=? ORDER BY created_at DESC LIMIT 80'
+  ).bind(status).all();
+  return json({items:(result.results||[]).map(photoListRow)},200,request);
+}
+async function moderatePhoto(request,env,id,action){
+  if(!photoReady(env))return photoError(request);
+  if(!await adminAuthorized(request,env)){
+    return json({error:'ログインが必要です。'},401,request);
+  }
+  const row=await env.DB.prepare(
+    'SELECT object_key,status FROM photo_submissions WHERE id=?'
+  ).bind(id).first();
+  const wanted=action==='unpublish'?'approved':'pending';
+  if(!row || row.status!==wanted){
+    return json({error:'写真が見つからないか、すでに処理されています。'},409,request);
+  }
+  const at=new Date().toISOString();
+  if(action==='approve'){
+    const result=await env.DB.prepare(
+      "UPDATE photo_submissions SET status='approved',reviewed_at=? "+
+      "WHERE id=? AND status='pending'"
+    ).bind(at,id).run();
+    if((result.meta?.changes||0)!==1)return json({error:'処理済みです。'},409,request);
+    return json({ok:true},200,request);
+  }
+  // 掲載取り消し／却下した画像は、データベースで非公開にしてからR2から削除する。
+  const result=await env.DB.prepare(
+    "UPDATE photo_submissions SET status='rejected',reviewed_at=? "+
+    "WHERE id=? AND status=?"
+  ).bind(at,id,wanted).run();
+  if((result.meta?.changes||0)!==1)return json({error:'処理済みです。'},409,request);
+  try{await env.PHOTOS.delete(row.object_key)}catch{
+    // R2バケットは非公開のため削除エラーでも画像が一般公開されることはない。
+  }
+  return json({ok:true},200,request);
+}
+async function uploadQuota(request,env){
+  const key=await clientKey(request,env.SESSION_SECRET);
+  const now=Math.floor(Date.now()/1000);
+  const row=await env.DB.prepare(
+    'SELECT requests,window_start FROM photo_upload_limits WHERE ip_hash=?'
+  ).bind(key).first();
+  if(row && now-Number(row.window_start)<PHOTO_WINDOW_SECONDS &&
+     Number(row.requests)>=PHOTO_MAX_ATTEMPTS)return false;
+  await env.DB.prepare(
+    'INSERT INTO photo_upload_limits(ip_hash,requests,window_start) VALUES(?,1,?) '+
+    'ON CONFLICT(ip_hash) DO UPDATE SET '+
+    'requests=CASE WHEN ?-window_start>=? THEN 1 ELSE requests+1 END,'+
+    'window_start=CASE WHEN ?-window_start>=? THEN excluded.window_start ELSE window_start END'
+  ).bind(key,now,now,PHOTO_WINDOW_SECONDS,now,PHOTO_WINDOW_SECONDS).run();
+  return true;
+}
+// canvasで作られた標準の静止WebPだけを許可。EXIF等の付加チャンクやアニメは拒否。
+function simpleWebp(bytes){
+  if(bytes.length<32 || bytes.length>PHOTO_LIMIT_BYTES)return false;
+  const ascii=(n,s)=>[...s].every((c,i)=>bytes[n+i]===c.charCodeAt(0));
+  if(!ascii(0,'RIFF')||!ascii(8,'WEBP'))return false;
+  const le32=n=>(bytes[n]|(bytes[n+1]<<8)|(bytes[n+2]<<16)|(bytes[n+3]<<24))>>>0;
+  if(le32(4)!==bytes.length-8)return false;
+  let at=12, imageChunks=0;
+  while(at+8<=bytes.length){
+    const kind=String.fromCharCode(...bytes.slice(at,at+4));
+    const size=le32(at+4);
+    const end=at+8+size+(size%2);
+    if(end>bytes.length)return false;
+    if(kind!=='VP8 ' && kind!=='VP8L')return false;
+    imageChunks++;
+    if(imageChunks>1)return false;
+    at=end;
+  }
+  return imageChunks===1 && at===bytes.length;
+}
+async function submitPhoto(request,env){
+  if(!photoReady(env))return photoError(request);
+  const declaredSize=Number(request.headers.get('Content-Length')||0);
+  if(declaredSize>PHOTO_LIMIT_BYTES+100000)return json({error:'画像が大きすぎます。'},413,request);
+  if(!/multipart\/form-data/i.test(request.headers.get('Content-Type')||'')){
+    return json({error:'画像を選択してください。'},400,request);
+  }
+  if(!await uploadQuota(request,env)){
+    return json({error:'送信回数が多すぎます。1時間ほど待ってください。'},429,request);
+  }
+  const data=await request.formData();
+  const studentCode=data.get('student_code');
+  if(typeof studentCode!=='string' || studentCode.length>256 ||
+     !await safeCompare(studentCode,env.STUDENT_UPLOAD_CODE)){
+    return json({error:'生徒用の投稿コードが違います。'},401,request);
+  }
+  const caption=data.get('caption'),nickname=data.get('nickname')||'匿名';
+  const permission=data.get('permission');
+  const file=data.get('image');
+  if(typeof caption!=='string'||caption.trim().length<1||caption.trim().length>200||
+     typeof nickname!=='string'||nickname.trim().length<1||nickname.trim().length>24){
+    return json({error:'コメントは1〜200文字、表示名は1〜24文字で入力してください。'},400,request);
+  }
+  if(permission!=='yes')return json({error:'写真の公開許可を確認してください。'},400,request);
+  if(!file || typeof file.arrayBuffer!=='function' || file.type!=='image/webp' ||
+     file.size>PHOTO_LIMIT_BYTES || file.size<32){
+    return json({error:'WebP形式で5MB以下の画像を選択してください。'},400,request);
+  }
+  const bytes=new Uint8Array(await file.arrayBuffer());
+  if(!simpleWebp(bytes))return json({error:'画像を確認できません。別の写真をお試しください。'},400,request);
+  const id=crypto.randomUUID(),key='pending/'+id+'.webp';
+  await env.PHOTOS.put(key,bytes,{httpMetadata:{contentType:'image/webp'}});
+  try {
+    await env.DB.prepare(
+      "INSERT INTO photo_submissions(id,object_key,nickname,caption,status,created_at) "+
+      "VALUES(?,?,?,?,'pending',?)"
+    ).bind(id,key,nickname.trim(),caption.trim(),new Date().toISOString()).run();
+  }catch(error){
+    await env.PHOTOS.delete(key);
+    throw error;
+  }
+  return json({ok:true,message:'管理者の承認待ちです。承認後に写真一覧へ表示されます。'},201,request);
+}
+
 export default {
   async fetch(request,env){
     const pathname=new URL(request.url).pathname;
