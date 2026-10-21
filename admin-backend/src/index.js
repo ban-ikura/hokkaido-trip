@@ -147,7 +147,6 @@ async function postAnnouncement(request,env){
   ).bind(id,date,title,body,data.important?1:0,createdAt).run();
   return json({ok:true,id,date,title},201,request);
 }
-
 /* --- 生徒写真: 非公開R2、承認制、投稿コード、サーバー側のアクセス制御 --- */
 const PHOTO_LIMIT_BYTES = 5 * 1024 * 1024;
 const PHOTO_WINDOW_SECONDS = 60 * 60;
@@ -177,74 +176,7 @@ function photoId(pathname, admin) {
   const prefix=admin?'/api/admin/photos/':'/api/photos/';
   if(!pathname.startsWith(prefix))return null;
   const rest=pathname.slice(prefix.length);
-  const match=rest.match(new RegExp('^('+PHOTO_ID_PATTERN+')(?:/(image|approve|reject|unpublish))?
-  async fetch(request,env){
-    const pathname=new URL(request.url).pathname;
-    const origin=request.headers.get('Origin');
-    if(request.method==='OPTIONS'){
-      if(origin!==SITE_ORIGIN)return json({error:'Forbidden'},403,request);
-      return new Response(null,{status:204,headers:{
-        'Access-Control-Allow-Origin':SITE_ORIGIN,
-        'Access-Control-Allow-Methods':'GET,POST,OPTIONS',
-        'Access-Control-Allow-Headers':'Content-Type,Authorization',
-        'Access-Control-Max-Age':'300',
-        'Vary':'Origin'
-      }});
-    }
-
-    // 写真: GETの一覧は承認済みのみ。画像もD1の承認状態を都度確認する。
-    if(pathname==='/api/photos'&&request.method==='GET'){
-      try{return await publicPhotos(request,env)}
-      catch{return json({error:'写真を取得できません。'},503,request)}
-    }
-    const studentPhoto=photoId(pathname,false);
-    if(studentPhoto && studentPhoto.action==='image' && request.method==='GET'){
-      try{return await photoImage(request,env,studentPhoto.id,false)}
-      catch{return json({error:'写真を取得できません。'},503,request)}
-    }
-    if(pathname==='/api/photos/submissions'&&request.method==='POST'){
-      if(origin!==SITE_ORIGIN)return json({error:'Forbidden'},403,request);
-      try{return await submitPhoto(request,env)}
-      catch{return json({error:'写真の送信に失敗しました。'},503,request)}
-    }
-    if(pathname==='/api/admin/photos'&&request.method==='GET'){
-      if(origin!==SITE_ORIGIN)return json({error:'Forbidden'},403,request);
-      try{return await adminPhotos(request,env,new URL(request.url).searchParams.get('status')||'pending')}
-      catch{return json({error:'写真を取得できません。'},503,request)}
-    }
-    const adminPhoto=photoId(pathname,true);
-    if(adminPhoto && origin===SITE_ORIGIN){
-      try{
-        if(adminPhoto.action==='image'&&request.method==='GET'){
-          return await photoImage(request,env,adminPhoto.id,true);
-        }
-        if(['approve','reject','unpublish'].includes(adminPhoto.action)&&request.method==='POST'){
-          return await moderatePhoto(request,env,adminPhoto.id,adminPhoto.action);
-        }
-      }catch{return json({error:'写真の処理に失敗しました。'},503,request)}
-    }
-
-    if(pathname==='/api/announcements'&&request.method==='GET'){
-      try{
-        if(!env.DB)return json({error:'データベース未設定'},503,request);
-        return await getAnnouncements(request,env);
-      }catch{return json({error:'お知らせを取得できません。'},503,request)}
-    }
-    if(pathname==='/api/login'&&request.method==='POST'||
-       pathname==='/api/announcements'&&request.method==='POST'){
-      if(origin!==SITE_ORIGIN)return json({error:'Forbidden'},403,request);
-      if(!env.DB)return json({error:'データベース未設定'},503,request);
-      try{
-        return pathname==='/api/login'?await login(request,env):await postAnnouncement(request,env);
-      }catch{return json({error:'サーバー処理に失敗しました。'},503,request)}
-    }
-    if(pathname==='/api/login'||pathname==='/api/announcements'){
-      return json({error:'この操作は許可されていません。'},405,request,{Allow:pathname==='/api/login'?'POST':'GET, POST'});
-    }
-    return json({error:'Not found'},404,request);
-  }
-};
-));
+  const match=rest.match(new RegExp('^('+PHOTO_ID_PATTERN+')(?:/(image|approve|reject|unpublish))?$'));
   return match?{id:match[1],action:match[2]||''}:null;
 }
 async function publicPhotos(request,env) {
@@ -420,6 +352,38 @@ export default {
         'Vary':'Origin'
       }});
     }
+    // 写真: GETの一覧は承認済みのみ。画像もD1の承認状態を都度確認する。
+    if(pathname==='/api/photos'&&request.method==='GET'){
+      try{return await publicPhotos(request,env)}
+      catch{return json({error:'写真を取得できません。'},503,request)}
+    }
+    const studentPhoto=photoId(pathname,false);
+    if(studentPhoto && studentPhoto.action==='image' && request.method==='GET'){
+      try{return await photoImage(request,env,studentPhoto.id,false)}
+      catch{return json({error:'写真を取得できません。'},503,request)}
+    }
+    if(pathname==='/api/photos/submissions'&&request.method==='POST'){
+      if(origin!==SITE_ORIGIN)return json({error:'Forbidden'},403,request);
+      try{return await submitPhoto(request,env)}
+      catch{return json({error:'写真の送信に失敗しました。'},503,request)}
+    }
+    if(pathname==='/api/admin/photos'&&request.method==='GET'){
+      if(origin!==SITE_ORIGIN)return json({error:'Forbidden'},403,request);
+      try{return await adminPhotos(request,env,new URL(request.url).searchParams.get('status')||'pending')}
+      catch{return json({error:'写真を取得できません。'},503,request)}
+    }
+    const adminPhoto=photoId(pathname,true);
+    if(adminPhoto && origin===SITE_ORIGIN){
+      try{
+        if(adminPhoto.action==='image'&&request.method==='GET'){
+          return await photoImage(request,env,adminPhoto.id,true);
+        }
+        if(['approve','reject','unpublish'].includes(adminPhoto.action)&&request.method==='POST'){
+          return await moderatePhoto(request,env,adminPhoto.id,adminPhoto.action);
+        }
+      }catch{return json({error:'写真の処理に失敗しました。'},503,request)}
+    }
+
     if(pathname==='/api/announcements'&&request.method==='GET'){
       try{
         if(!env.DB)return json({error:'データベース未設定'},503,request);
