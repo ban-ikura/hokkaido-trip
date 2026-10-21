@@ -343,3 +343,32 @@ function renderHotelImages(){
 }
 renderCredits();renderHotelImages();renderSchedule();renderChecklist();renderNextSchedule();loadAnnouncements();
 if($('#next-schedule'))setInterval(renderNextSchedule,60_000);
+
+/* Scroll-triggered reveal: progressively enhanced, reduced-motion aware. */
+(function initScrollReveal(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window))return;
+  const selector='.section-heading,.overview-tile,.day-card,.checklist-item,.feature-link,.info-card,.destination-card,.subhero';
+  const observer=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting)return;
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
+    });
+  },{threshold:0.08,rootMargin:'0px 0px -24px 0px'});
+  function register(root){
+    const nodes=[...(root.matches?.(selector)?[root]:[]),...root.querySelectorAll(selector)];
+    nodes.forEach((el)=>{
+      if(el.classList.contains('scroll-reveal'))return;
+      const rect=el.getBoundingClientRect();
+      el.classList.add('scroll-reveal');
+      if(rect.top<window.innerHeight*0.88 && rect.bottom>0) {
+        el.classList.add('is-visible');
+      } else {
+        observer.observe(el);
+      }
+    });
+  }
+  register(document.body);
+  const host=document.querySelector('#schedule-root');
+  if(host)new MutationObserver(()=>register(host)).observe(host,{childList:true,subtree:true});
+})();
