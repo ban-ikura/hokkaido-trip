@@ -378,47 +378,37 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   document.body.classList.add('motion-ready');
 }
 
-/* Replay hero entrance each time the visitor scrolls away and returns. */
-(function initTopReplay(){
+
+/* Map scrolling continuously to the drawn length; reverse automatically on upward scroll. */
+(function initScrollScrubbedTitle(){
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  let away=false,wasTop=window.scrollY<90;
-  function update(){
-    const y=window.scrollY;
-    if(y>Math.max(260,window.innerHeight*.55)){away=true;wasTop=false;document.body.classList.remove('top-replay');}
-    if(y<90&&!wasTop&&away){
-      wasTop=true;away=false;
-      document.body.classList.remove('top-replay');
-      void document.body.offsetWidth;
-      document.body.classList.add('top-replay');
-    }
+  const glyphs=[...document.querySelectorAll('.stroke-title svg text')];
+  const strokes=[...document.querySelectorAll('.brand-drawn-mark .logo-stroke')];
+  if(!glyphs.length&&!strokes.length)return;
+  let scheduled=false;
+  const clamp=x=>Math.min(1,Math.max(0,x));
+  function render(){
+    scheduled=false;
+    const distance=Math.max(380,Math.min(740,window.innerHeight*.85));
+    const progress=clamp(window.scrollY/distance);
+    // The final character disappears first; scrolling upward redraws in reading order.
+    glyphs.forEach((glyph,index)=>{
+      const erase=clamp(progress*glyphs.length-(glyphs.length-1-index));
+      glyph.style.setProperty('--stroke-offset',(erase*540).toFixed(2));
+      glyph.style.setProperty('--stroke-fill',(1-clamp(erase*2)).toFixed(3));
+    });
+    strokes.forEach((stroke,index)=>{
+      const erase=clamp(progress*2-(1-index));
+      stroke.style.setProperty('--logo-offset',(erase*120).toFixed(2));
+    });
   }
-  window.addEventListener('scroll',update,{passive:true});
-})();
-
-/* Assign character order for sequential title outline tracing. */
-document.querySelectorAll('.stroke-title svg text').forEach((glyph,index)=>glyph.style.setProperty('--glyph-index',index));
-
-/* Restart the SVG stroke animations after every scroll-away / return cycle. */
-(function initReliableTopDrawing(){
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  let armed=false;
-  let atTop=window.scrollY<90;
-  const update=()=>{
-    const y=window.scrollY;
-    if(y>Math.max(260,innerHeight*.55)){armed=true;atTop=false;document.body.classList.remove('title-drawing');}
-    if(y<90&&armed&&!atTop){
-      atTop=true;armed=false;
-      document.body.classList.remove('title-drawing');
-      void document.body.offsetWidth;
-      document.body.classList.add('title-drawing');
-    }
+  const schedule=()=>{
+    if(scheduled)return;
+    scheduled=true;
+    requestAnimationFrame(render);
   };
-  addEventListener('scroll',update,{passive:true});
-  addEventListener('pageshow',event=>{
-    if(event.persisted&&window.scrollY<90){
-      document.body.classList.remove('title-drawing');
-      void document.body.offsetWidth;
-      document.body.classList.add('title-drawing');
-    }
-  });
+  window.addEventListener('scroll',schedule,{passive:true});
+  window.addEventListener('resize',schedule,{passive:true});
+  window.addEventListener('pageshow',schedule);
+  render();
 })();

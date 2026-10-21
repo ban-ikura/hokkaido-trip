@@ -552,3 +552,22 @@ body::before {display:none !important;}
     animation:reverseMountainStroke 1.1s .1s ease both!important;
   }
 }
+
+/* Scroll-scrubbed handwriting: progress follows scroll position in both directions. */
+@media(prefers-reduced-motion:no-preference){
+  body.motion-ready .stroke-title svg text,
+  body.motion-ready.top-replay .stroke-title svg text,
+  body.motion-ready.top-replay.title-drawing .stroke-title svg text{
+    animation:none!important;
+    stroke-dasharray:540;
+    stroke-dashoffset:var(--stroke-offset,0)!important;
+    fill:rgba(255,255,255,var(--stroke-fill,1))!important;
+  }
+  body.motion-ready .logo-stroke,
+  body.motion-ready.top-replay .logo-stroke,
+  body.motion-ready.top-replay.title-drawing .logo-stroke{
+    animation:none!important;
+    stroke-dashoffset:var(--logo-offset,0)!important;
+  }
+  body.motion-ready .hero h1,body.motion-ready.top-replay .hero h1{animation:none!important;clip-path:none!important;transform:none!important}
+}
