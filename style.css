@@ -504,3 +504,17 @@ body::before {display:none !important;}
   @media(hover:hover){.brand:hover .brand-drawn-mark{transform:rotate(-8deg) scale(1.08);transition:transform .3s ease}}
 }
 @media(prefers-reduced-motion:reduce){.logo-stroke{stroke-dashoffset:0!important}.brand-drawn-mark{transform:none!important}}
+
+/* Sequential outlined title drawing; replayed whenever the visitor returns to top. */
+.stroke-title .stroke-title-line{display:block;line-height:1.16}
+.stroke-title svg{display:block;height:1.16em;max-width:100%;overflow:visible}
+.stroke-title svg text{font-family:inherit;font-weight:850;font-size:100px;fill:#fff;stroke:#e0f5ff;stroke-width:1.8px;stroke-linejoin:round;paint-order:stroke fill}
+@media(prefers-reduced-motion:no-preference){
+  body.motion-ready .stroke-title,body.motion-ready.top-replay .stroke-title{animation:none!important;transform:none!important;clip-path:none!important}
+  .stroke-title svg text{stroke-dasharray:540;stroke-dashoffset:0}
+  @keyframes traceGlyph{0%{stroke-dashoffset:540;fill:transparent}65%{fill:transparent}100%{stroke-dashoffset:0;fill:#fff}}
+  body.motion-ready .stroke-title svg text,body.motion-ready.top-replay .stroke-title svg text{animation:traceGlyph .92s ease-in-out both;animation-delay:calc(.2s + var(--glyph-index)*.25s)}
+  body.motion-ready.top-replay .stroke-title svg text{animation-name:none}
+  body.motion-ready.top-replay .stroke-title svg text{animation-name:traceGlyph}
+}
+@media(prefers-reduced-motion:reduce){.stroke-title svg text{stroke-dashoffset:0;fill:#fff;animation:none!important}}

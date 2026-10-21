@@ -394,3 +394,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }
   window.addEventListener('scroll',update,{passive:true});
 })();
+
+/* Assign character order for sequential title outline tracing. */
+document.querySelectorAll('.stroke-title svg text').forEach((glyph,index)=>glyph.style.setProperty('--glyph-index',index));
