@@ -571,3 +571,16 @@ body::before {display:none !important;}
   }
   body.motion-ready .hero h1,body.motion-ready.top-replay .hero h1{animation:none!important;clip-path:none!important;transform:none!important}
 }
+
+/* Compact four-day overview tiles */
+.overview-grid{gap:9px}
+.overview-tile{min-height:104px;padding:12px 14px;border-radius:12px}
+.overview-tile .tile-number{font-size:30px}
+.overview-tile .tile-copy strong{font-size:13px}
+.overview-tile .tile-arrow{right:12px;top:10px;font-size:14px}
+@media(max-width:760px){
+  .overview-grid{gap:8px}
+  .overview-tile{min-height:96px;padding:11px 12px}
+  .overview-tile .tile-number{font-size:27px}
+  .overview-tile .tile-copy strong{font-size:12px}
+}
