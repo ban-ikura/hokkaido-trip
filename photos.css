@@ -1,55 +1,140 @@
-/* 生徒用フォトギャラリー：承認された写真のみ */
-:root{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",Meiryo,system-ui,sans-serif;color-scheme:light}
-*{box-sizing:border-box}
-body{margin:0;color:#233b4f;line-height:1.65;background:radial-gradient(circle at 85% 2%,#2b6b92,transparent 32%),linear-gradient(145deg,#091e34,#133a59 62%,#0c2842);min-height:100vh}
-a{color:inherit}button,input,textarea{font:inherit}button{cursor:pointer}
-.photos-header{max-width:1020px;margin:auto;padding:21px 24px;color:#d8f1ff;display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:13px}
-.photos-header a{text-decoration:none}.photos-header strong{letter-spacing:.1em}.photos-header span{color:#95dfff}
-.photos-main{width:min(920px,calc(100% - 32px));margin:24px auto 65px}
-.eyebrow{font-size:11px;letter-spacing:.18em;font-weight:800;color:#a2deff}
-h1{font-size:clamp(27px,5vw,43px);line-height:1.28;color:white;letter-spacing:-.045em;margin:7px 0 8px}
-.lead{color:#d5e7f6;font-size:14px;max-width:670px;margin:0 0 26px}
-section{border-radius:20px;background:#f8fcff;padding:clamp(19px,4vw,30px);box-shadow:0 20px 55px rgba(0,10,30,.2);margin-bottom:25px}
-.section-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.section-top small{font-size:11px;font-weight:900;letter-spacing:.11em;color:#26759d}
-h2{font-size:clamp(21px,3vw,27px);line-height:1.3;margin:5px 0 17px;color:#173b53}
-.tag{border:1px solid #96d5ed;background:#e6f7ff;border-radius:30px;color:#196989;padding:5px 12px;font-size:11px;font-weight:800}
-#photo-form{display:grid;gap:8px}
-#photo-form label:not(.agree){font-size:13px;font-weight:800;margin-top:10px}
-label em{font-size:10px;color:#9c3e27;font-style:normal}
-input:not([type=checkbox]),textarea{display:block;width:100%;border-radius:10px;border:1px solid #b5cfdf;background:#fff;padding:12px 14px;color:#233b4f}
-input[type=file]{font-size:13px}textarea{resize:vertical}
-input:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid #5db8dd;outline-offset:2px}
-.hint{font-size:12px;color:#586f7f;margin:3px 0 8px}
-#photo-preview{display:block;max-height:260px;max-width:100%;margin:6px auto;object-fit:contain;border-radius:12px}
+/* HOKKAIDO 2026 — Student gallery / separate upload, responsive and accessible */
+:root{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",Meiryo,system-ui,sans-serif;color:#17374c;background:#0e263c;color-scheme:light;--navy:#102b43;--sea:#1f6688;--mist:#ebf5fa;--line:#dbeaf1}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;background:linear-gradient(160deg,#0c2339,#173d59 40%,#1d5470 100%);line-height:1.65}
+a{color:inherit}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
 [hidden]{display:none!important}
-.agree{display:flex;align-items:flex-start;gap:11px;margin:12px 0;font-size:12px;color:#445d6c}
-.agree input{margin-top:5px;flex:0 0 auto;accent-color:#176a92}
-#photo-submit{border:0;border-radius:12px;background:#146a8f;color:white;padding:14px;font-weight:800}
-#photo-submit:disabled{opacity:.45;cursor:not-allowed}
-.message{min-height:1.4em;font-size:13px;font-weight:750}
-.message.error{color:#a12d2d}.message.success{color:#116b43}
-.notice{background:#e9f4fa;color:#315b72;padding:10px 14px;border-radius:10px;font-size:12px;margin-bottom:10px}
-.gallery-intro,.gallery-status{color:#5b7483;font-size:13px}
-#photo-reload{border:1px solid #bfd9e6;border-radius:9px;padding:7px 12px;background:#edf8fd;color:#1d6685;font-size:12px;font-weight:800}
-.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;margin-top:17px}
-.photo-card{overflow:hidden;border:1px solid #dcebf1;border-radius:15px;background:white}
-.photo-card img{width:100%;aspect-ratio:1/1;object-fit:cover;background:#e2eef5;display:block}
-.photo-info{padding:12px 14px}
-.photo-info strong{font-size:12px;color:#185273}
-.photo-info p{font-size:13px;line-height:1.6;overflow-wrap:anywhere;margin:5px 0 0;white-space:pre-wrap}
-.privacy{font-size:12px;color:#bbd6e7;line-height:1.9}
-footer{text-align:center;color:#bdddeb;font-size:11px;padding:28px}
-@media(min-width:720px){.photos-main{margin-top:42px}.send-panel{max-width:680px}}
-
-/* 顔写真禁止の投稿ガイドライン */
-.photo-rules{background:#fff9ee;border:1px solid #f1d0a4;border-radius:18px;padding:clamp(17px,4vw,25px);margin:0 0 25px;box-shadow:0 16px 42px rgba(0,10,30,.12)}
-.rules-eyebrow{color:#9c6420;font-weight:900;font-size:10px;letter-spacing:.12em}
-.photo-rules h2{font-size:21px;margin:5px 0 12px;color:#503816}
-.rule-emphasis{background:#fff0e5;border-left:4px solid #c85632;border-radius:8px;padding:12px 14px;color:#973e24;font-size:17px;font-weight:900;line-height:1.55;margin:10px 0}
-.photo-rules ul{padding-left:1.3em;margin:12px 0 13px}
-.photo-rules li{font-size:13px;line-height:1.8;margin:8px 0;color:#4a4035}
-.photo-rules strong{font-weight:900}
-.rules-note{margin:13px 0 0;color:#6f583a;font-size:12px;line-height:1.8}
-.captcha-area{padding:12px 0 4px;min-height:95px}
-#photo-turnstile{min-height:65px}
+:focus-visible{outline:3px solid #65d8f7;outline-offset:3px}
+.photos-header{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1120px;margin:auto;padding:20px 24px;color:#deedf6}
+.photos-header a{text-decoration:none}
+.photos-back,.photos-header-link{font-size:12px;font-weight:750}
+.photos-back:hover,.photos-header-link:hover{color:white}
+.photos-brand{font-size:13px;letter-spacing:.14em;font-weight:900;white-space:nowrap}
+.photos-brand span{color:#96dfff}
+.photos-main{width:min(1050px,calc(100% - 34px));margin:28px auto 56px}
+.eyebrow,.section-kicker,.step-label{font-size:11px;letter-spacing:.15em;font-weight:900}
+.album-hero{position:relative;isolation:isolate;overflow:hidden;min-height:310px;display:flex;align-items:center;padding:clamp(28px,5.5vw,62px);background:radial-gradient(circle at 91% 20%,rgba(210,243,255,.20),transparent 26%),linear-gradient(130deg,#17415f,#215d7d 58%,#377f98);border:1px solid rgba(222,246,255,.22);border-radius:26px;color:#fff;box-shadow:0 24px 60px rgba(5,20,37,.14)}
+.album-hero::after{content:"";position:absolute;right:-8%;bottom:-66%;width:70%;height:100%;background:linear-gradient(25deg,rgba(234,250,255,.16),transparent);transform:rotate(-22deg);border-radius:50%;z-index:-1}
+.album-hero-inner{position:relative;z-index:2;max-width:720px}
+.album-hero .eyebrow{color:#a9e8ff;display:flex;align-items:center;gap:14px}
+.eyebrow-rule{display:inline-block;height:1px;width:27px;background:rgba(190,236,255,.6)}
+.album-hero h1,.post-intro h1{font-size:clamp(33px,5.6vw,62px);line-height:1.22;letter-spacing:-.055em;margin:14px 0 18px;font-weight:900}
+.album-hero h1 em,.post-intro h1 em{font-style:normal;color:#c4f1ff}
+.lead{max-width:570px;margin:0;color:#e1f1fb;font-size:14px;line-height:1.85}
+.album-hero-foot{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:26px}
+.hero-pill{display:inline-flex;align-items:center;gap:9px;padding:8px 12px;font-size:11px;font-weight:800;border-radius:99px;background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.22);color:#ecf9ff}
+.hero-dot{height:7px;width:7px;border-radius:50%;background:#82e9cf;box-shadow:0 0 0 3px rgba(130,233,207,.15)}
+.hero-date{font-size:10px;letter-spacing:.12em;color:#d7f0f9;font-weight:800}
+.snow-deco{position:absolute;z-index:0;color:rgba(231,249,255,.14);pointer-events:none}
+.snow-a{font-size:210px;right:6%;top:2%;line-height:1}.snow-b{font-size:95px;right:22%;bottom:-42px}
+.album-content{background:#fbfdff;padding:clamp(20px,4.2vw,38px);margin-top:26px;border-radius:24px;box-shadow:0 20px 48px rgba(4,24,40,.13)}
+.album-content-head,.section-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.section-kicker{color:#247895;margin:0 0 7px}
+.album-content h2{font-size:clamp(23px,3vw,31px);line-height:1.25;letter-spacing:-.035em;margin:0}
+.photo-count{font-size:12px;vertical-align:middle;margin-left:7px;color:#377997;letter-spacing:0}
+.refresh-button{background:#eef7fc;color:#205e7a;border:1px solid #d5e8f0;border-radius:10px;font-size:12px;font-weight:800;padding:9px 14px;white-space:nowrap}
+.refresh-button:hover{background:#d8f1ff}
+.gallery-status{font-size:13px;color:#648092;padding:11px 0 13px;margin:0}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:17px;align-items:start}
+.photo-card{overflow:hidden;background:white;border:1px solid #e0edf3;border-radius:16px;box-shadow:0 10px 24px rgba(16,52,75,.07)}
+.photo-card img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#e9f3f7}
+.photo-info{padding:13px 15px 16px}
+.photo-info strong{color:#166184;font-size:12px;font-weight:850}
+.photo-info p{white-space:pre-wrap;overflow-wrap:anywhere;color:#314b5e;font-size:13px;line-height:1.75;margin:6px 0 0}
+.album-notice{display:flex;gap:13px;background:#f1f8fb;border:1px solid #e1eef4;border-radius:13px;padding:13px 16px;margin-top:24px;align-items:start}
+.album-notice>span{color:#227396;font-size:22px;line-height:1.2}
+.album-notice p{font-size:12px;color:#496a7d;margin:0;line-height:1.85}
+.album-notice strong{color:#2c546a}
+.privacy{font-size:11px;line-height:1.85;color:#c5dce8;margin:23px auto;max-width:980px}
+.floating-post{position:fixed;z-index:20;right:max(20px,env(safe-area-inset-right));bottom:max(22px,env(safe-area-inset-bottom));display:inline-flex;align-items:center;justify-content:center;gap:11px;min-height:56px;padding:10px 21px 10px 13px;border-radius:999px;background:#e2f7ff;color:#113f5c;text-decoration:none;box-shadow:0 12px 35px rgba(1,17,32,.35);border:1px solid white;font-size:14px;font-weight:900;transition:transform .16s,box-shadow .16s}
+.floating-post:hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(1,17,32,.37)}
+.floating-post-icon{display:grid;place-items:center;width:33px;height:33px;border-radius:50%;background:#205f82;color:white;font-size:24px;line-height:1}
+.photos-footer{display:flex;align-items:center;justify-content:space-between;gap:18px;max-width:1080px;margin:0 auto;padding:24px;color:#c7e3ef;font-size:11px;letter-spacing:.06em}
+.photos-footer a{text-decoration:none}
+.post-main{max-width:1040px}
+.post-intro{padding:18px 7px 27px;color:white}
+.post-intro .eyebrow{color:#95ddf3;margin:0}
+.post-intro h1{font-size:clamp(32px,5vw,49px);margin:9px 0 11px}
+.post-intro>p:last-child{color:#d6e9f5;max-width:750px;font-size:14px;line-height:1.85;margin:0}
+.post-columns{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(285px,.85fr);gap:22px;align-items:start}
+.post-form-panel,.rules-panel,.how-it-works{background:#fcfeff;border:1px solid #edf4f7;box-shadow:0 15px 38px rgba(2,17,31,.12);border-radius:20px}
+.post-form-panel{padding:clamp(20px,3.5vw,32px)}
+.post-panel-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.step-label{color:#297d99}
+.approval-chip{font-size:11px;font-weight:800;color:#126f65;background:#e4f5f0;border:1px solid #c8e8dc;border-radius:99px;padding:4px 12px}
+.post-form-panel h2{color:#173d56;font-size:clamp(22px,3vw,29px);letter-spacing:-.035em;line-height:1.3;margin:10px 0 6px}
+.post-panel-sub{color:#668090;font-size:12px;line-height:1.7;margin:0 0 17px}
+.notice{border:1px solid #d6eaf1;background:#eff8fc;color:#285d77;border-radius:11px;padding:11px 13px;font-size:12px;margin:0 0 17px}
+#photo-form{display:flex;flex-direction:column;gap:8px}
+#photo-form>label:not(.agree){font-size:13px;color:#2a4d61;font-weight:850;margin-top:13px}
+.required,.optional{font-size:10px;font-weight:750;border-radius:5px;padding:2px 6px;margin-left:5px}
+.required{background:#fae8e4;color:#984536}.optional{background:#e9f2f7;color:#618094}
+input:not([type=checkbox]),textarea{border:1px solid #c7dce7;border-radius:12px;background:#fff;color:#233f52;padding:13px 14px;width:100%;font-size:14px}
+textarea{resize:vertical;min-height:118px}
+input::placeholder,textarea::placeholder{color:#9aabb4}
+.upload-field{position:relative;border:1.5px dashed #a6ccdf;background:#f0f9fd;border-radius:14px;overflow:hidden;min-height:104px;display:flex;align-items:center;justify-content:center}
+.upload-field input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
+.upload-field:focus-within{outline:3px solid #6fcdeb;outline-offset:2px}
+.upload-field-caption{pointer-events:none;display:flex;align-items:center;gap:12px;font-size:13px;font-weight:850;color:#266c8a}
+.upload-field-caption span{display:grid;place-items:center;width:35px;height:35px;background:white;border-radius:10px;color:#236d8e;font-size:23px}
+.upload-field:has(input:disabled){opacity:.6}
+.hint,.field-footnote{font-size:11px;color:#6f8795;line-height:1.75;margin:2px 0 6px}
+#photo-preview{display:block;max-height:280px;width:auto;max-width:100%;margin:7px auto;object-fit:contain;border-radius:12px;border:1px solid #e2edf1}
+.form-divider{height:1px;background:#e1edf3;margin:13px 0}
+.agree{display:flex;gap:11px;align-items:flex-start;margin:6px 0;font-size:12px;color:#38586b;line-height:1.85}
+.agree input{margin:5px 0 0;flex:0 0 auto;width:19px;height:19px;accent-color:#1f7794}
+.agree strong{color:#1f455b}
+.captcha-area{padding:10px 0 2px;min-height:92px}
+#photo-turnstile{min-height:55px}
+.primary-submit{background:linear-gradient(120deg,#166a92,#114862);border:none;color:white;padding:15px 17px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:13px;font-size:14px;font-weight:850;margin-top:5px}
+.primary-submit:not(:disabled):hover{filter:brightness(1.08)}
+.primary-submit:disabled{opacity:.53;cursor:not-allowed}
+.message{min-height:20px;font-size:13px;font-weight:750;margin:6px 0}
+.message.error{color:#a53635}.message.success{color:#16704c}
+.post-side{display:grid;gap:16px}
+.rules-panel{padding:25px 22px}
+.rules-icon{width:36px;height:36px;border-radius:10px;background:#f8ece5;color:#b05230;display:grid;place-items:center;font-size:21px;font-weight:900;margin-bottom:14px}
+.rules-panel .section-kicker{color:#a96a3a;font-size:10px}
+.rules-panel h2{font-size:22px;letter-spacing:-.04em;line-height:1.35;color:#27485b;margin:6px 0 12px}
+.rule-emphasis{margin:0 0 10px;border-left:4px solid #c86c4b;border-radius:7px;background:#fff0e8;padding:11px 12px;font-weight:900;font-size:17px;color:#994c30}
+.rules-lead{font-size:12px;line-height:1.8;color:#6f584e;margin:0 0 14px}
+.rules-list{padding:0;margin:0;list-style:none}
+.rules-list li{padding:12px 0;border-top:1px solid #e6eef2;display:grid;gap:4px;font-size:12px}
+.rules-list strong{color:#224c62;font-size:12px}
+.rules-list li span{color:#6b7d86;line-height:1.75}
+.rules-tip{background:#eef8f7;border-radius:12px;padding:13px 14px;margin-top:17px}
+.rules-tip strong{font-size:12px;color:#276a65}
+.rules-tip p{font-size:12px;line-height:1.75;color:#47716d;margin:4px 0 0}
+.how-it-works{padding:18px 20px}
+.how-it-works>span{font-size:12px;font-weight:850;color:#246889}
+.how-it-works p{display:flex;flex-wrap:wrap;align-items:center;gap:5px;font-size:11px;margin:8px 0 5px;color:#36556b}
+.how-it-works p span{color:#76a3b6}
+.how-it-works small{font-size:11px;color:#718b99}
+@media(max-width:760px){
+ .photos-header{padding:17px 17px}
+ .photos-main{width:calc(100% - 26px);margin:16px auto 42px}
+ .album-hero{min-height:306px;border-radius:19px;padding:27px 22px}
+ .album-hero h1{font-size:clamp(32px,8.5vw,49px)}
+ .album-hero .eyebrow{font-size:9px}
+ .snow-a{right:-12%;font-size:170px}.snow-b{display:none}
+ .album-content{margin-top:17px;padding:19px 15px;border-radius:18px}
+ .photo-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .photo-card{border-radius:12px}
+ .photo-card img{aspect-ratio:1/1}
+ .photo-info{padding:10px}
+ .photo-info p{font-size:11px}
+ .floating-post{right:15px;bottom:max(16px,env(safe-area-inset-bottom));padding:9px 16px 9px 10px;font-size:13px}
+ .post-intro{padding:16px 4px 23px}
+ .post-columns{grid-template-columns:minmax(0,1fr);gap:17px}
+ .post-form-panel{padding:19px 16px}
+ .post-side{grid-row:1}
+ .rules-panel{padding:21px 18px}
+ .rules-list{display:grid;grid-template-columns:1fr}
+ .post-intro h1{font-size:36px}
+ .photos-footer{padding:20px 16px 90px}
+}
+@media(max-width:390px){.photos-brand{font-size:11px;letter-spacing:.07em}.photos-back,.photos-header-link{font-size:11px}.hero-date{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
