@@ -126,7 +126,7 @@ function renderTimeline(day,course){
   const wrapper=node('div','timeline-wrapper');
   const toolbar=node('div','timeline-toolbar');
   const left=node('div','timeline-label','横スクロール行程表');
-  left.append(node('span','','30分刻み・移動はバー表示'));
+  left.append(node('span','','30分刻み・オレンジの時刻をタップすると詳細表示'));
   const controls=node('div','timeline-controls');
   controls.append(node('span','scroll-tip','左右にスクロール'));
   for(const [sign,label] of [[-1,'前の時間へ'],[1,'次の時間へ']]){
@@ -152,6 +152,49 @@ function renderTimeline(day,course){
     axis.append(tick);
   }
   const track=node('div','timeline-track');
+  // 終了時刻が未記載の予定はタップ可能な時刻ボタンで表示する。
+  // 画面外へはみ出さないよう端に寄せ、近接する予定は上下に分ける。
+  const pointWidth=54;
+  const pointRows=[-Infinity,-Infinity];
+  const detailId='point-detail-'+day.id+'-'+course.id;
+  const detail=node('section','point-detail');
+  detail.id=detailId;
+  detail.hidden=true;
+  detail.setAttribute('aria-live','polite');
+  let selectedPoint=null;
+  const closePoint=(restoreFocus=false)=>{
+    detail.hidden=true;
+    if(selectedPoint){
+      selectedPoint.classList.remove('selected');
+      selectedPoint.setAttribute('aria-expanded','false');
+      if(restoreFocus)selectedPoint.focus({preventScroll:true});
+      selectedPoint=null;
+    }
+  };
+  const openPoint=(button,event)=>{
+    if(selectedPoint===button){closePoint();return}
+    if(selectedPoint){
+      selectedPoint.classList.remove('selected');
+      selectedPoint.setAttribute('aria-expanded','false');
+    }
+    selectedPoint=button;
+    button.classList.add('selected');
+    button.setAttribute('aria-expanded','true');
+    const content=node('div','point-detail-content');
+    content.append(node('span','point-detail-label',day.date+' / '+course.label));
+    content.append(node('div','point-detail-clock',event.start));
+    content.append(node('h4','point-detail-title',event.title));
+    if(event.note)content.append(node('p','point-detail-note',event.note));
+    content.append(node('p','point-detail-context','資料に記載の時刻は1つのみです。もう一方の時刻や所要時間は推測していません。'));
+    const close=node('button','point-detail-close','閉じる ×');
+    close.type='button';
+    close.setAttribute('aria-label','詳細を閉じる');
+    close.addEventListener('click',()=>closePoint(true));
+    detail.replaceChildren(content,close);
+    detail.hidden=false;
+    requestAnimationFrame(()=>detail.scrollIntoView({block:'nearest',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'}));
+  };
+  wrapper.addEventListener('keydown',e=>{if(e.key==='Escape'&&!detail.hidden){e.preventDefault();closePoint(true)}});
   const now=Date.now();const idx=days.indexOf(day);
   for(const event of course.events){
     const len=(minOf(event.end)-minOf(event.start))*timelineRate;
@@ -161,16 +204,28 @@ function renderTimeline(day,course){
     const isPoint=event.start===event.end;
     const key=(transport||isPoint)?null:hasImage(event);
     const showScene=false;
-    const card=node('article','route-event '+event.type+(isPoint?' is-point':'')+(transport?' transport-bar':'')+((key||showScene)?' has-photo':'')+(w<133?' compact':'')+(w<74?' tiny':''));
-    card.style.left=((minOf(event.start)-minOf(day.start))*timelineRate)+'px';
-    card.style.width=w+'px';
-    if(isPoint)card.tabIndex=0;
+    const pointX=(minOf(event.start)-minOf(day.start))*timelineRate;
+    const pointRow=isPoint && pointX-pointRows[0]<pointWidth ? 1 : 0;
+    if(isPoint)pointRows[pointRow]=pointX;
+    const card=node(isPoint?'button':'article','route-event '+event.type+(isPoint?' is-point point-row-'+(pointRow+1):'')+(transport?' transport-bar':'')+((key||showScene)?' has-photo':'')+(w<133?' compact':'')+(w<74?' tiny':''));
+    card.style.left=(isPoint?Math.max(0,Math.min(width-pointWidth,pointX-pointWidth/2)):pointX)+'px';
+    card.style.width=(isPoint?pointWidth:w)+'px';
+    if(isPoint){
+      card.type='button';
+      card.setAttribute('aria-controls',detailId);
+      card.setAttribute('aria-expanded','false');
+      card.setAttribute('aria-haspopup','false');
+    }
     card.dataset.start=event.start;
     const modeInfo=transport?' / '+transport.label:'';
     const displayTime=event.start===event.end?event.start:event.start+'〜'+event.end;
     card.setAttribute('aria-label',displayTime+' '+event.title+modeInfo+(event.note?'、'+event.note:''));
     card.title=displayTime+' '+event.title+modeInfo+(event.note?' / '+event.note:'');
-    if(key){
+    if(isPoint)card.setAttribute('aria-label',event.start+' '+event.title+'。詳細を表示');
+    if(isPoint){
+      card.append(node('span','point-event-time',event.start));
+      card.addEventListener('click',()=>openPoint(card,event));
+    }else if(key){
       card.append(placePhoto(key));
       if(venuePhotos[key]?.permissionPending && w>=150){
         card.append(node('span','route-photo-note',venuePhotos[key].sourceType==='official'?'公式掲載画像':'参考画像（仮配置）'));
@@ -198,12 +253,13 @@ function renderTimeline(day,course){
       text.append(node('strong','route-event-title',w>=74?event.title:'•'));
       card.append(text);
     }
-    if(now>=dateOf(idx,event.start)&&now<dateOf(idx,event.end))card.classList.add('is-current');
+    if(!isPoint && now>=dateOf(idx,event.start)&&now<dateOf(idx,event.end))card.classList.add('is-current');
     track.append(card);
   }
   canvas.append(axis,track);viewport.append(canvas);wrapper.append(viewport);
   const progress=node('div','timeline-progress');progress.setAttribute('aria-hidden','true');
   const fill=node('span');progress.append(fill);wrapper.append(progress);
+  wrapper.append(detail);
   const updateProgress=()=>{
     const max=Math.max(1,viewport.scrollWidth-viewport.clientWidth);
     fill.style.width=(100*(viewport.scrollLeft/max)).toFixed(2)+'%';
