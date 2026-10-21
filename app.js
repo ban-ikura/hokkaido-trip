@@ -397,3 +397,28 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
 
 /* Assign character order for sequential title outline tracing. */
 document.querySelectorAll('.stroke-title svg text').forEach((glyph,index)=>glyph.style.setProperty('--glyph-index',index));
+
+/* Restart the SVG stroke animations after every scroll-away / return cycle. */
+(function initReliableTopDrawing(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  let armed=false;
+  let atTop=window.scrollY<90;
+  const update=()=>{
+    const y=window.scrollY;
+    if(y>Math.max(260,innerHeight*.55)){armed=true;atTop=false;document.body.classList.remove('title-drawing');}
+    if(y<90&&armed&&!atTop){
+      atTop=true;armed=false;
+      document.body.classList.remove('title-drawing');
+      void document.body.offsetWidth;
+      document.body.classList.add('title-drawing');
+    }
+  };
+  addEventListener('scroll',update,{passive:true});
+  addEventListener('pageshow',event=>{
+    if(event.persisted&&window.scrollY<90){
+      document.body.classList.remove('title-drawing');
+      void document.body.offsetWidth;
+      document.body.classList.add('title-drawing');
+    }
+  });
+})();
