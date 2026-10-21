@@ -147,15 +147,15 @@ async function postAnnouncement(request,env){
   ).bind(id,date,title,body,data.important?1:0,createdAt).run();
   return json({ok:true,id,date,title},201,request);
 }
-/* --- 生徒写真: 非公開R2、承認制、投稿コード、サーバー側のアクセス制御 --- */
+/* --- 生徒写真: 非公開R2、承認制、Turnstile、サーバー側のアクセス制御 --- */
 const PHOTO_LIMIT_BYTES = 5 * 1024 * 1024;
 const PHOTO_WINDOW_SECONDS = 60 * 60;
 const PHOTO_MAX_ATTEMPTS = 20;
 const PHOTO_ID_PATTERN = '[0-9a-f-]{36}';
 
 function photoReady(env) {
-  return !!(env.DB && env.PHOTOS && typeof env.STUDENT_UPLOAD_CODE === 'string' &&
-    env.STUDENT_UPLOAD_CODE.length >= 12 && env.SESSION_SECRET && env.SESSION_SECRET.length >= 32);
+  return !!(env.DB && env.PHOTOS && typeof env.TURNSTILE_SECRET === 'string' &&
+    env.TURNSTILE_SECRET.length >= 12 && env.SESSION_SECRET && env.SESSION_SECRET.length >= 32);
 }
 function photoError(request) {
   return json({error:'写真投稿機能は準備中です。'},503,request);
@@ -294,6 +294,24 @@ function simpleWebp(bytes){
   }
   return imageChunks===1 && at===bytes.length;
 }
+// Cloudflare Turnstileトークンを必ずサーバーで照合。無効なら保存しない。
+async function verifyPhotoTurnstile(request,env,token){
+  if(typeof token!=='string'||token.length<10||token.length>2048)return false;
+  const form=new FormData();
+  form.append('secret',env.TURNSTILE_SECRET);
+  form.append('response',token);
+  const ip=request.headers.get('CF-Connecting-IP');
+  if(ip)form.append('remoteip',ip);
+  try{
+    const result=await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{
+      method:'POST',body:form,signal:AbortSignal.timeout(6000)
+    });
+    if(!result.ok)return false;
+    const verdict=await result.json();
+    return !!(verdict && verdict.success===true &&
+      verdict.hostname==='ban-ikura.github.io' && verdict.action==='photo_upload');
+  }catch{return false}
+}
 async function submitPhoto(request,env){
   if(!photoReady(env))return photoError(request);
   const declaredSize=Number(request.headers.get('Content-Length')||0);
@@ -301,14 +319,12 @@ async function submitPhoto(request,env){
   if(!/multipart\/form-data/i.test(request.headers.get('Content-Type')||'')){
     return json({error:'画像を選択してください。'},400,request);
   }
+  const data=await request.formData();
+  if(!await verifyPhotoTurnstile(request,env,data.get('turnstile_token'))){
+    return json({error:'安全確認に失敗しました。再度確認して送信してください。'},403,request);
+  }
   if(!await uploadQuota(request,env)){
     return json({error:'送信回数が多すぎます。1時間ほど待ってください。'},429,request);
-  }
-  const data=await request.formData();
-  const studentCode=data.get('student_code');
-  if(typeof studentCode!=='string' || studentCode.length>256 ||
-     !await safeCompare(studentCode,env.STUDENT_UPLOAD_CODE)){
-    return json({error:'生徒用の投稿コードが違います。'},401,request);
   }
   const caption=data.get('caption'),nickname=data.get('nickname')||'匿名';
   const permission=data.get('permission');
@@ -317,7 +333,7 @@ async function submitPhoto(request,env){
      typeof nickname!=='string'||nickname.trim().length<1||nickname.trim().length>24){
     return json({error:'コメントは1〜200文字、表示名は1〜24文字で入力してください。'},400,request);
   }
-  if(permission!=='yes')return json({error:'写真の公開許可を確認してください。'},400,request);
+  if(permission!=='yes')return json({error:'顔写真禁止と投稿ルールを確認して同意してください。'},400,request);
   if(!file || typeof file.arrayBuffer!=='function' || file.type!=='image/webp' ||
      file.size>PHOTO_LIMIT_BYTES || file.size<32){
     return json({error:'WebP形式で5MB以下の画像を選択してください。'},400,request);
