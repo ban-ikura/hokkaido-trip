@@ -1,0 +1,43 @@
+/* 生徒用フォトギャラリー：承認された写真のみ */
+:root{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",Meiryo,system-ui,sans-serif;color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;color:#233b4f;line-height:1.65;background:radial-gradient(circle at 85% 2%,#2b6b92,transparent 32%),linear-gradient(145deg,#091e34,#133a59 62%,#0c2842);min-height:100vh}
+a{color:inherit}button,input,textarea{font:inherit}button{cursor:pointer}
+.photos-header{max-width:1020px;margin:auto;padding:21px 24px;color:#d8f1ff;display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:13px}
+.photos-header a{text-decoration:none}.photos-header strong{letter-spacing:.1em}.photos-header span{color:#95dfff}
+.photos-main{width:min(920px,calc(100% - 32px));margin:24px auto 65px}
+.eyebrow{font-size:11px;letter-spacing:.18em;font-weight:800;color:#a2deff}
+h1{font-size:clamp(27px,5vw,43px);line-height:1.28;color:white;letter-spacing:-.045em;margin:7px 0 8px}
+.lead{color:#d5e7f6;font-size:14px;max-width:670px;margin:0 0 26px}
+section{border-radius:20px;background:#f8fcff;padding:clamp(19px,4vw,30px);box-shadow:0 20px 55px rgba(0,10,30,.2);margin-bottom:25px}
+.section-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.section-top small{font-size:11px;font-weight:900;letter-spacing:.11em;color:#26759d}
+h2{font-size:clamp(21px,3vw,27px);line-height:1.3;margin:5px 0 17px;color:#173b53}
+.tag{border:1px solid #96d5ed;background:#e6f7ff;border-radius:30px;color:#196989;padding:5px 12px;font-size:11px;font-weight:800}
+#photo-form{display:grid;gap:8px}
+#photo-form label:not(.agree){font-size:13px;font-weight:800;margin-top:10px}
+label em{font-size:10px;color:#9c3e27;font-style:normal}
+input:not([type=checkbox]),textarea{display:block;width:100%;border-radius:10px;border:1px solid #b5cfdf;background:#fff;padding:12px 14px;color:#233b4f}
+input[type=file]{font-size:13px}textarea{resize:vertical}
+input:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid #5db8dd;outline-offset:2px}
+.hint{font-size:12px;color:#586f7f;margin:3px 0 8px}
+#photo-preview{display:block;max-height:260px;max-width:100%;margin:6px auto;object-fit:contain;border-radius:12px}
+[hidden]{display:none!important}
+.agree{display:flex;align-items:flex-start;gap:11px;margin:12px 0;font-size:12px;color:#445d6c}
+.agree input{margin-top:5px;flex:0 0 auto;accent-color:#176a92}
+#photo-submit{border:0;border-radius:12px;background:#146a8f;color:white;padding:14px;font-weight:800}
+#photo-submit:disabled{opacity:.45;cursor:not-allowed}
+.message{min-height:1.4em;font-size:13px;font-weight:750}
+.message.error{color:#a12d2d}.message.success{color:#116b43}
+.notice{background:#e9f4fa;color:#315b72;padding:10px 14px;border-radius:10px;font-size:12px;margin-bottom:10px}
+.gallery-intro,.gallery-status{color:#5b7483;font-size:13px}
+#photo-reload{border:1px solid #bfd9e6;border-radius:9px;padding:7px 12px;background:#edf8fd;color:#1d6685;font-size:12px;font-weight:800}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;margin-top:17px}
+.photo-card{overflow:hidden;border:1px solid #dcebf1;border-radius:15px;background:white}
+.photo-card img{width:100%;aspect-ratio:1/1;object-fit:cover;background:#e2eef5;display:block}
+.photo-info{padding:12px 14px}
+.photo-info strong{font-size:12px;color:#185273}
+.photo-info p{font-size:13px;line-height:1.6;overflow-wrap:anywhere;margin:5px 0 0;white-space:pre-wrap}
+.privacy{font-size:12px;color:#bbd6e7;line-height:1.9}
+footer{text-align:center;color:#bdddeb;font-size:11px;padding:28px}
+@media(min-width:720px){.photos-main{margin-top:42px}.send-panel{max-width:680px}}
