@@ -158,11 +158,13 @@ function renderTimeline(day,course){
     const w=Math.max(6,len-4);
     const transport=transportFor(event);
     // 移動は画像カードではなく、所要時間に比例する棒で表す。
-    const key=transport?null:hasImage(event);
+    const isPoint=event.start===event.end;
+    const key=(transport||isPoint)?null:hasImage(event);
     const showScene=false;
-    const card=node('article','route-event '+event.type+(transport?' transport-bar':'')+((key||showScene)?' has-photo':'')+(w<133?' compact':'')+(w<74?' tiny':''));
+    const card=node('article','route-event '+event.type+(isPoint?' is-point':'')+(transport?' transport-bar':'')+((key||showScene)?' has-photo':'')+(w<133?' compact':'')+(w<74?' tiny':''));
     card.style.left=((minOf(event.start)-minOf(day.start))*timelineRate)+'px';
     card.style.width=w+'px';
+    if(isPoint)card.tabIndex=0;
     card.dataset.start=event.start;
     const modeInfo=transport?' / '+transport.label:'';
     const displayTime=event.start===event.end?event.start:event.start+'〜'+event.end;
