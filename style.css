@@ -674,3 +674,73 @@ button.agenda-event .agenda-label{min-width:0;overflow-wrap:anywhere}
 @media(max-width:700px){
   button.agenda-event{min-height:44px;padding:11px 6px}
 }
+
+/* HOKKAIDO PAGE SCROLLBAR 2026 — snow, Mt. Yotei / sky palette.
+   Native browser scrollbar remains operable; touch devices get a persistent progress indicator. */
+html{
+  overflow-y:scroll;
+  scrollbar-width:thin;
+  scrollbar-color:#5da9c7 #e8f3fb;
+}
+html::-webkit-scrollbar{width:15px;background:#e9f5fb}
+html::-webkit-scrollbar-track{
+  border-left:1px solid #abcbdc;
+  background:repeating-linear-gradient(175deg,#eaf6fc 0,#eaf6fc 15px,#d5e9f3 15px,#d5e9f3 16px);
+}
+html::-webkit-scrollbar-thumb{
+  border:3px solid #eaf6fb;border-radius:18px;
+  background:linear-gradient(165deg,#f8ffff 0%,#e0f3fd 14%,#5ba6c8 15%,#21678f 70%,#153a62 100%);
+  box-shadow:inset 0 0 0 1px #83b7d0;
+  min-height:40px;
+}
+html::-webkit-scrollbar-thumb:hover{background:linear-gradient(165deg,#fff 0%,#e9f7ff 12%,#2d8dbe 13%,#12577e 75%)}
+html::-webkit-scrollbar-corner{background:#e9f5fb}
+.page-scroll-rail{
+  position:fixed;z-index:60;right:5px;top:34vh;height:clamp(110px,29vh,246px);
+  width:9px;border-radius:99px;overflow:visible;pointer-events:none;
+  background:linear-gradient(180deg,#f3fbff,#c0dfea,#f8fdff);
+  border:1px solid rgba(8,71,109,.26);
+  box-shadow:0 1px 10px rgba(8,39,67,.2);
+}
+.page-scroll-rail::before{
+  position:absolute;content:"";left:-3px;top:-8px;width:13px;height:11px;
+  background:#d6effb;clip-path:polygon(50% 0,70% 35%,85% 45%,100% 100%,0 100%,15% 45%,30% 35%);
+  filter:drop-shadow(0 1px 1px rgba(5,57,90,.25));
+}
+.page-scroll-thumb{
+  display:block;position:absolute;top:0;left:-4px;width:15px;height:42px;
+  border:1px solid rgba(24,78,109,.4);border-radius:9px;
+  background:linear-gradient(155deg,#fff 0 18%,#bdeaff 19% 33%,#448fb3 34% 75%,#143c62 76%);
+  box-shadow:0 2px 5px rgba(17,61,98,.32);
+  transition:background-color .15s;
+}
+.page-scroll-thumb::after{
+  content:"";position:absolute;top:3px;left:3px;width:8px;height:7px;
+  background:rgba(255,255,255,.96);
+  clip-path:polygon(50% 0,100% 100%,67% 79%,50% 47%,32% 79%,0 100%);
+}
+.page-scroll-rail.at-bottom .page-scroll-thumb{background:linear-gradient(160deg,#fff,#86c7e1 40%,#174a78)}
+.news-current{display:grid;gap:9px}
+.news-history{
+  border:1px solid rgba(222,242,255,.48);border-radius:13px;
+  background:rgba(8,37,63,.64);overflow:hidden;box-shadow:0 6px 20px rgba(4,18,32,.12);
+}
+.news-history-toggle{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  min-height:49px;cursor:pointer;padding:12px 17px;
+  color:#e7f7ff;font-size:13px;font-weight:850;list-style:none;
+}
+.news-history-toggle::-webkit-details-marker{display:none}
+.news-history-toggle::after{content:"＋";font-size:20px;font-weight:400}
+.news-history[open] .news-history-toggle::after{content:"−"}
+.news-history-toggle:hover{background:rgba(138,209,241,.13)}
+.news-history-toggle:focus-visible{outline:2px solid #8fe3ff;outline-offset:-3px}
+.news-history-list{display:grid;gap:9px;padding:0 12px 13px}
+.news-history-list .news-item{background:rgba(248,252,255,.97)}
+.news-history-list .news-empty{background:rgba(255,255,255,.94)}
+@media(max-width:700px){
+  .page-scroll-rail{right:3px;width:7px;top:39vh;height:clamp(95px,25vh,164px)}
+  .page-scroll-thumb{left:-3px;width:12px;height:34px}
+  .page-scroll-thumb::after{left:2px;width:7px}
+  .news-history-toggle{font-size:12px}
+}
