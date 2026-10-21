@@ -472,3 +472,13 @@ body::before {display:none !important;}
 @media (prefers-reduced-motion: reduce) {
   body.motion-ready .site-header,body.motion-ready .hero-copy,body.motion-ready .subhero,body.motion-ready .next-card,body.motion-ready .hero-copy .hero-lead,body.motion-ready .hero-copy .hero-actions {animation:none!important}
 }
+
+/* Replay page-top motion when returning to top */
+@media (prefers-reduced-motion: no-preference) {
+  body.motion-ready.top-replay .hero-copy,
+  body.motion-ready.top-replay .subhero {animation:topReturnUp .7s both cubic-bezier(.2,.75,.2,1)}
+  body.motion-ready.top-replay .next-card {animation:topReturnCard .75s .12s both cubic-bezier(.2,.75,.2,1)}
+  body.motion-ready.top-replay .hero-actions {animation:topReturnUp .65s .16s both}
+  @keyframes topReturnUp {from{opacity:.35;transform:translate3d(0,18px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+  @keyframes topReturnCard {from{opacity:.5;transform:translate3d(0,14px,0) scale(.98)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+}

@@ -377,3 +377,20 @@ if($('#next-schedule'))setInterval(renderNextSchedule,60_000);
 if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   document.body.classList.add('motion-ready');
 }
+
+/* Replay hero entrance each time the visitor scrolls away and returns. */
+(function initTopReplay(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  let away=false,wasTop=window.scrollY<90;
+  function update(){
+    const y=window.scrollY;
+    if(y>Math.max(260,window.innerHeight*.55)){away=true;wasTop=false;document.body.classList.remove('top-replay');}
+    if(y<90&&!wasTop&&away){
+      wasTop=true;away=false;
+      document.body.classList.remove('top-replay');
+      void document.body.offsetWidth;
+      document.body.classList.add('top-replay');
+    }
+  }
+  window.addEventListener('scroll',update,{passive:true});
+})();
