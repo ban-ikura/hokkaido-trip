@@ -47,7 +47,7 @@ Secret key は絶対にGitHubやチャットに書かないでください。
 - Value：先ほどの **Secret key**
 
 既存の **ADMIN_PASSWORD / SESSION_SECRET** は**変更不要**です。
-写真は生徒用コード無しで送信できますが、毎回Cloudflareの安全確認を通過する必要があります。
+写真は生徒用コード無しで送信できますが、毎回Cloudflareの安全確認を通過する必要があります。アルバムと投稿フォームは別ページです（`photos.html` → `photos-post.html`）。
 バックエンドはTurnstileのSiteverifyで成功／hostname／actionを検証します。
 IPごとの送信上限（1時間20回）も残しています。学校Wi-Fiでは複数の生徒に同じ上限が適用されることがあります。
 **投稿の身元を特定するものではなく、写真の内容は管理者が審査する必要があります。**
@@ -65,7 +65,7 @@ GitHubの [src/index.js](src/index.js) のコード**全体**で、現在の `wo
 
 1. `https://hokkaido-trip-news-api.banse-oji.workers.dev/api/announcements` → 既存のお知らせが表示される。
 2. `https://hokkaido-trip-news-api.banse-oji.workers.dev/api/photos` → `{"items":[]}`（まだ写真がない場合）。
-3. `https://ban-ikura.github.io/hokkaido-trip/photos.html` → コードを入力せず、Turnstileの安全確認後に写真投稿。「承認待ち」になる。
+3. `https://ban-ikura.github.io/hokkaido-trip/photos.html` → アルバムの右下の「写真を投稿」ボタンを押す。`photos-post.html` でTurnstileの安全確認後に写真を送信する。承認待ちになる。
 4. `https://ban-ikura.github.io/hokkaido-trip/admin.html` → 既存の管理者共通パスワードでログイン → 「生徒の写真を承認」から承認。
 5. `photos.html` を再読み込みして、**承認済みの写真だけ**表示されることを確認。
 6. テスト写真を「掲載取り消し」したら一覧から消えることを確認。
