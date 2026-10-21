@@ -584,3 +584,20 @@ body::before {display:none !important;}
   .overview-tile .tile-number{font-size:27px}
   .overview-tile .tile-copy strong{font-size:12px}
 }
+
+/* Single-time milestones from the supplied PDF: no assumed duration. */
+.route-event.is-point,
+.route-event.is-point.tiny,
+.route-event.is-point.compact{
+  top:7px;height:28px;width:11px!important;z-index:8;overflow:visible;
+  border-radius:9px;background:#f1a54a;border:2px solid #fff;
+  box-shadow:0 1px 1px #365c79,0 0 0 2px #bd6820;
+  cursor:help;
+}
+.route-event.is-point .route-event-content,
+.route-event.is-point img,
+.route-event.is-point::after{display:none!important}
+.route-event.is-point:focus-visible{outline:3px solid #135e9b;outline-offset:4px}
+@media(max-width:700px){
+  .route-event.is-point,.route-event.is-point.tiny,.route-event.is-point.compact{top:6px;height:26px}
+}
