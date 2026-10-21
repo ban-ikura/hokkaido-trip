@@ -1,0 +1,10 @@
+name = "hokkaido-trip-news-api"
+main = "src/index.js"
+compatibility_date = "2026-10-21"
+workers_dev = true
+
+# npx wrangler d1 create hokkaido-trip-news で得たUUIDに置き換えてください。
+[[d1_databases]]
+binding = "DB"
+database_name = "hokkaido-trip-news"
+database_id = "REPLACE_WITH_D1_DATABASE_UUID"
