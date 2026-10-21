@@ -1,12 +1,14 @@
-/* 写真の公開はサーバー側の承認判定のみ。秘密の投稿コードは保存しない。 */
+/* 写真は管理者が承認したものだけ公開。生徒用コード不要、Cloudflare Turnstileを利用。 */
 (() => {
   'use strict';
   const $=s=>document.querySelector(s);
-  const form=$('#photo-form'),submit=$('#photo-submit'),code=$('#student-code');
+  const form=$('#photo-form'),submit=$('#photo-submit');
   const fileInput=$('#student-photo'),preview=$('#photo-preview');
   const formStatus=$('#photo-status'),setup=$('#photo-setup'),galleryStatus=$('#gallery-status');
   const grid=$('#photo-grid');
-  let previewUrl='',ready=false;
+  let previewUrl='',ready=false,working=false,captchaToken='',captchaWidget=null;
+  const siteKey=typeof window.HOKKAIDO_PHOTO_TURNSTILE_SITE_KEY==='string'?
+    window.HOKKAIDO_PHOTO_TURNSTILE_SITE_KEY.trim():'';
   const raw=window.HOKKAIDO_NEWS_API_URL;
   let api='';
   try{
@@ -17,6 +19,30 @@
   function status(msg,isError=false){
     formStatus.textContent=msg;
     formStatus.className='message'+(isError?' error':' success');
+  }
+  function updateSubmit(){submit.disabled=!ready||!captchaToken||working}
+  function initTurnstile(){
+    if(!siteKey){
+      setup.textContent='写真の安全確認（Turnstile）の設定がまだ完了していません。';
+      return;
+    }
+    const script=document.createElement('script');
+    script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+    script.async=true;
+    script.onload=()=>{
+      try{
+        captchaWidget=window.turnstile.render('#photo-turnstile',{
+          sitekey:siteKey,theme:'light',action:'photo_upload',appearance:'interaction-only',
+          callback:token=>{captchaToken=token;updateSubmit()},
+          'expired-callback':()=>{captchaToken='';updateSubmit()},
+          'error-callback':()=>{captchaToken='';updateSubmit();status('安全確認が完了できません。ページを再読み込みしてください。',true)}
+        });
+      }catch{
+        status('安全確認の読み込みに失敗しました。ページを再読み込みしてください。',true);
+      }
+    };
+    script.onerror=()=>status('安全確認が読み込めません。通信環境を確認してください。',true);
+    document.head.append(script);
   }
   async function jsonResponse(response){
     const data=await response.json().catch(()=>({}));
@@ -34,8 +60,8 @@
     try{
       const result=await jsonResponse(await fetch(api+'/api/photos',{cache:'no-store',credentials:'omit'}));
       ready=true;
-      submit.disabled=false;
-      setup.textContent='生徒用の投稿コードを使って写真を送信できます。投稿後は管理者の承認待ちになります。';
+      setup.textContent=siteKey?'投稿コードは不要です。安全確認が完了すれば写真を送信できます。投稿後は承認待ちになります。':'写真投稿の安全確認の設定がまだ完了していません。';
+      updateSubmit();
       const items=Array.isArray(result.items)?result.items:[];
       galleryStatus.textContent=items.length?items.length+'枚の写真を公開中':'まだ公開された写真はありません。';
       for(const p of items){
@@ -60,8 +86,8 @@
       }
     }catch(error){
       ready=false;
-      submit.disabled=true;
       setup.textContent='写真投稿システムは準備中です。設定担当者の作業完了までお待ちください。';
+      updateSubmit();
       galleryStatus.textContent='写真を取得できませんでした。';
     }
   }
@@ -128,12 +154,14 @@
     if(!ready||submit.disabled||!form.reportValidity())return;
     const file=fileInput.files?.[0];
     if(!file)return;
-    submit.disabled=true;
+    if(!captchaToken){status('安全確認が完了するまでお待ちください。',true);return}
+    working=true;
+    updateSubmit();
     status('写真を圧縮しています…');
     try{
       const photo=await reencode(file);
       const data=new FormData();
-      data.append('student_code',code.value);
+      data.append('turnstile_token',captchaToken);
       data.append('nickname',$('#student-nickname').value.trim()||'匿名');
       data.append('caption',$('#student-caption').value.trim());
       data.append('permission',$('#photo-permission').checked?'yes':'no');
@@ -147,9 +175,14 @@
       status('送信しました！ 管理者の承認後にアルバムへ表示されます。');
     }catch(error){
       status(error instanceof TypeError?'接続できません。通信状態を確認してください。':error.message,true);
-    }finally{submit.disabled=!ready}
+    }finally{
+      captchaToken='';
+      if(captchaWidget!==null && window.turnstile)window.turnstile.reset(captchaWidget);
+      working=false;updateSubmit();
+    }
   });
   $('#photo-reload').addEventListener('click',loadGallery);
-  window.addEventListener('pagehide',()=>{code.value='';clearPreview()});
+  window.addEventListener('pagehide',()=>{clearPreview();captchaToken=''});
+  initTurnstile();
   loadGallery();
 })();
