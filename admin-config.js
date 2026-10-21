@@ -1,2 +1,2 @@
 /* 公開設定：Cloudflare Worker のURLのみ。パスワードは絶対にここに記入しないでください。 */
-window.HOKKAIDO_NEWS_API_URL = '';
+window.HOKKAIDO_NEWS_API_URL = 'https://hokkaido-trip-news-api.banse-oji.workers.dev';
