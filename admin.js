@@ -15,6 +15,10 @@
   const logout=document.querySelector('#logout-button');
   let accessToken='';
   let expiresAt=0;
+  let photoFilter='pending';
+  let photoGeneration=0;
+  let photoObserver=null;
+  const photoUrls=[];
 
   function configuredApi(){
     const value=window.HOKKAIDO_NEWS_API_URL;
@@ -40,6 +44,8 @@
     postPanel.hidden=true;
     status(loginStatus,message||'',type||'');
     status(postStatus,'','');
+    clearPhotoPreviews();
+    document.querySelector('#photo-mod-list').replaceChildren();
   }
   function showPost(){
     passwordInput.value='';
@@ -48,6 +54,7 @@
     status(loginStatus,'','');
     status(postStatus,'','');
     document.querySelector('#notice-title').focus();
+    loadModeration();
   }
   async function readResponse(response){
     let data;
@@ -129,6 +136,128 @@
       publishButton.disabled=false;
     }
   });
+
+  /* 生徒写真の承認画面。ログイン時の同じ署名付きトークンを利用する。 */
+  const modStatus=document.querySelector('#photo-mod-status');
+  const modList=document.querySelector('#photo-mod-list');
+  const tabPending=document.querySelector('#photo-tab-pending');
+  const tabApproved=document.querySelector('#photo-tab-approved');
+  function clearPhotoPreviews(){
+    photoGeneration++;
+    if(photoObserver){photoObserver.disconnect();photoObserver=null}
+    for(const url of photoUrls)URL.revokeObjectURL(url);
+    photoUrls.length=0;
+  }
+  function setPhotoFilter(name){
+    photoFilter=name;
+    tabPending.classList.toggle('selected',name==='pending');
+    tabApproved.classList.toggle('selected',name==='approved');
+    tabPending.setAttribute('aria-pressed',String(name==='pending'));
+    tabApproved.setAttribute('aria-pressed',String(name==='approved'));
+    loadModeration();
+  }
+  async function adminFetch(url,options={}){
+    const headers={'Authorization':'Bearer '+accessToken,...(options.headers||{})};
+    return fetch(api+url,{
+      ...options,mode:'cors',credentials:'omit',cache:'no-store',headers
+    });
+  }
+  async function loadPhotoPreview(img,id,generation){
+    try{
+      if(!accessToken)return;
+      const response=await adminFetch('/api/admin/photos/'+id+'/image');
+      if(!response.ok)return;
+      const blob=await response.blob();
+      if(generation!==photoGeneration||!accessToken)return;
+      const objectUrl=URL.createObjectURL(blob);
+      photoUrls.push(objectUrl);
+      img.src=objectUrl;
+    }catch{}
+  }
+  async function reviewAction(id,action,button){
+    const message=action==='approve'?'この写真を公開しますか？':
+      action==='reject'?'この写真を却下し、保存画像を削除しますか？':
+      'この写真の公開を取り消し、保存画像を削除しますか？';
+    if(!window.confirm(message))return;
+    button.disabled=true;
+    status(modStatus,'処理中…','');
+    try{
+      await readResponse(await adminFetch('/api/admin/photos/'+id+'/'+action,{method:'POST'}));
+      await loadModeration();
+      status(modStatus,'写真を処理しました。','success');
+    }catch(error){
+      status(modStatus,error.message,'error');
+      button.disabled=false;
+    }
+  }
+  async function loadModeration(){
+    if(!accessToken || !api)return;
+    clearPhotoPreviews();
+    const generation=photoGeneration;
+    modList.replaceChildren();
+    status(modStatus,'写真を読み込み中…','');
+    try{
+      const data=await readResponse(await adminFetch('/api/admin/photos?status='+photoFilter));
+      if(generation!==photoGeneration)return;
+      const items=Array.isArray(data.items)?data.items:[];
+      status(modStatus,items.length?items.length+'件の'+(photoFilter==='pending'?'承認待ち':'公開中')+'の写真があります。':
+        (photoFilter==='pending'?'承認待ちの写真はありません。':'公開中の写真はありません。'),'');
+      if('IntersectionObserver' in window){
+        photoObserver=new IntersectionObserver(entries=>{
+          for(const entry of entries){
+            if(entry.isIntersecting){
+              photoObserver?.unobserve(entry.target);
+              loadPhotoPreview(entry.target,entry.target.dataset.photoId,generation);
+            }
+          }
+        },{rootMargin:'250px'});
+      }
+      for(const item of items){
+        if(!/^[0-9a-f-]{36}$/.test(item.id))continue;
+        const article=document.createElement('article');
+        article.className='photo-mod-card';
+        const img=document.createElement('img');
+        img.alt='承認審査する投稿写真';
+        img.dataset.photoId=item.id;
+        const meta=document.createElement('div');
+        meta.className='photo-mod-meta';
+        const name=document.createElement('strong');
+        name.textContent=typeof item.nickname==='string'?item.nickname:'匿名';
+        const caption=document.createElement('p');
+        caption.textContent=typeof item.caption==='string'?item.caption:'';
+        const date=document.createElement('small');
+        date.textContent=new Date(item.created_at).toLocaleString('ja-JP');
+        const buttons=document.createElement('div');
+        buttons.className='photo-mod-buttons';
+        const actions=photoFilter==='pending'?
+          [['approve','承認して公開'],['reject','却下']]:
+          [['unpublish','掲載取り消し']];
+        for(const [action,label] of actions){
+          const button=document.createElement('button');
+          button.type='button';
+          button.className=action;
+          button.textContent=label;
+          button.addEventListener('click',()=>reviewAction(item.id,action,button));
+          buttons.append(button);
+        }
+        meta.append(name,caption,date,buttons);
+        article.append(img,meta);
+        modList.append(article);
+        if(photoObserver)photoObserver.observe(img);
+        else loadPhotoPreview(img,item.id,generation);
+      }
+    }catch(error){
+      if(error.status===401){
+        showLogin('ログインの有効期限が切れました。もう一度ログインしてください。','error');
+      }else{
+        status(modStatus,'写真の承認機能は準備中、または通信できません。お知らせの投稿は引き続き利用できます。','error');
+      }
+    }
+  }
+  tabPending.addEventListener('click',()=>setPhotoFilter('pending'));
+  tabApproved.addEventListener('click',()=>setPhotoFilter('approved'));
+  document.querySelector('#photo-mod-reload').addEventListener('click',loadModeration);
+
   logout.addEventListener('click',()=>showLogin('ログアウトしました。','success'));
   window.addEventListener('pagehide',()=>{
     accessToken='';expiresAt=0;
