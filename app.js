@@ -372,3 +372,8 @@ if($('#next-schedule'))setInterval(renderNextSchedule,60_000);
   const host=document.querySelector('#schedule-root');
   if(host)new MutationObserver(()=>register(host)).observe(host,{childList:true,subtree:true});
 })();
+
+/* Entrance animation starts only after the page has initialized. */
+if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  document.body.classList.add('motion-ready');
+}

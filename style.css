@@ -454,3 +454,21 @@ body::before {display:none !important;}
 @media (prefers-reduced-motion: reduce) {
   .scroll-reveal {opacity:1!important;transform:none!important;transition:none!important}
 }
+
+/* Entrance + scroll animations 2026-10-21 */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes entranceFadeUp {from{opacity:0;transform:translate3d(0,24px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+  @keyframes entranceFadeDown {from{opacity:0;transform:translate3d(0,-14px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+  @keyframes entranceScale {from{opacity:0;transform:translate3d(0,18px,0) scale(.97)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+  body.motion-ready .site-header {animation:entranceFadeDown .65s both cubic-bezier(.2,.75,.2,1)}
+  body.motion-ready .hero-copy,body.motion-ready .subhero {animation:entranceFadeUp .8s .12s both cubic-bezier(.2,.75,.2,1)}
+  body.motion-ready .hero-copy .hero-lead {animation:entranceFadeUp .75s .25s both}
+  body.motion-ready .hero-copy .hero-actions {animation:entranceFadeUp .75s .38s both}
+  body.motion-ready .next-card {animation:entranceScale .85s .32s both cubic-bezier(.2,.75,.2,1)}
+  body.motion-ready .scroll-reveal:not(.is-visible) {opacity:0;transform:translate3d(0,28px,0)}
+  body.motion-ready .scroll-reveal.is-visible {opacity:1;transform:translate3d(0,0,0)}
+  body.motion-ready .scroll-reveal {transition:opacity .7s ease,transform .7s cubic-bezier(.2,.75,.2,1)}
+}
+@media (prefers-reduced-motion: reduce) {
+  body.motion-ready .site-header,body.motion-ready .hero-copy,body.motion-ready .subhero,body.motion-ready .next-card,body.motion-ready .hero-copy .hero-lead,body.motion-ready .hero-copy .hero-actions {animation:none!important}
+}
