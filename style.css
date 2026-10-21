@@ -638,3 +638,39 @@ body::before {display:none !important;}
   .point-detail-note{font-size:12px}
   .point-detail-close{padding:8px 10px}
 }
+
+/* Every timeline block and the expanded agenda can open the same detail panel. */
+button.route-event:not(.is-point){
+  appearance:none;display:block;padding:0;margin:0;
+  text-align:left;font-family:inherit;cursor:pointer;
+  touch-action:manipulation;
+}
+button.route-event:not(.is-point):hover{filter:brightness(1.08)}
+button.route-event:not(.is-point).selected{
+  outline:3px solid #f4a950;outline-offset:-3px;
+  box-shadow:0 0 0 3px rgba(184,105,20,.25),0 5px 15px rgba(16,66,94,.2);
+  z-index:7;
+}
+button.route-event:focus-visible{
+  outline:3px solid #e59b31;outline-offset:2px;
+  z-index:10;
+}
+.route-event.is-point{touch-action:manipulation}
+button.agenda-event{
+  appearance:none;display:grid;box-sizing:border-box;
+  grid-template-columns:87px minmax(0,1fr);gap:9px;align-items:start;
+  width:100%;margin:0;padding:8px 4px;
+  font:inherit;font-size:12px;text-align:left;
+  background:transparent;color:inherit;
+  border:0;border-bottom:1px solid #e1edf4;
+  border-radius:5px;cursor:pointer;
+  touch-action:manipulation;
+}
+button.agenda-event:hover,button.agenda-event.selected{background:#e6f2f8}
+button.agenda-event:focus-visible{
+  outline:2px solid #227aa8;outline-offset:1px;z-index:1;
+}
+button.agenda-event .agenda-label{min-width:0;overflow-wrap:anywhere}
+@media(max-width:700px){
+  button.agenda-event{min-height:44px;padding:11px 6px}
+}
