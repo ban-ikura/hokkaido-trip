@@ -744,3 +744,10 @@ html::-webkit-scrollbar-corner{background:#e9f5fb}
   .page-scroll-thumb::after{left:2px;width:7px}
   .news-history-toggle{font-size:12px}
 }
+
+/* Administrators can only open the separate news-posting page. */
+.news-admin-access{margin:13px 3px 0;text-align:right;font-size:11px;font-weight:750}
+.news-admin-access a{display:inline-block;color:#deeffb;border-bottom:1px solid rgba(222,239,251,.62);padding:6px 2px;text-underline-offset:3px}
+.news-admin-access a:hover{color:#fff;border-color:#fff}
+.news-admin-access a:focus-visible{outline:2px solid #b1e7ff;outline-offset:4px}
+.news-sync-warning{margin:7px 0 0;background:#fff6e6;color:#84580a;padding:10px 13px;border-radius:8px;font-size:12px}
