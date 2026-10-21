@@ -526,3 +526,29 @@ body::before {display:none !important;}
   body.motion-ready.top-replay.title-drawing .logo-stroke-a{animation:drawMountain 1.25s .1s ease both}
   body.motion-ready.top-replay.title-drawing .logo-stroke-b{animation:drawMountain 1.1s .55s ease both}
 }
+
+/* Reverse handwriting when scrolling back to the page top. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes reverseTitleStroke {
+    0% {stroke-dashoffset:0;fill:#fff}
+    35% {fill:transparent}
+    100% {stroke-dashoffset:540;fill:transparent}
+  }
+  @keyframes reverseMountainStroke {
+    from {stroke-dashoffset:0}
+    to {stroke-dashoffset:120}
+  }
+  body.motion-ready.top-replay.title-drawing .stroke-title svg text {
+    animation-name:reverseTitleStroke!important;
+    animation-duration:.92s!important;
+    animation-timing-function:ease-in-out!important;
+    animation-fill-mode:both!important;
+    animation-delay:calc(.12s + (6 - var(--glyph-index)) * .25s)!important;
+  }
+  body.motion-ready.top-replay.title-drawing .logo-stroke-a {
+    animation:reverseMountainStroke 1.25s .55s ease both!important;
+  }
+  body.motion-ready.top-replay.title-drawing .logo-stroke-b {
+    animation:reverseMountainStroke 1.1s .1s ease both!important;
+  }
+}
