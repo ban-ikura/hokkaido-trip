@@ -108,21 +108,18 @@ async function loadAnnouncements(){
 // 日本時間（UTC+09:00）固定。閲覧端末のタイムゾーンに左右されません。
 const dateOf=(dayIndex,time)=>Date.parse(dateStrings[dayIndex]+'T'+time+':00+09:00');
 const timelineRate=2.5; // 30分 = 75px
-// 2026年10月5日付の行程表に基づく移動手段の表示。
-// バス移動区間は行程表上の概略時刻であり、確定の乗車時刻ではありません。
+// 移動手段は最新行程表の表記に従う。便名・貸切種別は推測しない。
 function transportFor(event){
   if(event.type!=='travel')return null;
-  if(/ANA53/.test(event.title))return {label:'航空機 ANA53',icon:'✈'};
-  if(/ANA68/.test(event.title))return {label:'航空機 ANA68',icon:'✈'};
-  // 空港での搭乗準備は移動ではないため別種別で管理する。
-  if(/移動/.test(event.title))return {label:'貸切バス（予定）',icon:'▰'};
+  if(/飛行機|航空機|ANA53|ANA68/.test(event.title))return {label:'飛行機（便名要確認）',icon:'✈'};
+  if(/バス|移動/.test(event.title))return {label:'バス',icon:'▰'};
   return {label:'移動手段 要確認',icon:'↗'};
 }
 function hasImage(event){
   const key=getPhotoKey(event.title);
   if(!key)return null;
   // ANA便や昼食など、行程に対応した写真がある場合は種類に関わらず掲載。
-  if(event.type==='travel' && !/ANA53|ANA68|空港/.test(event.title))return null;
+  if(event.type==='travel' && !/ANA53|ANA68|空港|飛行機|航空機/.test(event.title))return null;
   return key;
 }
 function renderTimeline(day,course){
@@ -168,8 +165,9 @@ function renderTimeline(day,course){
     card.style.width=w+'px';
     card.dataset.start=event.start;
     const modeInfo=transport?' / '+transport.label:'';
-    card.setAttribute('aria-label',event.start+'〜'+event.end+' '+event.title+modeInfo+(event.note?'、'+event.note:''));
-    card.title=event.start+'〜'+event.end+' '+event.title+modeInfo+(event.note?' / '+event.note:'');
+    const displayTime=event.start===event.end?event.start:event.start+'〜'+event.end;
+    card.setAttribute('aria-label',displayTime+' '+event.title+modeInfo+(event.note?'、'+event.note:''));
+    card.title=displayTime+' '+event.title+modeInfo+(event.note?' / '+event.note:'');
     if(key){
       card.append(placePhoto(key));
       if(venuePhotos[key]?.permissionPending && w>=150){
@@ -194,7 +192,7 @@ function renderTimeline(day,course){
       card.append(label);
     }else{
       const text=node('div','route-event-content');
-      if(w>=74)text.append(node('span','route-event-time',event.start+'–'+event.end));
+      if(w>=74)text.append(node('span','route-event-time',(event.start===event.end?event.start:event.start+'–'+event.end)));
       text.append(node('strong','route-event-title',w>=74?event.title:'•'));
       card.append(text);
     }
@@ -216,7 +214,7 @@ function renderTimeline(day,course){
   const agenda=node('div','agenda-grid');
   course.events.forEach(event=>{
     const row=node('div','agenda-row');
-    row.append(node('span','agenda-clock',event.start+'–'+event.end));
+    row.append(node('span','agenda-clock',(event.start===event.end?event.start:event.start+'–'+event.end)));
     const txt=node('div','agenda-label',event.title);
     const transport=transportFor(event);
     if(transport)txt.append(node('small','agenda-transport','移動手段：'+transport.label));
