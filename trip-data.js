@@ -203,7 +203,7 @@ function getPhotoKey(title){
  if(/洞爺湖/.test(title))return 'lake';
  if(/地獄谷|登別/.test(title))return 'jigokudani';
  if(/白い恋人/.test(title))return 'shiroi';
- if(/札幌ビール園/.test(title))return 'beer';
+ if(/サッポロビール園|札幌ビール園/.test(title))return 'beer';
  if(/旭山記念/.test(title))return 'asahiyama';
  if(/ニューオータニイン/.test(title))return 'newotani';
  if(/新千歳空港/.test(title))return 'airport';
