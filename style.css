@@ -585,19 +585,56 @@ body::before {display:none !important;}
   .overview-tile .tile-copy strong{font-size:12px}
 }
 
-/* Single-time milestones from the supplied PDF: no assumed duration. */
+/* Single-time milestones — click/tap to read the exact recorded time and notes. */
 .route-event.is-point,
-.route-event.is-point.tiny,
-.route-event.is-point.compact{
-  top:7px;height:28px;width:11px!important;z-index:8;overflow:visible;
-  border-radius:9px;background:#f1a54a;border:2px solid #fff;
-  box-shadow:0 1px 1px #365c79,0 0 0 2px #bd6820;
-  cursor:help;
+.route-event.is-point.compact,
+.route-event.is-point.tiny{
+  appearance:none;position:absolute;top:9px;width:54px!important;height:42px;
+  min-width:54px;padding:0 5px;z-index:8;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid #d07820;border-radius:12px;
+  color:#6e3705;background:#ffe5bb;
+  box-shadow:0 2px 0 rgba(111,59,13,.17),0 4px 11px rgba(111,59,13,.17);
+  cursor:pointer;font:inherit;touch-action:pan-x;
+  transition:background .16s ease,border-color .16s ease,transform .16s ease;
 }
+.route-event.is-point.point-row-2{top:54px}
+.point-event-time{display:block;font-size:11px;line-height:1.1;font-weight:900;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.route-event.is-point:hover,.route-event.is-point.selected{
+  color:#fff;background:#a9570c;border-color:#8b4608;
+}
+.route-event.is-point:focus-visible{outline:3px solid #185d90;outline-offset:3px}
 .route-event.is-point .route-event-content,
 .route-event.is-point img,
 .route-event.is-point::after{display:none!important}
-.route-event.is-point:focus-visible{outline:3px solid #135e9b;outline-offset:4px}
+.point-detail[hidden]{display:none!important}
+.point-detail{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  margin-top:12px;padding:16px 18px;border:1px solid #f0c18b;border-left:5px solid #d18430;
+  border-radius:13px;background:#fff7ec;
+  box-shadow:0 6px 18px rgba(92,61,29,.06);
+  color:#342b21;
+}
+.point-detail-content{min-width:0;flex:1}
+.point-detail-label{display:block;margin-bottom:6px;font-size:11px;font-weight:750;color:#916126}
+.point-detail-clock{font-size:25px;font-weight:900;line-height:1.2;font-variant-numeric:tabular-nums;color:#934c0c}
+.point-detail-title{font-size:16px;line-height:1.45;color:#35291f;margin:7px 0 5px;font-weight:850}
+.point-detail-note{margin:9px 0 5px;padding:8px 10px;border-radius:8px;background:#fff0d9;font-size:13px;line-height:1.6;color:#69441f}
+.point-detail-context{margin:9px 0 0;font-size:11px;line-height:1.65;color:#816c55}
+.point-detail-close{
+  appearance:none;flex:none;min-height:38px;padding:8px 12px;cursor:pointer;
+  background:#fff;border:1px solid #dabb98;border-radius:8px;
+  color:#714719;font-size:12px;font-weight:800;
+}
+.point-detail-close:hover{background:#fff0db}
+.point-detail-close:focus-visible{outline:3px solid #185d90;outline-offset:2px}
 @media(max-width:700px){
-  .route-event.is-point,.route-event.is-point.tiny,.route-event.is-point.compact{top:6px;height:26px}
+  .route-event.is-point,.route-event.is-point.compact,.route-event.is-point.tiny{
+    top:8px;height:42px;
+  }
+  .route-event.is-point.point-row-2{top:51px}
+  .point-detail{padding:13px 12px;gap:8px}
+  .point-detail-title{font-size:15px}
+  .point-detail-note{font-size:12px}
+  .point-detail-close{padding:8px 10px}
 }
