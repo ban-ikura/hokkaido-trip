@@ -126,7 +126,8 @@ function transportFor(event){
     const flight=event.title.match(/ANA\s*(53|68)\b/);
     return {label:flight?'航空機 ANA'+flight[1]:'飛行機（便名要確認）',icon:'✈'};
   }
-  if(/バス|移動/.test(event.title))return {label:'バス',icon:'▰'};
+  if(/バス/.test(event.title))return {label:'バス',icon:'▰'};
+  if(/移動/.test(event.title))return {label:'移動手段 要確認',icon:'↗'};
   return {label:'移動手段 要確認',icon:'↗'};
 }
 function hasImage(event){
