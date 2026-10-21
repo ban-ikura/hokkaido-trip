@@ -1,56 +1,44 @@
 <!doctype html>
-<html lang="ja"><head>
+<html lang="ja">
+<head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="北海道研修旅行2026の写真アルバム。管理者が承認した写真だけを掲載しています。">
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="no-referrer">
-<meta name="theme-color" content="#091f36">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self'; img-src 'self' blob: https://*.workers.dev; connect-src 'self' https://*.workers.dev https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
-<title>写真アルバム｜北海道研修旅行 2026</title>
+<meta name="theme-color" content="#102b43">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https://*.workers.dev; connect-src 'self' https://*.workers.dev; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; upgrade-insecure-requests">
+<title>みんなのフォトアルバム｜北海道研修旅行 2026</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="photos.css?v=20261022-1">
+<link rel="stylesheet" href="photos.css?v=20261022-gallery-separate-2">
 <script src="admin-config.js?v=20261021-worker-connected-1" defer></script>
-<script src="photos-config.js?v=20261022-nocode-1" defer></script>
-<script src="photos.js?v=20261022-nocode-1" defer></script>
-</head><body>
-<header class="photos-header"><a href="index.html">← 旅行サイトへ戻る</a><strong>HOKKAIDO <span>2026</span></strong></header>
+<script src="photos-gallery.js?v=20261022-gallery-separate-2" defer></script>
+</head>
+<body data-photo-page="gallery">
+<header class="photos-header">
+  <a class="photos-back" href="index.html"><span aria-hidden="true">←</span> 旅行サイトへ</a>
+  <a class="photos-brand" href="index.html">HOKKAIDO <span>2026</span></a>
+  <a class="photos-header-link" href="photos-post.html">投稿する <span aria-hidden="true">↗</span></a>
+</header>
 <main class="photos-main">
-<div class="eyebrow">TRIP MEMORIES / GALLERY</div><h1>みんなの北海道フォト</h1>
-<p class="lead">北海道の風景や食べ物、旅行の思い出を共有しよう。投稿前に管理者が内容を確認し、承認した写真だけ公開します。</p>
-<aside class="photo-rules" aria-labelledby="rules-heading">
-  <div class="rules-eyebrow">POSTING RULES / 必ず読んでください</div>
-  <h2 id="rules-heading">写真投稿のルール</h2>
-  <p class="rule-emphasis">顔が写っている写真は投稿禁止です。</p>
-  <ul>
-    <li><strong>顔・人物を特定できる写真はNG。</strong> 集合写真・自撮り・鏡や窓に映った顔も投稿しないでください。</li>
-    <li><strong>個人情報は載せない。</strong> 本名・制服の名札・学生証・部屋番号・住所・連絡先・車のナンバーなどが写っていないか確認してください。</li>
-    <li><strong>他人を傷つけない。</strong> 悪口、いじめ、差別、からかい、無断撮影、嫌がらせ、危険行為や迷惑行為を写した内容は禁止です。</li>
-    <li><strong>無断転載しない。</strong> 他人の写真、SNSのスクリーンショット、著作権や肖像権を侵害する画像は投稿しないでください。</li>
-    <li><strong>公開前に確認。</strong> 投稿内容は管理者が審査し、問題があれば承認しません。写真や文章から個人が特定されないよう注意してください。</li>
-  </ul>
-  <p class="rules-note">推奨：景色、雪景色、建物、料理、お土産などの写真。承認された写真はインターネット上で誰でも見ることができます。</p>
-</aside>
-<section class="send-panel" aria-labelledby="send-heading">
-<div class="section-top"><div><small>01 / POST</small><h2 id="send-heading">写真を投稿</h2></div><span class="tag">承認制</span></div>
-<div id="photo-setup" class="notice" role="status">写真投稿システムを確認しています…</div>
-<form id="photo-form">
-<label for="student-nickname">表示名（任意）</label>
-<input id="student-nickname" maxlength="24" placeholder="例：ニセコ班（未入力は匿名）">
-<label for="student-caption">写真のコメント <em>必須</em></label>
-<textarea id="student-caption" maxlength="200" rows="3" placeholder="例：小樽運河の夜景がきれいでした！" required></textarea>
-<label for="student-photo">写真 <em>必須・1枚</em></label>
-<input type="file" id="student-photo" accept="image/*,.heic,.heif" required>
-<p class="hint">スマホの写真を縮小して送信します（静止画1枚・最大5MB）。撮影位置などのメタデータはブラウザで画像を作り直して削除します。</p>
-<img id="photo-preview" alt="投稿する写真のプレビュー" hidden>
-<label class="agree"><input id="photo-permission" type="checkbox" required><span><strong>顔が写っていないこと</strong>と、個人情報・無断転載・誹謗中傷・迷惑行為などが含まれないことを確認しました。上のルールを守り、承認された写真がインターネットに公開されることに同意します。</span></label>
-<div class="captcha-area"><div id="photo-turnstile" aria-label="投稿の安全確認"></div><p class="hint">投稿コードは不要です。不正投稿対策の自動確認が必要です。</p></div>
-<button type="submit" id="photo-submit" disabled>管理者の確認に送る</button>
-<p id="photo-status" class="message" role="status" aria-live="polite"></p>
-</form></section>
-<section class="gallery" aria-labelledby="gallery-heading">
-<div class="section-top"><div><small>02 / APPROVED POSTS</small><h2 id="gallery-heading">承認された写真</h2></div><button type="button" id="photo-reload">更新 ↻</button></div>
-<p class="gallery-intro">管理者が公開を許可した写真だけを表示しています。</p>
-<p id="gallery-status" class="gallery-status" role="status">アルバムを読み込み中…</p>
-<div class="photo-grid" id="photo-grid"></div>
-</section>
-<p class="privacy">承認前の写真は非公開で管理者のみが審査します。承認を保証するものではありません。顔・個人情報・不適切な内容がある場合は却下します。掲載後の取り消しを希望する場合は学校の管理者に連絡してください。管理者の審査はすべての問題を確実に検出できるものではありません。</p>
-</main><footer>HOKKAIDO 2026 · <a href="index.html">旅程表へ戻る</a></footer>
+  <section class="album-hero" aria-labelledby="gallery-title">
+    <div class="album-hero-inner">
+      <p class="eyebrow">OUR MEMORIES <span class="eyebrow-rule"></span> HOKKAIDO 2026</p>
+      <h1 id="gallery-title">旅の一瞬を、<br><em>ひとつのアルバムに。</em></h1>
+      <p class="lead">北海道で見つけた絶景、おいしかったもの、忘れたくない景色。みんなの思い出をここに集めよう。</p>
+      <div class="album-hero-foot"><span class="hero-pill"><span class="hero-dot"></span> 管理者の承認済み写真のみ掲載</span><span class="hero-date">DEC 07—10, 2026</span></div>
+    </div>
+    <div class="snow-deco snow-a" aria-hidden="true">✳</div><div class="snow-deco snow-b" aria-hidden="true">✳</div>
+  </section>
+  <section class="album-content" aria-labelledby="approved-heading">
+    <div class="album-content-head">
+      <div><p class="section-kicker">GALLERY / APPROVED POSTS</p><h2 id="approved-heading">みんなの写真 <span id="photo-count" class="photo-count"></span></h2></div>
+      <button type="button" class="refresh-button" id="photo-reload"><span aria-hidden="true">↻</span> 更新</button>
+    </div>
+    <p id="gallery-status" class="gallery-status" role="status" aria-live="polite">アルバムを読み込み中…</p>
+    <div class="photo-grid" id="photo-grid"></div>
+    <div class="album-notice"><span aria-hidden="true">◇</span><p>掲載写真はすべて管理者が確認しています。<strong>顔写真や個人情報を含む写真の投稿は禁止</strong>です。ルールを確認してから投稿してください。</p></div>
+  </section>
+  <p class="privacy">このアルバムはインターネット上で閲覧できます。写真の掲載取り消しを希望する場合は学校の管理者に相談してください。審査で不適切な内容を完全に防げるとは限りません。</p>
+</main>
+<a href="photos-post.html" class="floating-post" aria-label="写真を投稿する"><span class="floating-post-icon" aria-hidden="true">＋</span><span>写真を投稿</span></a>
+<footer class="photos-footer"><span>HOKKAIDO 2026 · MEMORIES</span><a href="index.html">旅行サイトへ戻る ↗</a></footer>
 </body></html>
