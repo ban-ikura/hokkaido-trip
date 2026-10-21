@@ -9,9 +9,9 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self' https://*.workers.dev; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; upgrade-insecure-requests">
   <title>管理者｜お知らせ投稿｜北海道研修旅行 2026</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="admin.css?v=20261021-news-only-1">
+  <link rel="stylesheet" href="admin.css?v=20261022-photo-moderation-1">
   <script src="admin-config.js?v=20261021-worker-connected-1" defer></script>
-  <script src="admin.js?v=20261021-news-only-1" defer></script>
+  <script src="admin.js?v=20261022-photo-moderation-1" defer></script>
 </head>
 <body>
   <header class="admin-header">
@@ -21,7 +21,7 @@
   <main class="admin-main">
     <div class="admin-kicker">ADMIN / NEWS ONLY</div>
     <h1>お知らせ投稿</h1>
-    <p class="admin-intro">管理者共通パスワードでログインし、新しいお知らせだけを投稿できます。過去のお知らせや行程表の編集・削除はできません。</p>
+    <p class="admin-intro">管理者共通パスワードでログインし、新しいお知らせだけを投稿できます。お知らせの新規投稿と写真の承認・掲載取り消しができます。過去のお知らせや行程表の編集・削除はできません。</p>
     <div id="setup-status" class="setup-status" hidden role="status">
       認証用サーバーの初期設定がまだ完了していません。設定担当者が接続先を登録するとログインできます。
     </div>
@@ -54,9 +54,24 @@
       </form>
       <p id="post-status" class="form-status" role="status" aria-live="polite"></p>
       <a id="published-link" class="published-link" href="index.html#news" hidden>公開サイトで確認する →</a>
-      <p class="admin-small">投稿済み記事の編集・削除機能はありません。内容をよく確認してから送信してください。</p>
+      <p class="admin-small">投稿済みお知らせの編集・削除機能はありません。内容をよく確認してから送信してください。</p>
+
+      <section class="photo-moderation" aria-labelledby="photo-moderation-heading">
+        <div class="photo-mod-title">
+          <div><div class="admin-kicker dark">PHOTO REVIEW</div><h2 id="photo-moderation-heading">生徒の写真を承認</h2></div>
+          <button type="button" id="photo-mod-reload" class="logout-button">再読み込み ↻</button>
+        </div>
+        <p>承認した写真だけが公開アルバムに表示されます。公開後も掲載を取り消せます。お知らせの編集・削除はできません。</p>
+        <div class="photo-mod-tabs">
+          <button type="button" id="photo-tab-pending" class="photo-mod-tab selected" aria-pressed="true">承認待ち</button>
+          <button type="button" id="photo-tab-approved" class="photo-mod-tab" aria-pressed="false">公開中</button>
+        </div>
+        <p id="photo-mod-status" class="form-status" role="status" aria-live="polite"></p>
+        <div id="photo-mod-list" class="photo-mod-list"></div>
+        <a href="photos.html" class="published-link">公開アルバムを確認する →</a>
+      </section>
     </section>
   </main>
-  <footer class="admin-footer">HOKKAIDO 2026 · 管理者専用（お知らせ投稿のみ）</footer>
+  <footer class="admin-footer">HOKKAIDO 2026 · 管理者専用（お知らせ投稿・写真承認）</footer>
 </body>
 </html>
