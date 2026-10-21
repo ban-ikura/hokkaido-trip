@@ -1,0 +1,6 @@
+背景写真が表示されないときの確認方法
+1. ZIPを展開し、すべてのファイルと assets フォルダをリポジトリ直下に配置。
+2. 特に assets/winter-evening.webp が GitHub に存在するか確認。
+3. https://ban-ikura.github.io/hokkaido-trip/assets/winter-evening.webp に直接アクセスし、写真が表示されるか確認。
+4. main の変更が Pages にデプロイされるまで数分待ち、Ctrl+Shift+R で再読み込み。
+5. 以前公開したPDFはリポジトリや履歴から公開されたままの可能性があるため、必要なら管理者へ相談。
