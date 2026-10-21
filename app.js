@@ -75,20 +75,45 @@ function renderCredits(){
 }
 
 // HTML文字列ではなくテキストノードを作るため、お知らせにHTML文字列があっても実行されません。
+function configuredNewsApi(){
+  const value=window.HOKKAIDO_NEWS_API_URL;
+  if(typeof value!=='string'||!value.trim())return '';
+  try{
+    const url=new URL(value.trim());
+    if(url.protocol!=='https:'||url.username||url.password||url.hash||url.search||
+      (url.pathname!==''&&url.pathname!=='/'))return '';
+    return url.origin;
+  }catch{return ''}
+}
 async function loadAnnouncements(){
   const host=$('#announcement-list');if(!host)return;
   const count=$('#announcement-count');
   try{
-    const response=await fetch('announcements.json',{cache:'no-store',credentials:'same-origin'});
-    if(!response.ok)throw new Error('HTTP '+response.status);
-    const data=await response.json();
-    // 同じ日付の場合はJSONに登録した順（新しいものを先頭）を維持する。
-    const items=Array.isArray(data.items)?data.items.filter(item=>item&&typeof item==='object'&&!Array.isArray(item)).slice(0,100):[];
-    items.sort((a,b)=>String(b?.date??'').localeCompare(String(a?.date??'')));
+    const api=configuredNewsApi();
+    const jobs=[
+      fetch('announcements.json',{cache:'no-store',credentials:'same-origin'})
+        .then(r=>{if(!r.ok)throw new Error('local '+r.status);return r.json()})
+    ];
+    if(api)jobs.push(
+      fetch(api+'/api/announcements',{cache:'no-store',mode:'cors',credentials:'omit'})
+        .then(r=>{if(!r.ok)throw new Error('remote '+r.status);return r.json()})
+    );
+    const results=await Promise.allSettled(jobs);
+    if(results.every(x=>x.status==='rejected'))throw new Error('すべての情報源が使用できません。');
+    const listFor=result=>result.status==='fulfilled'&&Array.isArray(result.value.items)
+      ? result.value.items.filter(x=>x&&typeof x==='object'&&!Array.isArray(x)).slice(0,100)
+      : [];
+    // 公開APIからの新着投稿を先に置き、同日付ならcreated_atを優先。
+    const remoteItems=api?listFor(results[1]):[];
+    const localItems=listFor(results[0]);
+    const items=[...remoteItems,...localItems].sort((a,b)=>{
+      const date=String(b.date??'').localeCompare(String(a.date??''));
+      return date||String(b.created_at??'').localeCompare(String(a.created_at??''));
+    }).slice(0,200);
     host.replaceChildren();
     if(count)count.textContent=items.length+'件';
     if(!items.length){host.append(node('p','news-empty','現在のお知らせはありません。'));return}
-    const renderItem=(item)=>{
+    const renderItem=item=>{
       const row=node('article','news-item'+(item.important===true?' important':''));
       const date=node('time','news-date',/^\d{4}-\d{2}-\d{2}$/.test(String(item.date))?item.date:'日付未設定');
       if(/^\d{4}-\d{2}-\d{2}$/.test(String(item.date)))date.dateTime=item.date;
@@ -102,15 +127,16 @@ async function loadAnnouncements(){
       return row;
     };
     const current=node('div','news-current');
-    current.append(renderItem(items[0]));
-    host.append(current);
+    current.append(renderItem(items[0]));host.append(current);
     const history=node('details','news-history');
     const summary=node('summary','news-history-toggle','過去のお知らせの履歴（'+(items.length-1)+'件）を見る');
     const older=node('div','news-history-list');
     items.slice(1).forEach(item=>older.append(renderItem(item)));
     if(items.length===1)older.append(node('p','news-empty','過去のお知らせはまだありません。'));
-    history.append(summary,older);
-    host.append(history);
+    history.append(summary,older);host.append(history);
+    if(api&&results[1]?.status==='rejected'){
+      host.append(node('p','news-sync-warning','新しいお知らせの取得に失敗しました。公開済みのお知らせのみ表示しています。'));
+    }
   }catch(_){
     if(count)count.textContent='';
     host.replaceChildren(node('p','news-empty','お知らせを読み込めませんでした。しばらくしてから再読み込みしてください。'));
