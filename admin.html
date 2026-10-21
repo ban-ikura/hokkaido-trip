@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#0b1c34">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self' https://*.workers.dev; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; upgrade-insecure-requests">
+  <title>管理者｜お知らせ投稿｜北海道研修旅行 2026</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="admin.css?v=20261021-news-only-1">
+  <script src="admin-config.js?v=20261021-news-only-1" defer></script>
+  <script src="admin.js?v=20261021-news-only-1" defer></script>
+</head>
+<body>
+  <header class="admin-header">
+    <a href="index.html" class="back-link">← サイトに戻る</a>
+    <span>HOKKAIDO <strong>2026</strong></span>
+  </header>
+  <main class="admin-main">
+    <div class="admin-kicker">ADMIN / NEWS ONLY</div>
+    <h1>お知らせ投稿</h1>
+    <p class="admin-intro">管理者共通パスワードでログインし、新しいお知らせだけを投稿できます。過去のお知らせや行程表の編集・削除はできません。</p>
+    <div id="setup-status" class="setup-status" hidden role="status">
+      認証用サーバーの初期設定がまだ完了していません。設定担当者が接続先を登録するとログインできます。
+    </div>
+    <section id="login-panel" class="admin-panel" aria-labelledby="login-heading">
+      <div class="panel-icon" aria-hidden="true">❄</div>
+      <h2 id="login-heading">管理者ログイン</h2>
+      <p>共通パスワードを入力してください。</p>
+      <form id="login-form">
+        <label for="admin-password">パスワード</label>
+        <input id="admin-password" name="password" type="password" minlength="12" maxlength="256" required autocomplete="current-password" placeholder="共通パスワード">
+        <button id="login-button" class="primary-button" type="submit" disabled>ログイン</button>
+      </form>
+      <p id="login-status" class="form-status" role="status" aria-live="polite"></p>
+      <p class="admin-small">共通パスワードはサイトには保存されません。ログイン状態はページを開いている間のみ有効です。</p>
+    </section>
+    <section id="post-panel" class="admin-panel" aria-labelledby="post-heading" hidden>
+      <div class="session-header">
+        <span class="session-label"><span class="green-dot"></span>ログイン中</span>
+        <button type="button" id="logout-button" class="logout-button">ログアウト</button>
+      </div>
+      <h2 id="post-heading">新しいお知らせを投稿</h2>
+      <p>送信すると公開サイトに追加され、前のお知らせは履歴に残ります。</p>
+      <form id="post-form">
+        <label for="notice-title">タイトル <small>必須・120文字以内</small></label>
+        <input id="notice-title" name="title" minlength="2" maxlength="120" required placeholder="例：集合時刻について">
+        <label for="notice-body">本文 <small>必須・1500文字以内</small></label>
+        <textarea id="notice-body" name="body" maxlength="1500" required rows="7" placeholder="お知らせの内容を入力"></textarea>
+        <label class="checkbox-row"><input type="checkbox" id="notice-important">重要なお知らせとして表示</label>
+        <button id="publish-button" class="primary-button" type="submit">お知らせを投稿</button>
+      </form>
+      <p id="post-status" class="form-status" role="status" aria-live="polite"></p>
+      <a id="published-link" class="published-link" href="index.html#news" hidden>公開サイトで確認する →</a>
+      <p class="admin-small">投稿済み記事の編集・削除機能はありません。内容をよく確認してから送信してください。</p>
+    </section>
+  </main>
+  <footer class="admin-footer">HOKKAIDO 2026 · 管理者専用（お知らせ投稿のみ）</footer>
+</body>
+</html>
