@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ja"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#091f36">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob: https://*.workers.dev; connect-src 'self' https://*.workers.dev; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; upgrade-insecure-requests">
+<title>写真アルバム｜北海道研修旅行 2026</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="photos.css?v=20261022-1">
+<script src="admin-config.js?v=20261021-worker-connected-1" defer></script>
+<script src="photos.js?v=20261022-1" defer></script>
+</head><body>
+<header class="photos-header"><a href="index.html">← 旅行サイトへ戻る</a><strong>HOKKAIDO <span>2026</span></strong></header>
+<main class="photos-main">
+<div class="eyebrow">TRIP MEMORIES / GALLERY</div><h1>みんなの北海道フォト</h1>
+<p class="lead">写真を投稿すると、管理者が確認してからアルバムに追加されます。承認されるまでは誰にも公開されません。</p>
+<section class="send-panel" aria-labelledby="send-heading">
+<div class="section-top"><div><small>01 / POST</small><h2 id="send-heading">写真を投稿</h2></div><span class="tag">承認制</span></div>
+<div id="photo-setup" class="notice" role="status">写真投稿システムを確認しています…</div>
+<form id="photo-form">
+<label for="student-code">生徒用投稿コード <em>必須</em></label>
+<input type="password" id="student-code" required minlength="12" maxlength="256" autocomplete="off" placeholder="学校から配られた投稿コード">
+<label for="student-nickname">表示名（任意）</label>
+<input id="student-nickname" maxlength="24" placeholder="例：ニセコ班（未入力は匿名）">
+<label for="student-caption">写真のコメント <em>必須</em></label>
+<textarea id="student-caption" maxlength="200" rows="3" placeholder="例：小樽運河で集合写真！" required></textarea>
+<label for="student-photo">写真 <em>必須・1枚</em></label>
+<input type="file" id="student-photo" accept="image/*,.heic,.heif" required>
+<p class="hint">スマホの写真を縮小して送信します（静止画1枚・最大5MB）。撮影位置などのメタデータはブラウザで画像を作り直して削除します。</p>
+<img id="photo-preview" alt="投稿する写真のプレビュー" hidden>
+<label class="agree"><input id="photo-permission" type="checkbox" required><span>写っている人の許可を得ており、氏名・学校名・連絡先など個人情報や危険な内容を含まないことを確認しました。承認後はインターネット上で閲覧可能になることを理解しています。</span></label>
+<button type="submit" id="photo-submit" disabled>管理者の確認に送る</button>
+<p id="photo-status" class="message" role="status" aria-live="polite"></p>
+</form></section>
+<section class="gallery" aria-labelledby="gallery-heading">
+<div class="section-top"><div><small>02 / APPROVED POSTS</small><h2 id="gallery-heading">承認された写真</h2></div><button type="button" id="photo-reload">更新 ↻</button></div>
+<p class="gallery-intro">管理者が公開を許可した写真だけを表示しています。</p>
+<p id="gallery-status" class="gallery-status" role="status">アルバムを読み込み中…</p>
+<div class="photo-grid" id="photo-grid"></div>
+</section>
+<p class="privacy">投稿内容は公開前に管理者が審査します。承認を保証するものではありません。掲載後の取り消しを希望する場合は学校の管理者に連絡してください。投稿コードを管理者以外の外部には共有しないでください。</p>
+</main><footer>HOKKAIDO 2026 · <a href="index.html">旅程表へ戻る</a></footer>
+</body></html>
