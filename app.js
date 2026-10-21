@@ -126,7 +126,7 @@ function renderTimeline(day,course){
   const wrapper=node('div','timeline-wrapper');
   const toolbar=node('div','timeline-toolbar');
   const left=node('div','timeline-label','横スクロール行程表');
-  left.append(node('span','','30分刻み・オレンジの時刻をタップすると詳細表示'));
+  left.append(node('span','','30分刻み・すべての予定をタップして詳細表示'));
   const controls=node('div','timeline-controls');
   controls.append(node('span','scroll-tip','左右にスクロール'));
   for(const [sign,label] of [[-1,'前の時間へ'],[1,'次の時間へ']]){
@@ -152,49 +152,53 @@ function renderTimeline(day,course){
     axis.append(tick);
   }
   const track=node('div','timeline-track');
-  // 終了時刻が未記載の予定はタップ可能な時刻ボタンで表示する。
-  // 画面外へはみ出さないよう端に寄せ、近接する予定は上下に分ける。
+  // すべての予定をクリック／タップ／キーボードで開けるようにする。
+  // 単一時刻の予定は画面端へ寄せ、近接する時刻ボタンは上下に分ける。
   const pointWidth=54;
   const pointRows=[-Infinity,-Infinity];
-  const detailId='point-detail-'+day.id+'-'+course.id;
-  const detail=node('section','point-detail');
+  const detailId='event-detail-'+day.id+'-'+course.id;
+  const detail=node('section','point-detail event-detail');
   detail.id=detailId;
   detail.hidden=true;
   detail.setAttribute('aria-live','polite');
-  let selectedPoint=null;
-  const closePoint=(restoreFocus=false)=>{
+  let selectedTrigger=null;
+  const closeDetail=(restoreFocus=false)=>{
     detail.hidden=true;
-    if(selectedPoint){
-      selectedPoint.classList.remove('selected');
-      selectedPoint.setAttribute('aria-expanded','false');
-      if(restoreFocus)selectedPoint.focus({preventScroll:true});
-      selectedPoint=null;
+    if(selectedTrigger){
+      selectedTrigger.classList.remove('selected');
+      selectedTrigger.setAttribute('aria-expanded','false');
+      if(restoreFocus)selectedTrigger.focus({preventScroll:true});
+      selectedTrigger=null;
     }
   };
-  const openPoint=(button,event)=>{
-    if(selectedPoint===button){closePoint();return}
-    if(selectedPoint){
-      selectedPoint.classList.remove('selected');
-      selectedPoint.setAttribute('aria-expanded','false');
+  const openDetail=(button,event)=>{
+    if(selectedTrigger===button){closeDetail();return}
+    if(selectedTrigger){
+      selectedTrigger.classList.remove('selected');
+      selectedTrigger.setAttribute('aria-expanded','false');
     }
-    selectedPoint=button;
+    selectedTrigger=button;
     button.classList.add('selected');
     button.setAttribute('aria-expanded','true');
+    const isPoint=event.start===event.end;
+    const transport=transportFor(event);
     const content=node('div','point-detail-content');
-    content.append(node('span','point-detail-label',day.date+' / '+course.label));
-    content.append(node('div','point-detail-clock',event.start));
+    const kind=transport?'移動':event.type==='food'?'食事':'行動';
+    content.append(node('span','point-detail-label',day.date+' / '+course.label+' / '+kind));
+    content.append(node('div','point-detail-clock',isPoint?event.start:event.start+' 〜 '+event.end));
     content.append(node('h4','point-detail-title',event.title));
+    if(transport)content.append(node('p','point-detail-note','移動手段：'+transport.label));
     if(event.note)content.append(node('p','point-detail-note',event.note));
-    content.append(node('p','point-detail-context','資料に記載の時刻は1つのみです。もう一方の時刻や所要時間は推測していません。'));
+    if(isPoint)content.append(node('p','point-detail-context','資料に記載の時刻は1つのみです。もう一方の時刻や所要時間は推測していません。'));
     const close=node('button','point-detail-close','閉じる ×');
     close.type='button';
     close.setAttribute('aria-label','詳細を閉じる');
-    close.addEventListener('click',()=>closePoint(true));
+    close.addEventListener('click',()=>closeDetail(true));
     detail.replaceChildren(content,close);
     detail.hidden=false;
     requestAnimationFrame(()=>detail.scrollIntoView({block:'nearest',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'}));
   };
-  wrapper.addEventListener('keydown',e=>{if(e.key==='Escape'&&!detail.hidden){e.preventDefault();closePoint(true)}});
+  wrapper.addEventListener('keydown',e=>{if(e.key==='Escape'&&!detail.hidden){e.preventDefault();closeDetail(true)}});
   const now=Date.now();const idx=days.indexOf(day);
   for(const event of course.events){
     const len=(minOf(event.end)-minOf(event.start))*timelineRate;
@@ -207,24 +211,20 @@ function renderTimeline(day,course){
     const pointX=(minOf(event.start)-minOf(day.start))*timelineRate;
     const pointRow=isPoint && pointX-pointRows[0]<pointWidth ? 1 : 0;
     if(isPoint)pointRows[pointRow]=pointX;
-    const card=node(isPoint?'button':'article','route-event '+event.type+(isPoint?' is-point point-row-'+(pointRow+1):'')+(transport?' transport-bar':'')+((key||showScene)?' has-photo':'')+(w<133?' compact':'')+(w<74?' tiny':''));
+    const card=node('button','route-event '+event.type+(isPoint?' is-point point-row-'+(pointRow+1):'')+(transport?' transport-bar':'')+((key||showScene)?' has-photo':'')+(w<133?' compact':'')+(w<74?' tiny':''));
     card.style.left=(isPoint?Math.max(0,Math.min(width-pointWidth,pointX-pointWidth/2)):pointX)+'px';
     card.style.width=(isPoint?pointWidth:w)+'px';
-    if(isPoint){
-      card.type='button';
-      card.setAttribute('aria-controls',detailId);
-      card.setAttribute('aria-expanded','false');
-      card.setAttribute('aria-haspopup','false');
-    }
+    card.type='button';
+    card.setAttribute('aria-controls',detailId);
+    card.setAttribute('aria-expanded','false');
     card.dataset.start=event.start;
     const modeInfo=transport?' / '+transport.label:'';
     const displayTime=event.start===event.end?event.start:event.start+'〜'+event.end;
     card.setAttribute('aria-label',displayTime+' '+event.title+modeInfo+(event.note?'、'+event.note:''));
     card.title=displayTime+' '+event.title+modeInfo+(event.note?' / '+event.note:'');
-    if(isPoint)card.setAttribute('aria-label',event.start+' '+event.title+'。詳細を表示');
+    card.setAttribute('aria-label',displayTime+' '+event.title+modeInfo+'。詳細を表示');
     if(isPoint){
       card.append(node('span','point-event-time',event.start));
-      card.addEventListener('click',()=>openPoint(card,event));
     }else if(key){
       card.append(placePhoto(key));
       if(venuePhotos[key]?.permissionPending && w>=150){
@@ -235,7 +235,9 @@ function renderTimeline(day,course){
       scenic.alt='北海道の冬景色（イメージ）';scenic.loading='lazy';scenic.decoding='async';
       card.append(scenic);
     }
-    if(transport){
+    if(isPoint){
+      // 単一時刻は上側の時刻ボタンのまま表示する。
+    }else if(transport){
       const label=node('div','transport-content');
       label.append(node('span','transport-icon',transport.icon));
       if(w>=115){
@@ -254,6 +256,7 @@ function renderTimeline(day,course){
       card.append(text);
     }
     if(!isPoint && now>=dateOf(idx,event.start)&&now<dateOf(idx,event.end))card.classList.add('is-current');
+    card.addEventListener('click',()=>openDetail(card,event));
     track.append(card);
   }
   canvas.append(axis,track);viewport.append(canvas);wrapper.append(viewport);
@@ -271,13 +274,19 @@ function renderTimeline(day,course){
   list.append(node('summary','','全予定の時刻一覧'));
   const agenda=node('div','agenda-grid');
   course.events.forEach(event=>{
-    const row=node('div','agenda-row');
+    const row=node('button','agenda-row agenda-event');
+    row.type='button';
+    row.setAttribute('aria-controls',detailId);
+    row.setAttribute('aria-expanded','false');
+    row.setAttribute('aria-label',(event.start===event.end?event.start:event.start+'から'+event.end)+' '+event.title+'。詳細を表示');
     row.append(node('span','agenda-clock',(event.start===event.end?event.start:event.start+'–'+event.end)));
     const txt=node('div','agenda-label',event.title);
     const transport=transportFor(event);
     if(transport)txt.append(node('small','agenda-transport','移動手段：'+transport.label));
     if(event.note)txt.append(node('small','',event.note));
-    row.append(txt);agenda.append(row);
+    row.append(txt);
+    row.addEventListener('click',()=>openDetail(row,event));
+    agenda.append(row);
   });list.append(agenda);wrapper.append(list);
   if(course.unknown.length){
     const unknown=node('div','unknown-box');unknown.append(node('strong','','未確定・要確認'));
