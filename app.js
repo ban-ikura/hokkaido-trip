@@ -446,7 +446,7 @@ function renderHotelImages(){
     holder.append(fig);
   });
 }
-renderCredits();renderHotelImages();renderSchedule();renderChecklist();renderNextSchedule();loadAnnouncements();
+renderCredits();renderHotelImages();renderSchedule();renderChecklist();renderNextSchedule();
 // When a public tab is first loaded by the same-document router, hydrate
 // its locally rendered sections without rerunning this large data bundle.
 window.HOKKAIDO_REINIT_PUBLIC_PAGE=function(){
@@ -457,7 +457,7 @@ window.HOKKAIDO_REINIT_PUBLIC_PAGE=function(){
   if(host.querySelector('#schedule-root'))renderSchedule();
   if(host.querySelector('#checklist-root'))renderChecklist();
   if(host.querySelector('#next-schedule'))renderNextSchedule();
-  if(host.querySelector('#announcement-list'))loadAnnouncements();
+
 };
 
 if($('#next-schedule'))setInterval(renderNextSchedule,60_000);
