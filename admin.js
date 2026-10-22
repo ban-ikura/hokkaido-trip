@@ -148,7 +148,7 @@
   });
 
   /* 上位タブ：お知らせ投稿／写真承認。どちらも同じ認証セッションを利用する。 */
-  function switchManagementTab(name,focusTab=false){
+  function switchManagementTab(name,focusTab=false,swipeDirection=''){
     if(name!=='news'&&name!=='photos')return;
     const previous=activeManagementTab;
     activeManagementTab=name;
@@ -162,6 +162,16 @@
     if(previous==='photos'&&name!=='photos'){
       clearPhotoPreviews();
       modList.replaceChildren();
+    }
+    const newPanel=managementPanels[name];
+    newPanel.classList.remove('swipe-in-from-left','swipe-in-from-right');
+    if(swipeDirection==='left'||swipeDirection==='right'){
+      // タブの移動方向に応じて、中身が滑り込むアニメーションを表示。
+      requestAnimationFrame(()=>{
+        if(!newPanel.hidden)newPanel.classList.add(
+          swipeDirection==='left'?'swipe-in-from-right':'swipe-in-from-left'
+        );
+      });
     }
     if(name==='photos'&&previous!=='photos'&&accessToken)loadModeration();
     if(focusTab)managementTabs[name].focus();
@@ -180,6 +190,38 @@
       switchManagementTab(managementKeys[target],true);
     });
   }
+
+  function attachHorizontalSwipe(surface,onSwipe,exclude=''){
+    let start=null;
+    surface.addEventListener('touchstart',event=>{
+      start=null;
+      if(event.touches.length!==1)return;
+      if(exclude && event.target.closest(exclude))return;
+      const point=event.touches[0];
+      if(point.clientX<28||point.clientX>window.innerWidth-28)return;
+      start={x:point.clientX,y:point.clientY,at:Date.now()};
+    },{passive:true});
+    surface.addEventListener('touchcancel',()=>{start=null},{passive:true});
+    surface.addEventListener('touchend',event=>{
+      if(!start||event.changedTouches.length!==1){start=null;return}
+      const origin=start;
+      start=null;
+      const point=event.changedTouches[0];
+      const dx=point.clientX-origin.x;
+      const dy=point.clientY-origin.y;
+      if(Math.abs(dx)<75||Math.abs(dx)<Math.abs(dy)*1.7||
+         Date.now()-origin.at>900)return;
+      onSwipe(dx<0?'left':'right');
+    },{passive:true});
+  }
+  // 大きな管理者タブ：左右のスワイプ。フォーム入力中や画像操作は除外。
+  const changeManagementBySwipe=direction=>{
+    const target=direction==='left'?'photos':'news';
+    if(target!==activeManagementTab)switchManagementTab(target,false,direction);
+  };
+  attachHorizontalSwipe(document.querySelector('.admin-tabs'),changeManagementBySwipe);
+  attachHorizontalSwipe(postPanel,changeManagementBySwipe,
+    'input,textarea,select,label,a,button,.admin-tabs,.photo-mod-list,.photo-mod-tabs,.photo-mod-card');
 
   /* 生徒写真の承認画面。ログイン時の同じ署名付きトークンを利用する。 */
   const modStatus=document.querySelector('#photo-mod-status');
@@ -300,6 +342,20 @@
   }
   tabPending.addEventListener('click',()=>setPhotoFilter('pending'));
   tabApproved.addEventListener('click',()=>setPhotoFilter('approved'));
+  // 写真承認タブの「承認待ち」「公開中」も左右スワイプで切り替えられる。
+  const changePhotoFilterBySwipe=direction=>{
+    if(activeManagementTab!=='photos')return;
+    const target=direction==='left'?'approved':'pending';
+    if(target!==photoFilter){
+      setPhotoFilter(target);
+      modList.classList.remove('swipe-in-from-left','swipe-in-from-right');
+      requestAnimationFrame(()=>modList.classList.add(
+        direction==='left'?'swipe-in-from-right':'swipe-in-from-left'
+      ));
+    }
+  };
+  attachHorizontalSwipe(modList,changePhotoFilterBySwipe,'button,a,input,textarea,select');
+  attachHorizontalSwipe(document.querySelector('.photo-mod-tabs'),changePhotoFilterBySwipe);
   document.querySelector('#photo-mod-reload').addEventListener('click',loadModeration);
 
   logout.addEventListener('click',()=>showLogin('ログアウトしました。','success'));
