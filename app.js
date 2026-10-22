@@ -167,7 +167,6 @@ function renderTimeline(day,course){
   const wrapper=node('div','timeline-wrapper');
   const toolbar=node('div','timeline-toolbar');
   const left=node('div','timeline-label','横スクロール行程表');
-  left.append(node('span','','30分刻み・すべての予定をタップして詳細表示'));
   const controls=node('div','timeline-controls');
   controls.append(node('span','scroll-tip','左右にスクロール'));
   for(const [sign,label] of [[-1,'前の時間へ'],[1,'次の時間へ']]){
@@ -360,7 +359,7 @@ function renderDay(day){
   const article=node('article','day-card');article.id=day.id;
   const head=node('div','day-top');
   const badge=node('div','day-badge');badge.append(node('small','','DAY'),node('strong','',day.num));
-  const title=node('div','day-titles');title.append(node('h3','',day.date+'｜'+day.title),node('p','',day.desc));
+  const title=node('div','day-titles');title.append(node('h3','',day.date+'｜'+day.title));
   head.append(badge,title);article.append(head);
   const active=selectedCourse(day);
   const content=node('div','course-content');
