@@ -276,23 +276,57 @@ async function uploadQuota(request,env){
 }
 // canvasで作られた標準の静止WebPだけを許可。EXIF等の付加チャンクやアニメは拒否。
 function simpleWebp(bytes){
-  if(bytes.length<32 || bytes.length>PHOTO_LIMIT_BYTES)return false;
+  // WebPのRIFF構造を確認。Chrome等の単純形式に加えて、スマホなどが生成する
+  // VP8X（拡張静止画）も許可する。アニメーションとEXIF/XMPは受け付けない。
+  if(!(bytes instanceof Uint8Array)||bytes.length<32||bytes.length>PHOTO_LIMIT_BYTES)return false;
   const ascii=(n,s)=>[...s].every((c,i)=>bytes[n+i]===c.charCodeAt(0));
-  if(!ascii(0,'RIFF')||!ascii(8,'WEBP'))return false;
   const le32=n=>(bytes[n]|(bytes[n+1]<<8)|(bytes[n+2]<<16)|(bytes[n+3]<<24))>>>0;
-  if(le32(4)!==bytes.length-8)return false;
-  let at=12, imageChunks=0;
+  if(!ascii(0,'RIFF')||!ascii(8,'WEBP')||le32(4)!==bytes.length-8)return false;
+  let at=12, imageCount=0, extended=false, alpha=false, colorProfile=false, flags=0;
+  let imageSeen=false;
   while(at+8<=bytes.length){
-    const kind=String.fromCharCode(...bytes.slice(at,at+4));
+    const kind=String.fromCharCode(...bytes.subarray(at,at+4));
     const size=le32(at+4);
-    const end=at+8+size+(size%2);
-    if(end>bytes.length)return false;
-    if(kind!=='VP8 ' && kind!=='VP8L')return false;
-    imageChunks++;
-    if(imageChunks>1)return false;
-    at=end;
+    const next=at+8+size+(size&1);
+    if(size>PHOTO_LIMIT_BYTES||next>bytes.length)return false;
+    if(kind==='VP8X'){
+      if(at!==12||extended||size!==10)return false;
+      extended=true;
+      flags=bytes[at+8];
+      // animation, EXIF, XMP and reserved bits are disallowed.
+      if(flags&0xCF)return false; // 0xC0 reserved, 0x08 EXIF, 0x04 XMP, 0x02 animation, 0x01 reserved
+      const w=1+bytes[at+12]+(bytes[at+13]<<8)+(bytes[at+14]<<16);
+      const h=1+bytes[at+15]+(bytes[at+16]<<8)+(bytes[at+17]<<16);
+      if(w>4096||h>4096)return false;
+    }else if(kind==='ICCP'){
+      if(!extended||colorProfile||imageSeen||size<1||size>32768)return false;
+      colorProfile=true;
+    }else if(kind==='ALPH'){
+      if(!extended||alpha||imageSeen||size<1)return false;
+      alpha=true;
+    }else if(kind==='VP8 '||kind==='VP8L'){
+      if(imageSeen||size<(kind==='VP8 '?10:5))return false;
+      imageCount++;
+      imageSeen=true;
+      const start=at+8;
+      if(kind==='VP8 '){
+        // VP8 lossy key-frame signature.
+        if(bytes[start+3]!==0x9d||bytes[start+4]!==0x01||bytes[start+5]!==0x2a)return false;
+      }else{
+        if(alpha||bytes[start]!==0x2f)return false;
+      }
+    }else{
+      // EXIF/XMP/ANIM/ANMF and unknown chunks are forbidden.
+      return false;
+    }
+    at=next;
   }
-  return imageChunks===1 && at===bytes.length;
+  if(at!==bytes.length||imageCount!==1)return false;
+  if(extended){
+    if(Boolean(flags&0x10)!==alpha)return false;
+    if(Boolean(flags&0x20)!==colorProfile)return false;
+  }else if(alpha||colorProfile)return false;
+  return true;
 }
 // Cloudflare Turnstileトークンを必ずサーバーで照合。無効なら保存しない。
 async function verifyPhotoTurnstile(request,env,token){
