@@ -9,9 +9,9 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob:; connect-src 'self' https://*.workers.dev; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; upgrade-insecure-requests">
   <title>管理者ダッシュボード｜北海道研修旅行 2026</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="admin.css?v=20261022-admin-tabs-1">
+  <link rel="stylesheet" href="admin.css?v=20261022-swipe-tabs-1">
   <script src="admin-config.js?v=20261021-worker-connected-1" defer></script>
-  <script src="admin.js?v=20261022-admin-tabs-1" defer></script>
+  <script src="admin.js?v=20261022-swipe-tabs-1" defer></script>
 </head>
 <body>
   <header class="admin-header">
@@ -46,6 +46,7 @@
         <button id="admin-tab-news" class="admin-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="admin-news-panel" tabindex="0"><span class="admin-tab-icon" aria-hidden="true">✉</span><span>お知らせ投稿</span></button>
         <button id="admin-tab-photos" class="admin-tab" type="button" role="tab" aria-selected="false" aria-controls="admin-photos-panel" tabindex="-1"><span class="admin-tab-icon" aria-hidden="true">▧</span><span>写真の承認</span></button>
       </div>
+      <p class="admin-swipe-hint">左右にスワイプしてタブを切り替えられます</p>
       <section id="admin-news-panel" class="admin-tab-panel" role="tabpanel" aria-labelledby="admin-tab-news" tabindex="0">
       <h2 id="post-heading">新しいお知らせを投稿</h2>
       <p>送信すると公開サイトに追加され、前のお知らせは履歴に残ります。</p>
