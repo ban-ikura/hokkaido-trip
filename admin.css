@@ -148,3 +148,35 @@ h1{margin:8px 0;color:white;font-size:clamp(27px,5vw,42px);line-height:1.3;lette
 @media(prefers-reduced-motion:reduce){
   .admin-tab{transition:none}
 }
+
+
+/* タブのスワイプ切り替え時の軽いスライド表示 */
+.admin-tab-panel.swipe-in-from-right,
+.photo-mod-list.swipe-in-from-right{
+  animation:admin-tab-arrive-right .22s ease-out both;
+}
+.admin-tab-panel.swipe-in-from-left,
+.photo-mod-list.swipe-in-from-left{
+  animation:admin-tab-arrive-left .22s ease-out both;
+}
+@keyframes admin-tab-arrive-right{
+  from{transform:translateX(20px);opacity:.55}
+  to{transform:translateX(0);opacity:1}
+}
+@keyframes admin-tab-arrive-left{
+  from{transform:translateX(-20px);opacity:.55}
+  to{transform:translateX(0);opacity:1}
+}
+.admin-swipe-hint{
+  margin:-15px 0 14px!important;
+  color:#7893a5!important;
+  font-size:11px!important;
+  text-align:center;
+}
+@media(min-width:761px){.admin-swipe-hint{display:none}}
+@media(prefers-reduced-motion:reduce){
+  .admin-tab-panel.swipe-in-from-right,
+  .admin-tab-panel.swipe-in-from-left,
+  .photo-mod-list.swipe-in-from-right,
+  .photo-mod-list.swipe-in-from-left{animation:none}
+}
