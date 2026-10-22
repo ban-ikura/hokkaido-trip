@@ -115,6 +115,9 @@
         window.HOKKAIDO_REFRESH_GALLERY();
       }
     }else{
+      // News and photo modules must have the Worker URL before home is hydrated.
+      if(page==='index.html'&&typeof window.HOKKAIDO_NEWS_API_URL!=='string')
+        await script('admin-config.js','20261021-worker-connected-1');
       const initializedApp=typeof window.HOKKAIDO_REINIT_PUBLIC_PAGE==='function';
       if(!initializedApp){
         await script('trip-data.js','20261021-nihontravel-priority-r2');
@@ -123,8 +126,6 @@
         window.HOKKAIDO_REINIT_PUBLIC_PAGE();
       }
       if(page==='index.html'){
-        if(typeof window.HOKKAIDO_NEWS_API_URL!=='string')
-          await script('admin-config.js','20261021-worker-connected-1');
         if(!pack.initialized){
           await script('photos-home.js','20261022-home-refresh-1');
         }else if(restoring && typeof window.HOKKAIDO_REFRESH_HOME_PHOTOS==='function'){
