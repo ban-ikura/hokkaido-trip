@@ -6,14 +6,16 @@
   <meta name="description" content="2026年12月7日〜10日 北海道研修旅行・公開用案内。日程、持ち物、宿泊、注意事項。">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https://upload.wikimedia.org https://encrypted-tbn0.gstatic.com https://www.otaru-orgel.co.jp data:; connect-src 'self' https://*.workers.dev; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https://*.workers.dev https://upload.wikimedia.org https://encrypted-tbn0.gstatic.com https://www.otaru-orgel.co.jp data:; connect-src 'self' https://*.workers.dev; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; upgrade-insecure-requests">
   <meta name="theme-color" content="#0b1c34">
   <meta name="color-scheme" content="light">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="style.css?v=20261021-post-only-news-1">
+  <link rel="stylesheet" href="photos-home.css?v=20261022-photo-preview-1">
   <title>ホーム | 北海道研修旅行 2026</title>
   <script src="trip-data.js?v=20261021-nihontravel-priority-r2" defer></script>
   <script src="admin-config.js?v=20261021-worker-connected-1" defer></script>
+  <script src="photos-home.js?v=20261022-photo-preview-1" defer></script>
   <script src="app.js?v=20261021-post-only-news-1" defer></script>
 </head>
 <body data-page="home">
@@ -43,8 +45,13 @@
     <p class="news-admin-access"><a href="admin.html">管理者の方はこちら：お知らせを投稿する <span aria-hidden="true">↗</span></a></p>
   </div></section>
   <section class="section-section photo-promo" id="memories"><div class="shell">
-    <div class="section-heading"><div><div class="overline">TRIP MEMORIES</div><h2>みんなの北海道フォト</h2><p class="heading-sub">生徒が撮影した写真を投稿。管理者が承認した写真だけを公開するアルバムです。</p></div></div>
-    <a class="button button-primary" href="photos.html">写真を見る・投稿する <span aria-hidden="true">↗</span></a>
+    <div class="section-heading home-photo-heading">
+      <div><div class="overline">TRIP MEMORIES</div><h2>みんなの北海道フォト</h2><p class="heading-sub">管理者が承認した最新の写真を2枚表示しています。</p></div>
+      <a class="home-photo-all" href="photos.html">すべての写真を見る <span aria-hidden="true">↗</span></a>
+    </div>
+    <p id="home-photo-status" class="home-photo-status" role="status" aria-live="polite">写真を読み込み中…</p>
+    <div id="home-photo-grid" class="home-photo-grid" aria-label="承認済みの最新写真"></div>
+    <a class="button button-primary home-photo-more" href="photos.html">みんなのアルバムへ <span aria-hidden="true">↗</span></a>
   </div></section>
   <section class="section-section overview-section" id="overview"><div class="shell">
     <div class="section-heading"><div><div class="overline">4 DAYS / OVERVIEW</div><h2>4日間の予定</h2></div><span class="section-aside">日付を選択すると行程へ移動</span></div>
