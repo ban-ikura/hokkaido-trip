@@ -1,0 +1,55 @@
+/* 宿泊・食事ページ：アレルギーPDF閲覧リンク */
+.allergy-card .allergy-pdf-link{
+  display:flex;align-items:center;gap:14px;
+  min-height:78px;
+  padding:15px 17px;
+  margin:13px 0 20px;
+  border-radius:13px;
+  color:#113b56;
+  background:linear-gradient(110deg,#e6f7ff,#f6fbff);
+  border:1px solid #b8ddf2;
+  text-decoration:none;
+  box-shadow:0 5px 15px rgba(21,87,119,.08);
+  transition:transform .15s,background .15s,border-color .15s;
+}
+.allergy-card .allergy-pdf-link[hidden]{display:none!important}
+.allergy-card .allergy-pdf-link:hover{
+  transform:translateY(-2px);
+  background:#effbff;
+  border-color:#5ca4cc;
+}
+.allergy-card .allergy-pdf-link:focus-visible{
+  outline:3px solid #4aaedc;
+  outline-offset:3px;
+}
+.allergy-pdf-icon{
+  display:grid;place-items:center;
+  flex:0 0 46px;width:46px;height:46px;
+  border-radius:11px;
+  background:#16658b;
+  color:#fff;
+  font-size:12px;font-weight:900;
+  letter-spacing:.08em;
+}
+.allergy-pdf-label{min-width:0;flex:1;display:grid;gap:3px}
+.allergy-pdf-label strong{color:#1b4e6c;font-size:15px}
+.allergy-pdf-label small{color:#5e7c8d;font-size:11px;line-height:1.5}
+.allergy-pdf-arrow{font-size:22px;font-weight:850;color:#287ca3}
+.allergy-pdf-status{
+  padding:12px 15px;margin:12px 0 18px;
+  border-radius:12px;
+  color:#5c7383;
+  background:#f2f7fb;
+  border:1px solid #d9e8f0;
+  font-size:12px;
+}
+.allergy-pdf-status[hidden]{display:none!important}
+@media(max-width:600px){
+  .allergy-card .allergy-pdf-link{gap:10px;padding:13px 12px}
+  .allergy-pdf-icon{width:39px;height:39px;flex-basis:39px}
+  .allergy-pdf-label strong{font-size:13px}
+  .allergy-pdf-label small{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  .allergy-card .allergy-pdf-link{transition:none}
+}
