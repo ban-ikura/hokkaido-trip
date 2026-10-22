@@ -25,38 +25,77 @@ const selectedCourse=day=>{
   return day.courses.find(course=>course.id===id)||day.courses[0];
 };
 
-// 写真は実在する撮影資料のみに限定。読み込み失敗時は案内カードへ切り替える。
-const bundledTimelinePhotos = Object.freeze({});
-function placePhoto(key,alt){
-  const placeholder=node('div','photo-pending');
-  placeholder.setAttribute('role','img');
-  placeholder.setAttribute('aria-label',alt||'写真は学校の確認後に掲載します');
-  placeholder.append(node('span','','写真は確認後に掲載'));
-  return placeholder;
+// 元写真の出典とCCライセンスを確認できた画像だけを表示する。
+function approvedPhotoMeta(key){
+  const meta=venuePhotos[key];
+  return meta && !meta.permissionPending &&
+    typeof meta.url==='string' && meta.url.startsWith('https://upload.wikimedia.org/') &&
+    meta.source && meta.license ? meta : null;
 }
+function photoFallback(alt){
+  const fallback=node('div','photo-pending');
+  fallback.setAttribute('role','img');
+  fallback.setAttribute('aria-label',alt||'写真を表示できません');
+  fallback.append(node('span','','写真を表示できません'));
+  return fallback;
+}
+function placePhoto(key,alt){
+  const meta=approvedPhotoMeta(key);
+  if(!meta)return photoFallback(alt);
+  const img=node('img','venue-photo');
+  img.src=meta.url;
+  img.alt=alt||meta.label;
+  img.loading='lazy';img.decoding='async';img.referrerPolicy='no-referrer';
+  img.addEventListener('error',()=>{
+    const frame=img.closest('.destination-card,.hotel-photo-holder,.route-event');
+    if(frame?.classList.contains('destination-card')){
+      frame.classList.remove('with-photo');
+      frame.classList.add('no-photo');
+      img.closest('.destination-media')?.remove();
+    }else if(frame?.classList.contains('route-event')){
+      frame.classList.remove('has-photo');
+      img.remove();
+    }else{
+      img.replaceWith(photoFallback(alt));
+    }
+  },{once:true});
+  return img;
+}
+document.addEventListener('error',event=>{
+  const target=event.target;
+  if(!(target instanceof HTMLImageElement)||!target.matches('.editorial-scene'))return;
+  const frame=target.closest('.editorial-photo');
+  frame?.classList.add('image-load-failed');
+  target.remove();
+},true);
 
 const externalLink=(text,url)=>{
   const a=node('a','',text);a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.referrerPolicy='no-referrer';return a;
 };
 
 function renderCredits(){
-  const host=$('#credits-list');if(!host)return;
-  // 公開サイトには提供された画像の著作者や再利用条件を推定で記載しない。
+  const footer=$('.site-footer .footer-inner');
+  if(!footer)return;
+  let host=$('#credits-list',footer);
+  if(!host){
+    const details=node('details','editorial-photo-credits');
+    details.append(node('summary','','写真の出典・ライセンス'));
+    host=node('div','credits-list');host.id='credits-list';
+    details.append(host);
+    footer.insertBefore(details,footer.querySelector('.legal-note'));
+  }
+  host.replaceChildren();
   for(const meta of Object.values(venuePhotos)){
+    if(meta.permissionPending)continue;
     const p=node('p','credit');
-    if(meta.permissionPending){
-      p.append(document.createTextNode(meta.label+' — '+meta.author+'／著作者・転載条件：'+meta.license+'（公開前に要確認） · '));
-      p.append(externalLink(meta.sourceType==='official'?'公式掲載画像':'提供された縮小画像',meta.source));
-    }else{
-      p.append(document.createTextNode(meta.label+'（'+meta.year+'撮影） — '+meta.author+' / '));
-      p.append(externalLink(meta.license,meta.licenseUrl));
-      p.append(document.createTextNode(' · '));
-      p.append(externalLink('原典',meta.source));
-    }
+    p.append(document.createTextNode(meta.label+'（'+meta.year+'撮影） — '+meta.author+' / '));
+    p.append(externalLink(meta.license,meta.licenseUrl));
+    p.append(document.createTextNode(' · '));
+    p.append(externalLink('写真の原典',meta.source));
     host.append(p);
   }
-  host.append(node('p','credit','ユーザー提供のGoogle画像6点は行程との対応が未確認の仮配置です。施設そのものを撮影したと保証するものではありません。画像の掲載・転載許可を確認してから公開してください。'));
-  host.append(node('p','credit','画像は表示用にトリミングしています。CC BY-SA画像の再利用には原ライセンス条件が適用されます。'));
+  host.append(node('p','credit','表示用に画像をトリミングしています。CC BY-SA作品の利用にはリンク先の原ライセンス条件が適用されます。'));
+  host.append(node('p','credit','提供された画像検索の写真は撮影場所と利用条件が未確認のため、公開画面では使用していません。'));
 }
 
 // HTML文字列ではなくテキストノードを作るため、お知らせにHTML文字列があっても実行されません。
@@ -146,7 +185,7 @@ function hasImage(event){
   if(!key)return null;
   // ANA便や昼食など、行程に対応した写真がある場合は種類に関わらず掲載。
   if(event.type==='travel' && !/ANA53|ANA68|空港|飛行機|航空機/.test(event.title))return null;
-  return key;
+  return approvedPhotoMeta(key)?key:null;
 }
 function renderTimeline(day,course){
   const wrapper=node('div','timeline-wrapper');
@@ -230,7 +269,7 @@ function renderTimeline(day,course){
     const transport=transportFor(event);
     // 移動は画像カードではなく、所要時間に比例する棒で表す。
     const isPoint=event.start===event.end;
-    const key=null; // Approved photographs can be added after school approval.
+    const key=!isPoint && !transport && w>=150 ? hasImage(event) : null;
     const showScene=false;
     const pointX=(minOf(event.start)-minOf(day.start))*timelineRate;
     const pointRow=isPoint && pointX-pointRows[0]<pointWidth ? 1 : 0;
@@ -317,7 +356,13 @@ function renderPlaces(course){
   details.append(node('summary','','訪問先と補足'));
   const grid=node('div','destination-grid');
   course.places.forEach(place=>{
-    const card=node('article','destination-card no-photo');
+    const meta=approvedPhotoMeta(place.photo);
+    const card=node('article','destination-card '+(meta?'with-photo':'no-photo'));
+    if(meta){
+      const media=node('div','destination-media');
+      media.append(placePhoto(place.photo,meta.label+'の写真'));
+      card.append(media);
+    }
     const copy=node('div','destination-copy');
     copy.append(node('h4','',place.name),node('p','',place.desc));
     card.append(copy);

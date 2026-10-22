@@ -452,3 +452,65 @@ html{scroll-behavior:auto!important}
   .day-fact .small-map-link,
   .day-fact .day-hotel-notes{margin-right:5px;padding:9px 11px;font-size:11px}
 }
+
+
+/* Editorial travel photography — deliberate placements, solid backgrounds. */
+.editorial-photo{position:relative;overflow:hidden;background:linear-gradient(145deg,#9dbbc9,#d9e6ea)}
+.editorial-photo img{display:block;width:100%;height:100%;object-fit:cover}
+.home-feature-photo{
+  grid-column:1/-1;min-width:0;height:clamp(215px,26vw,315px);
+  margin:0;border-radius:15px;isolation:isolate;
+}
+.home-feature-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,35,52,.62),rgba(11,35,52,.08) 75%);pointer-events:none}
+.home-feature-photo figcaption{position:absolute;left:clamp(20px,4vw,48px);bottom:26px;z-index:1;display:flex;flex-direction:column;gap:5px;color:#fff}
+.home-feature-photo figcaption span{font-size:10px;letter-spacing:.22em;font-weight:900}
+.home-feature-photo figcaption strong{font-size:clamp(25px,3.5vw,40px);font-weight:900;line-height:1.3}
+.home-feature-photo figcaption small{font-size:10px;color:#edf5f7;font-weight:700}
+.home-day-link{padding:12px 15px;gap:13px;min-height:106px}
+.home-day-count{flex-basis:31px}
+.home-day-photo{flex:0 0 104px;width:104px;height:82px;border-radius:9px}
+.home-day-photo img{object-position:center}
+.day-hero{align-items:center}
+.day-hero-photo{flex:0 0 min(38%,315px);height:166px;margin:0;border-radius:12px;isolation:isolate}
+.day-hero-photo .day-hero-index{
+ position:absolute;right:13px;bottom:8px;color:#fff;font-size:clamp(43px,5.5vw,72px);
+ text-shadow:0 2px 15px rgba(0,0,0,.55);z-index:1;
+}
+.day-schedule-section .destination-card.with-photo{
+ display:grid;grid-template-columns:170px minmax(0,1fr);padding:0;
+ min-height:148px;border-color:#dce6e9;background:#fff;
+}
+.day-schedule-section .destination-card .destination-media{position:relative;min-width:0;overflow:hidden;min-height:148px}
+.day-schedule-section .destination-card .destination-media img{
+ position:static;inset:auto;z-index:auto;width:100%;height:100%;object-fit:cover;
+}
+.day-schedule-section .destination-card.with-photo .destination-copy{align-self:center;padding:18px 21px}
+.day-schedule-section .destination-card.no-photo{display:block}
+.hotel-photo-holder>.venue-photo{width:100%;height:225px;object-fit:cover}
+.editorial-photo-credits{margin:10px 0 15px;padding:11px 0;border-top:1px solid #d2dfe4;color:#506f7b}
+.editorial-photo-credits summary{width:fit-content;cursor:pointer;font-size:11px;font-weight:850;color:#34677d}
+.editorial-photo-credits .credits-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 19px;margin-top:14px;font-size:10px;line-height:1.65}
+.editorial-photo-credits .credit{margin:0;min-width:0;overflow-wrap:anywhere}
+.editorial-photo-credits a{color:#246580;text-decoration:underline;text-underline-offset:2px}
+@media(max-width:680px){
+ .home-feature-photo{height:205px;border-radius:12px}
+ .home-feature-photo figcaption{left:20px;bottom:17px}
+ .home-day-link{padding:8px 12px;gap:10px;min-height:80px}
+ .home-day-count{flex-basis:29px}
+ .home-day-photo{flex-basis:86px;width:86px;height:64px;border-radius:7px}
+ .home-day-text strong{font-size:15px}
+ .home-day-arrow{font-size:15px}
+ .day-hero{align-items:flex-start;flex-wrap:wrap}
+ .day-hero-photo{flex:0 0 100%;width:100%;height:160px}
+ .day-hero-photo .day-hero-index{font-size:60px}
+ .day-schedule-section .destination-card.with-photo{grid-template-columns:116px minmax(0,1fr);min-height:120px}
+ .day-schedule-section .destination-card .destination-media{min-height:120px}
+ .day-schedule-section .destination-card.with-photo .destination-copy{padding:12px}
+ .day-schedule-section .destination-card .destination-copy h4{font-size:13px}
+ .day-schedule-section .destination-card .destination-copy p{font-size:11px}
+ .hotel-photo-holder>.venue-photo{height:190px}
+ .editorial-photo-credits .credits-list{grid-template-columns:1fr}
+}
+@media print{
+ .editorial-photo-credits{display:none}
+}

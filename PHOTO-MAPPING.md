@@ -27,3 +27,8 @@
 `trip-data.js` 冒頭の `userSubmittedPhotos` のキー（`airport`, `otaru`, `glass`, `lake`, `jigokudani`, `shiroi`, `music`）に指定されている `url` を編集してください。
 
 アップロード後、GitHub Pagesのサイトを強制再読み込みしてください（Ctrl + Shift + R）。
+
+## 公開デザインの風景写真（2026-10-23）
+サイトのトップビジュアル・日程サムネイル・日別ヘッダー・訪問先・宿泊先には、原典とライセンスを確認できたWikimedia Commonsの写真を掲載しています。作者名・原典・ライセンスはサイト下部の「写真の出典・ライセンス」に表示します。見やすさのためCSSの object-fit: cover でトリミングしています。
+
+Google画像検索サムネイルおよび施設公式画像の転載許諾は確認できないため、`userSubmittedPhotos` は公開用 `venuePhotos` に追加しません。訪問先・実施内容が未確定の箇所には実施設であると断定する写真を入れません。

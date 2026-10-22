@@ -109,8 +109,8 @@
       if(name==='index.html'&&typeof window.HOKKAIDO_NEWS_API_URL!=='string')
         await js('admin-config.js','20261021-worker-connected-1');
       if(typeof window.HOKKAIDO_REINIT_PUBLIC_PAGE!=='function'){
-        await js('trip-data.js','20261023-focus-v2');
-        await js('app.js','20261023-focus-v4');
+        await js('trip-data.js','20261023-photo-layout-v1');
+        await js('app.js','20261023-photo-layout-v1');
       }else if(!item.ready){
         window.HOKKAIDO_REINIT_PUBLIC_PAGE();
       }

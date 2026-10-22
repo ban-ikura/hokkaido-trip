@@ -190,7 +190,8 @@ const userSubmittedPhotos = {
     "usage": "公式サイト掲載画像。転載許諾は未確認"
   }
 };
-Object.assign(venuePhotos,userSubmittedPhotos);
+// 権利・撮影場所が未確認の提供画像は公開画面に反映しない。
+// 検証済みのWikimedia Commons画像のみvenuePhotosに残す。
 
 function getPhotoKey(title){
  if(/ヒルトンニセコ/.test(title))return 'hilton';
