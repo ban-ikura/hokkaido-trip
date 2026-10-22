@@ -13,6 +13,15 @@
   const setupStatus=document.querySelector('#setup-status');
   const publishedLink=document.querySelector('#published-link');
   const logout=document.querySelector('#logout-button');
+  const managementTabs={
+    news:document.querySelector('#admin-tab-news'),
+    photos:document.querySelector('#admin-tab-photos')
+  };
+  const managementPanels={
+    news:document.querySelector('#admin-news-panel'),
+    photos:document.querySelector('#admin-photos-panel')
+  };
+  let activeManagementTab='news';
   let accessToken='';
   let expiresAt=0;
   let photoFilter='pending';
@@ -46,6 +55,7 @@
     status(postStatus,'','');
     clearPhotoPreviews();
     document.querySelector('#photo-mod-list').replaceChildren();
+    switchManagementTab('news');
   }
   function showPost(){
     passwordInput.value='';
@@ -53,8 +63,8 @@
     postPanel.hidden=false;
     status(loginStatus,'','');
     status(postStatus,'','');
+    switchManagementTab('news');
     document.querySelector('#notice-title').focus();
-    loadModeration();
   }
   async function readResponse(response){
     let data;
@@ -136,6 +146,40 @@
       publishButton.disabled=false;
     }
   });
+
+  /* 上位タブ：お知らせ投稿／写真承認。どちらも同じ認証セッションを利用する。 */
+  function switchManagementTab(name,focusTab=false){
+    if(name!=='news'&&name!=='photos')return;
+    const previous=activeManagementTab;
+    activeManagementTab=name;
+    for(const key of ['news','photos']){
+      const selected=key===name;
+      managementTabs[key].classList.toggle('is-active',selected);
+      managementTabs[key].setAttribute('aria-selected',String(selected));
+      managementTabs[key].tabIndex=selected?0:-1;
+      managementPanels[key].hidden=!selected;
+    }
+    if(previous==='photos'&&name!=='photos'){
+      clearPhotoPreviews();
+      modList.replaceChildren();
+    }
+    if(name==='photos'&&previous!=='photos'&&accessToken)loadModeration();
+    if(focusTab)managementTabs[name].focus();
+  }
+  const managementKeys=['news','photos'];
+  for(const [index,key] of managementKeys.entries()){
+    managementTabs[key].addEventListener('click',()=>switchManagementTab(key));
+    managementTabs[key].addEventListener('keydown',event=>{
+      let target=-1;
+      if(event.key==='ArrowRight')target=(index+1)%managementKeys.length;
+      if(event.key==='ArrowLeft')target=(index+managementKeys.length-1)%managementKeys.length;
+      if(event.key==='Home')target=0;
+      if(event.key==='End')target=managementKeys.length-1;
+      if(target<0)return;
+      event.preventDefault();
+      switchManagementTab(managementKeys[target],true);
+    });
+  }
 
   /* 生徒写真の承認画面。ログイン時の同じ署名付きトークンを利用する。 */
   const modStatus=document.querySelector('#photo-mod-status');
