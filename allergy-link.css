@@ -53,3 +53,70 @@
 @media(prefers-reduced-motion:reduce){
   .allergy-card .allergy-pdf-link{transition:none}
 }
+
+/* タップ可能な食事別PDFリンク */
+.allergy-document-links{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin:16px 0 20px;
+}
+.allergy-document-links a{
+  min-width:0;min-height:82px;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:3px;
+  padding:14px 15px 14px 17px;
+  color:#24485e;
+  text-decoration:none;
+  border:1px solid #d2e7f0;
+  border-radius:13px;
+  background:#f7fcff;
+  box-shadow:0 5px 16px rgba(19,74,101,.045);
+  transition:background .18s,border-color .18s,transform .18s,box-shadow .18s;
+}
+.allergy-document-links a::before{
+  content:"";
+  position:absolute;
+  width:3px;
+  inset:13px auto 13px 0;
+  border-radius:0 3px 3px 0;
+  background:#4bafd2;
+}
+.allergy-document-links a:hover{
+  transform:translateY(-2px);
+  background:#ebf9ff;
+  border-color:#79c1de;
+  box-shadow:0 10px 22px rgba(16,80,113,.12);
+}
+.allergy-document-links a>span:first-child{
+  font-size:10px;
+  font-weight:750;
+  color:#6c8897;
+}
+.allergy-document-links a>strong{
+  font-size:13px;
+  line-height:1.4;
+  color:#144b68;
+  font-weight:850;
+}
+.allergy-document-links a>span:last-child{
+  font-size:10px;
+  color:#2586a8;
+  font-weight:900;
+  align-self:flex-end;
+  margin-top:2px;
+}
+@media(max-width:540px){
+  .allergy-document-links{gap:8px}
+  .allergy-document-links a{padding:12px 10px 11px 13px;min-height:88px}
+  .allergy-document-links a>strong{font-size:12px}
+}
+@media(max-width:370px){
+  .allergy-document-links{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  .allergy-document-links a{transition:none}
+}
