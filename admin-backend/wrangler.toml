@@ -9,9 +9,6 @@ binding = "DB"
 database_name = "hokkaido-trip-news"
 database_id = "REPLACE_WITH_D1_DATABASE_UUID"
 
-# DashboardでR2バインディングを設定する場合も変数名は PHOTOS。
-[[r2_buckets]]
-binding = "PHOTOS"
-bucket_name = "hokkaido-trip-photos"
-
-# STUDENT_UPLOAD_CODE / ADMIN_PASSWORD / SESSION_SECRET は Cloudflare Secret に保存。
+# 写真は既存D1のphoto_imagesテーブルに小容量BLOBとして保存します。
+# PHOTOS(R2)バインディングは不要です。
+# TURNSTILE_SECRET、ADMIN_PASSWORD、SESSION_SECRET はCloudflare Secretにのみ保存。
