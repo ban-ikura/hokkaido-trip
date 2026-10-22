@@ -147,14 +147,15 @@ async function postAnnouncement(request,env){
   ).bind(id,date,title,body,data.important?1:0,createdAt).run();
   return json({ok:true,id,date,title},201,request);
 }
-/* --- 生徒写真: 非公開R2、承認制、Turnstile、サーバー側のアクセス制御 --- */
-const PHOTO_LIMIT_BYTES = 5 * 1024 * 1024;
+/* --- 生徒写真: D1 BLOB小容量保存、承認制、Turnstile、サーバー側のアクセス制御 --- */
+// Free D1での運用向け: 投稿写真は最大300KB、写真専用行にBLOBで保存。
+const PHOTO_LIMIT_BYTES = 300000;
 const PHOTO_WINDOW_SECONDS = 60 * 60;
 const PHOTO_MAX_ATTEMPTS = 20;
 const PHOTO_ID_PATTERN = '[0-9a-f-]{36}';
 
 function photoReady(env) {
-  return !!(env.DB && env.PHOTOS && typeof env.TURNSTILE_SECRET === 'string' &&
+  return !!(env.DB && typeof env.TURNSTILE_SECRET === 'string' &&
     env.TURNSTILE_SECRET.length >= 12 && env.SESSION_SECRET && env.SESSION_SECRET.length >= 32);
 }
 function photoError(request) {
@@ -192,14 +193,14 @@ async function photoImage(request,env,id,requiresAdmin) {
   if(requiresAdmin && !await adminAuthorized(request,env)){
     return json({error:'ログインが必要です。'},401,request);
   }
+  // 画像バイナリを返すSQLでも承認状態を確認し、未承認の写真の直接公開を拒否。
   const row=await env.DB.prepare(
-    'SELECT object_key,status FROM photo_submissions WHERE id=?'
+    "SELECT pi.data AS data FROM photo_images pi JOIN photo_submissions ps "+
+    "ON ps.id=pi.id WHERE ps.id=? AND ps.status IN ("+
+    (requiresAdmin?"'pending','approved'":"'approved'")+")"
   ).bind(id).first();
-  if(!row || (requiresAdmin?row.status==='rejected':row.status!=='approved')){
-    return json({error:'Not found'},404,request);
-  }
-  const object=await env.PHOTOS.get(row.object_key);
-  if(!object || !object.body)return json({error:'Not found'},404,request);
+  if(!row||!Array.isArray(row.data)||row.data.length<32||
+     row.data.length>PHOTO_LIMIT_BYTES)return json({error:'Not found'},404,request);
   const headers=new Headers({
     'Content-Type':'image/webp', 'X-Content-Type-Options':'nosniff',
     'Content-Security-Policy':"default-src 'none'; sandbox",
@@ -210,7 +211,7 @@ async function photoImage(request,env,id,requiresAdmin) {
     headers.set('Access-Control-Allow-Origin',SITE_ORIGIN);
     headers.set('Vary','Origin');
   }
-  return new Response(object.body,{status:200,headers});
+  return new Response(new Uint8Array(row.data),{status:200,headers});
 }
 async function adminPhotos(request,env,status) {
   if(!photoReady(env))return photoError(request);
@@ -247,15 +248,14 @@ async function moderatePhoto(request,env,id,action){
     if((result.meta?.changes||0)!==1)return json({error:'処理済みです。'},409,request);
     return json({ok:true},200,request);
   }
-  // 掲載取り消し／却下した画像は、データベースで非公開にしてからR2から削除する。
+  // 却下・掲載取り消しは、状態変更後にD1から写真データを削除する。
   const result=await env.DB.prepare(
     "UPDATE photo_submissions SET status='rejected',reviewed_at=? "+
     "WHERE id=? AND status=?"
   ).bind(at,id,wanted).run();
   if((result.meta?.changes||0)!==1)return json({error:'処理済みです。'},409,request);
-  try{await env.PHOTOS.delete(row.object_key)}catch{
-    // R2バケットは非公開のため削除エラーでも画像が一般公開されることはない。
-  }
+  // 削除の途中で失敗しても、承認状態がrejectedなら画像取得APIは拒否する。
+  await env.DB.prepare('DELETE FROM photo_images WHERE id=?').bind(id).run();
   return json({ok:true},200,request);
 }
 async function uploadQuota(request,env){
@@ -336,21 +336,19 @@ async function submitPhoto(request,env){
   if(permission!=='yes')return json({error:'顔写真禁止と投稿ルールを確認して同意してください。'},400,request);
   if(!file || typeof file.arrayBuffer!=='function' || file.type!=='image/webp' ||
      file.size>PHOTO_LIMIT_BYTES || file.size<32){
-    return json({error:'WebP形式で5MB以下の画像を選択してください。'},400,request);
+    return json({error:'写真を300KB以下のWebPに圧縮して送信してください。'},400,request);
   }
   const bytes=new Uint8Array(await file.arrayBuffer());
   if(!simpleWebp(bytes))return json({error:'画像を確認できません。別の写真をお試しください。'},400,request);
-  const id=crypto.randomUUID(),key='pending/'+id+'.webp';
-  await env.PHOTOS.put(key,bytes,{httpMetadata:{contentType:'image/webp'}});
-  try {
-    await env.DB.prepare(
+  const id=crypto.randomUUID(),key='d1/'+id+'.webp';
+  // D1 batchはトランザクション。画像と投稿記録を一緒に保存する。
+  await env.DB.batch([
+    env.DB.prepare(
       "INSERT INTO photo_submissions(id,object_key,nickname,caption,status,created_at) "+
       "VALUES(?,?,?,?,'pending',?)"
-    ).bind(id,key,nickname.trim(),caption.trim(),new Date().toISOString()).run();
-  }catch(error){
-    await env.PHOTOS.delete(key);
-    throw error;
-  }
+    ).bind(id,key,nickname.trim(),caption.trim(),new Date().toISOString()),
+    env.DB.prepare('INSERT INTO photo_images(id,data) VALUES(?,?)').bind(id,bytes)
+  ]);
   return json({ok:true,message:'管理者の承認待ちです。承認後に写真一覧へ表示されます。'},201,request);
 }
 
