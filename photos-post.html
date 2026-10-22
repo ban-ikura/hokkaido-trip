@@ -8,7 +8,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self'; img-src 'self' blob:; connect-src 'self' https://*.workers.dev https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
 <title>写真を投稿｜北海道研修旅行 2026</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="photos.css?v=20261022-gallery-separate-2">
+<link rel="stylesheet" href="photos.css?v=20261022-rules-collapsed-1">
 <script src="admin-config.js?v=20261021-worker-connected-1" defer></script>
 <script src="photos-config.js?v=20261022-nocode-1" defer></script>
 <script src="photos-submit.js?v=20261022-gallery-separate-2" defer></script>
@@ -49,19 +49,29 @@
     </section>
     <aside class="post-side" aria-labelledby="rules-heading">
       <div class="rules-panel">
-        <div class="rules-icon" aria-hidden="true">!</div>
-        <p class="section-kicker">IMPORTANT / POSTING RULES</p>
-        <h2 id="rules-heading">安心して楽しむために</h2>
-        <p class="rule-emphasis">顔写真は投稿禁止です。</p>
-        <p class="rules-lead">顔が小さく写っている場合や、鏡・ガラスへの映り込みも投稿しないでください。</p>
-        <ul class="rules-list">
-          <li><strong>個人を特定できる情報は禁止</strong><span>氏名、制服の名札、学生証、部屋番号、住所、連絡先、車のナンバーなど。</span></li>
-          <li><strong>人を傷つける行為は禁止</strong><span>いじめ、悪口、差別、からかい、無断撮影、嫌がらせ。</span></li>
-          <li><strong>危険・迷惑行為は禁止</strong><span>ルール違反、危ない行動、周囲の人の迷惑になる行為。</span></li>
-          <li><strong>無断転載・権利侵害は禁止</strong><span>他人の作品やSNSのスクリーンショット、許可のない画像。</span></li>
-          <li><strong>コメントにも配慮する</strong><span>個人情報や攻撃的な文章、憶測、デマを載せない。</span></li>
-        </ul>
-        <div class="rules-tip"><strong>おすすめの写真</strong><p>雪景色、風景、街並み、料理、お土産、建物など、人の顔が写っていない思い出。</p></div>
+        <details class="rules-disclosure">
+          <summary class="rules-summary">
+            <span class="rules-summary-icon" aria-hidden="true">!</span>
+            <span class="rules-summary-copy">
+              <span class="rules-summary-kicker">投稿前に確認</span>
+              <strong id="rules-heading">投稿の注意事項</strong>
+              <span class="rules-summary-note">顔写真・個人情報は投稿禁止</span>
+            </span>
+            <span class="rules-summary-action" aria-hidden="true"><span class="rules-action-open">詳細を見る</span><span class="rules-action-close">閉じる</span><span class="rules-summary-arrow">⌄</span></span>
+          </summary>
+          <div class="rules-content">
+            <p class="rule-emphasis">顔写真は投稿禁止です。</p>
+            <p class="rules-lead">顔が小さく写っている場合や、鏡・ガラスへの映り込みも投稿しないでください。</p>
+            <ul class="rules-list">
+              <li><strong>個人を特定できる情報は禁止</strong><span>氏名、制服の名札、学生証、部屋番号、住所、連絡先、車のナンバーなど。</span></li>
+              <li><strong>人を傷つける行為は禁止</strong><span>いじめ、悪口、差別、からかい、無断撮影、嫌がらせ。</span></li>
+              <li><strong>危険・迷惑行為は禁止</strong><span>ルール違反、危ない行動、周囲の人の迷惑になる行為。</span></li>
+              <li><strong>無断転載・権利侵害は禁止</strong><span>他人の作品やSNSのスクリーンショット、許可のない画像。</span></li>
+              <li><strong>コメントにも配慮する</strong><span>個人情報や攻撃的な文章、憶測、デマを載せない。</span></li>
+            </ul>
+            <div class="rules-tip"><strong>おすすめの写真</strong><p>雪景色、風景、街並み、料理、お土産、建物など、人の顔が写っていない思い出。</p></div>
+          </div>
+        </details>
       </div>
       <div class="how-it-works"><span>投稿の流れ</span><p><b>写真を送る</b> <span>→</span> <b>管理者が確認</b> <span>→</span> <b>承認後に公開</b></p><small>投稿しただけでは公開されません。承認されない場合もあります。</small></div>
     </aside>
