@@ -412,3 +412,43 @@ body[data-photo-page="post"] .how-it-works{box-shadow:none}
  .packing-disclosure .checklist-grid{grid-template-columns:1fr}
  body[data-photo-page="post"] .post-main{margin-top:14px}
 }
+
+
+/* Immediate navigation, direct hotel maps and minimal feedback motion. */
+html{scroll-behavior:auto!important}
+.day-fact .small-map-link,
+.day-fact .day-hotel-notes{
+  display:inline-flex;
+  align-items:center;
+  margin-top:12px;
+  margin-right:8px;
+  min-height:41px;
+  padding:10px 13px;
+  border:1px solid #bfd5df;
+  border-radius:9px;
+  background:#eef6f8;
+  color:#1f5e79;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.4;
+}
+.day-fact .day-hotel-notes{
+  background:#fff;
+  border-color:#d8e5e9;
+  color:#446777;
+}
+.day-fact .small-map-link:hover,
+.day-fact .day-hotel-notes:hover{
+  background:#e0eef2;
+  border-color:#a5c9d8;
+}
+.day-fact .small-map-link:focus-visible,
+.day-fact .day-hotel-notes:focus-visible{
+  outline:2px solid #3f9ac0;
+  outline-offset:2px;
+}
+@media(max-width:420px){
+  .day-fact .small-map-link,
+  .day-fact .day-hotel-notes{margin-right:5px;padding:9px 11px;font-size:11px}
+}
