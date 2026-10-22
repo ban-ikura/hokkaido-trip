@@ -353,3 +353,99 @@ body[data-photo-page="gallery"] .album-notice{
 @media(prefers-reduced-motion:reduce){
   body[data-photo-page="gallery"] .photo-card{transition:none}
 }
+
+
+/* Matching photo-submission experience: cleaner form and mobile rhythm. */
+body[data-photo-page="post"]{
+  background:
+    radial-gradient(ellipse at 72% -10%,rgba(104,197,231,.18),transparent 44%),
+    linear-gradient(160deg,#081c31,#14415c 55%,#1b5770);
+}
+body[data-photo-page="post"] .photos-header{
+  border-bottom:1px solid rgba(196,233,251,.2);
+  max-width:1110px;
+}
+body[data-photo-page="post"] .photos-main{
+  width:min(1060px,calc(100% - 34px));
+  margin-top:22px;
+}
+body[data-photo-page="post"] .post-intro{
+  padding:24px 6px 29px;
+}
+body[data-photo-page="post"] .post-intro .eyebrow{
+  letter-spacing:.19em;
+  color:#a6e6fd;
+}
+body[data-photo-page="post"] .post-intro h1{
+  font-weight:900;
+  letter-spacing:-.065em;
+  line-height:1.2;
+  margin:13px 0 0;
+}
+body[data-photo-page="post"] .post-columns{gap:20px}
+body[data-photo-page="post"] .post-form-panel,
+body[data-photo-page="post"] .rules-panel,
+body[data-photo-page="post"] .how-it-works{
+  background:linear-gradient(165deg,#fff,#f7fcff);
+  border:1px solid rgba(241,252,255,.92);
+  box-shadow:0 22px 46px rgba(2,19,35,.19);
+  border-radius:21px;
+}
+body[data-photo-page="post"] .post-form-panel{padding:clamp(20px,3.4vw,34px)}
+body[data-photo-page="post"] .post-form-panel h2{font-weight:900}
+body[data-photo-page="post"] .upload-field{
+  border-radius:16px;
+  border:2px dashed #9ccfe5;
+  background:linear-gradient(145deg,#f0faff,#e3f5fc);
+  min-height:124px;
+  transition:background .2s,border-color .2s;
+}
+body[data-photo-page="post"] .upload-field:hover{
+  background:#e5f7ff;
+  border-color:#52a9d0;
+}
+body[data-photo-page="post"] #photo-form input:not([type="checkbox"]),
+body[data-photo-page="post"] #photo-form textarea{
+  border:1px solid #c5dce9;
+  border-radius:13px;
+  background:#fcfeff;
+}
+body[data-photo-page="post"] #photo-form input:focus-visible,
+body[data-photo-page="post"] #photo-form textarea:focus-visible{
+  border-color:#439dcc;
+  outline:3px solid rgba(53,167,213,.2);
+  outline-offset:1px;
+}
+body[data-photo-page="post"] .agree{
+  background:#f1f9fc;
+  border:1px solid #daeaf2;
+  border-radius:13px;
+  padding:12px 13px;
+}
+body[data-photo-page="post"] .primary-submit{
+  min-height:52px;
+  border-radius:13px;
+  font-weight:900;
+  background:linear-gradient(115deg,#156e93,#114663);
+  box-shadow:0 12px 24px rgba(8,59,89,.16);
+}
+body[data-photo-page="post"] .rules-summary{
+  border-radius:18px;
+}
+body[data-photo-page="post"] .how-it-works{
+  background:linear-gradient(135deg,#eaf8fd,#fff);
+}
+@media(max-width:760px){
+  body[data-photo-page="post"] .photos-main{width:calc(100% - 24px);margin-top:11px}
+  body[data-photo-page="post"] .post-intro{padding:19px 3px 24px}
+  body[data-photo-page="post"] .post-intro h1{font-size:clamp(29px,8vw,40px)}
+  body[data-photo-page="post"] .post-form-panel,
+  body[data-photo-page="post"] .rules-panel,
+  body[data-photo-page="post"] .how-it-works{border-radius:17px}
+  body[data-photo-page="post"] .post-columns{gap:14px}
+  body[data-photo-page="post"] .post-form-panel{padding:20px 16px}
+  body[data-photo-page="post"] .upload-field{min-height:114px}
+}
+@media(prefers-reduced-motion:reduce){
+  body[data-photo-page="post"] .upload-field{transition:none}
+}
