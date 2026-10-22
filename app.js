@@ -448,6 +448,19 @@ function renderHotelImages(){
   });
 }
 renderCredits();renderHotelImages();renderSchedule();renderChecklist();renderNextSchedule();loadAnnouncements();
+// When a public tab is first loaded by the same-document router, hydrate
+// its locally rendered sections without rerunning this large data bundle.
+window.HOKKAIDO_REINIT_PUBLIC_PAGE=function(){
+  const host=document.querySelector('main');
+  if(!host)return;
+  renderCredits();
+  if(host.querySelector('[data-venue-photo]'))renderHotelImages();
+  if(host.querySelector('#schedule-root'))renderSchedule();
+  if(host.querySelector('#checklist-root'))renderChecklist();
+  if(host.querySelector('#next-schedule'))renderNextSchedule();
+  if(host.querySelector('#announcement-list'))loadAnnouncements();
+};
+
 if($('#next-schedule'))setInterval(renderNextSchedule,60_000);
 
 /* Scroll-triggered reveal: progressively enhanced, reduced-motion aware. */
