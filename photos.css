@@ -138,3 +138,71 @@ input::placeholder,textarea::placeholder{color:#9aabb4}
 }
 @media(max-width:390px){.photos-brand{font-size:11px;letter-spacing:.07em}.photos-back,.photos-header-link{font-size:11px}.hero-date{display:none}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+
+
+/* 投稿ルールは初期状態で折りたたむ。要点は常時表示、全文は詳細ボタンから。 */
+body[data-photo-page="post"] .rules-panel{padding:0;overflow:hidden}
+.rules-disclosure{color:#27485b}
+.rules-summary{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:16px 17px;
+  list-style:none;
+  cursor:pointer;
+  user-select:none;
+  transition:background .18s ease;
+}
+.rules-summary::-webkit-details-marker{display:none}
+.rules-summary::marker{content:""}
+.rules-summary:hover{background:#f1f8fc}
+.rules-summary:focus-visible{outline:3px solid #55b4d5;outline-offset:-4px;border-radius:16px}
+.rules-summary-icon{
+  flex:0 0 31px;
+  display:grid;
+  place-items:center;
+  width:31px;height:31px;
+  border-radius:9px;
+  background:#fff0e8;
+  color:#ab5634;
+  font-size:18px;
+  font-weight:900;
+}
+.rules-summary-copy{display:grid;gap:1px;flex:1;min-width:0}
+.rules-summary-kicker{color:#a56b43;font-size:10px;font-weight:850;line-height:1.35}
+.rules-summary-copy strong{font-size:15px;font-weight:900;line-height:1.4;color:#23485c}
+.rules-summary-note{font-size:11px;line-height:1.5;color:#9b4d38;font-weight:750}
+.rules-summary-action{
+  display:inline-flex;
+  align-items:center;
+  flex:0 0 auto;
+  gap:6px;
+  border-radius:100px;
+  background:#eaf5fb;
+  color:#1e6787;
+  padding:7px 9px;
+  font-size:11px;
+  line-height:1.4;
+  font-weight:850;
+}
+.rules-action-close{display:none}
+.rules-summary-arrow{font-size:19px;line-height:0.8;transform:translateY(-2px);transition:transform .18s}
+.rules-disclosure[open] .rules-action-open{display:none}
+.rules-disclosure[open] .rules-action-close{display:inline}
+.rules-disclosure[open] .rules-summary-arrow{transform:rotate(180deg) translateY(2px)}
+.rules-disclosure[open] .rules-summary{border-bottom:1px solid #e1edf2;background:#f7fbfd}
+.rules-content{padding:17px 19px 20px}
+.rules-content .rule-emphasis{font-size:15px;margin-bottom:10px}
+.rules-content .rules-list li:first-child{border-top:0}
+.rules-content .rules-tip{margin-top:14px}
+@media(max-width:760px){
+  .rules-summary{gap:10px;padding:13px 12px}
+  .rules-summary-copy strong{font-size:14px}
+  .rules-summary-action{font-size:10px;padding:7px 8px}
+  .rules-content{padding:13px 15px 18px}
+}
+@media(max-width:390px){
+  .rules-summary-note{font-size:10px}
+  .rules-summary{gap:8px}
+  .rules-summary-icon{width:27px;height:27px;flex-basis:27px}
+}
