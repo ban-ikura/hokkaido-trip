@@ -160,7 +160,11 @@
     const photoStyle=resource('link[rel="stylesheet"]','photos.css');
     if(photoStyle){
       photoStyle.media=name==='photos.html'?'all':'not all';
-      if(name==='photos.html')document.head.append(photoStyle);
+      if(name==='photos.html'){
+        document.head.append(photoStyle);
+        const theme=resource('link[rel="stylesheet"]','site-swipe.css');
+        if(theme)document.head.append(theme);
+      }
     }
     document.title=item.title;
     page=name;
