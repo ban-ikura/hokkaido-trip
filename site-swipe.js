@@ -88,8 +88,8 @@
   }
 
   async function prepare(name){
-    await css('style.css','20261023-focus-v1');
-    if(name==='photos.html')await css('photos.css','20261023-focus-v1');
+    await css('style.css','20261023-focus-v2');
+    if(name==='photos.html')await css('photos.css','20261023-focus-v2');
     if(name==='index.html')await css('photos-home.css','20261022-home-photo-post-2');
     if(name==='stay.html')await css('allergy-link.css','20261022-clickable-docs-2');
   }
@@ -104,8 +104,8 @@
       if(name==='index.html'&&typeof window.HOKKAIDO_NEWS_API_URL!=='string')
         await js('admin-config.js','20261021-worker-connected-1');
       if(typeof window.HOKKAIDO_REINIT_PUBLIC_PAGE!=='function'){
-        await js('trip-data.js','20261023-focus-v1');
-        await js('app.js','20261023-focus-v1');
+        await js('trip-data.js','20261023-focus-v2');
+        await js('app.js','20261023-focus-v2');
       }else if(!item.ready){
         window.HOKKAIDO_REINIT_PUBLIC_PAGE();
       }
