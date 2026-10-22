@@ -108,7 +108,7 @@
       if(typeof window.HOKKAIDO_NEWS_API_URL!=='string')
         await script('admin-config.js','20261021-worker-connected-1');
       if(!pack.initialized){
-        await script('photos-gallery.js','20261022-photos-overlay-1');
+        await script('photos-gallery.js','20261022-gallery-refresh-1');
       }else if(restoring && typeof window.HOKKAIDO_REFRESH_GALLERY==='function'){
         window.HOKKAIDO_REFRESH_GALLERY();
       }
@@ -116,7 +116,7 @@
       const initializedApp=typeof window.HOKKAIDO_REINIT_PUBLIC_PAGE==='function';
       if(!initializedApp){
         await script('trip-data.js','20261021-nihontravel-priority-r2');
-        await script('app.js','20261021-post-only-news-1');
+        await script('app.js','20261022-reinit-spa-1');
       }else if(!pack.initialized){
         window.HOKKAIDO_REINIT_PUBLIC_PAGE();
       }
@@ -124,7 +124,7 @@
         if(typeof window.HOKKAIDO_NEWS_API_URL!=='string')
           await script('admin-config.js','20261021-worker-connected-1');
         if(!pack.initialized){
-          await script('photos-home.js','20261022-photo-preview-1');
+          await script('photos-home.js','20261022-home-refresh-1');
         }else if(restoring && typeof window.HOKKAIDO_REFRESH_HOME_PHOTOS==='function'){
           window.HOKKAIDO_REFRESH_HOME_PHOTOS();
         }
