@@ -121,7 +121,7 @@
       const initializedApp=typeof window.HOKKAIDO_REINIT_PUBLIC_PAGE==='function';
       if(!initializedApp){
         await script('trip-data.js','20261021-nihontravel-priority-r2');
-        await script('app.js','20261022-reinit-spa-1');
+        await script('app.js','20261022-clean-labels-1');
       }else if(!pack.initialized){
         window.HOKKAIDO_REINIT_PUBLIC_PAGE();
       }
