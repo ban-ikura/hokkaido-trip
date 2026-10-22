@@ -425,6 +425,14 @@ window.HOKKAIDO_REINIT_PUBLIC_PAGE=function(){
   if(host.querySelector('#announcement-list'))loadAnnouncements();
 };
 
-if($('#next-schedule'))setInterval(renderNextSchedule,60_000);
+// Returning to the home tab must refresh live information, even when its DOM is cached.
+window.HOKKAIDO_REFRESH_PUBLIC_HOME=function(){
+  if($('#next-schedule'))renderNextSchedule();
+  if($('#announcement-list'))loadAnnouncements();
+};
+// Activate the clock on every entry page, not only when the initial document was home.
+setInterval(()=>{
+  if($('#next-schedule'))renderNextSchedule();
+},60_000);
 
 // Page content is immediately visible. Animations never hide or delay information.
