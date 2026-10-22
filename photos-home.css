@@ -101,3 +101,36 @@
 @media(prefers-reduced-motion:reduce){
   .home-photo-card{transition:none}
 }
+
+
+/* Photo submission action next to the heading (desktop and mobile). */
+.home-photo-title-row{
+  display:flex;align-items:center;gap:13px;flex-wrap:wrap;
+}
+.home-photo-title-row h2{margin:0}
+.home-photo-post{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  gap:8px;
+  padding:8px 14px;
+  min-height:39px;
+  border-radius:99px;
+  color:#092d45;
+  background:#d6f2ff;
+  border:1px solid rgba(255,255,255,.7);
+  font-size:12px;
+  font-weight:900;
+  white-space:nowrap;
+  box-shadow:0 5px 16px rgba(4,19,35,.15);
+  transition:transform .16s ease,background .16s ease;
+}
+.home-photo-post:hover{background:#fff;transform:translateY(-2px)}
+.home-photo-post span{font-size:19px;line-height:1}
+@media(max-width:520px){
+  .home-photo-title-row{gap:10px}
+  .home-photo-title-row h2{font-size:clamp(23px,6vw,29px)}
+  .home-photo-post{padding:7px 11px;font-size:11px;min-height:35px}
+}
+@media(prefers-reduced-motion:reduce){.home-photo-post{transition:none}}
