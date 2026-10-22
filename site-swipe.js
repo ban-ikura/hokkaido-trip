@@ -89,7 +89,12 @@
 
   async function prepare(name){
     await css('style.css','20261023-focus-v2');
-    if(name==='photos.html')await css('photos.css','20261023-focus-v2');
+    if(name==='photos.html'){
+      await css('photos.css','20261023-focus-v2');
+      // Keep the common minimal theme after the optional gallery stylesheet.
+      const theme=resource('link[rel="stylesheet"]','site-swipe.css');
+      if(theme)document.head.append(theme);
+    }
     if(name==='index.html')await css('photos-home.css','20261022-home-photo-post-2');
     if(name==='stay.html')await css('allergy-link.css','20261022-clickable-docs-2');
   }
