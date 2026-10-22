@@ -1,14 +1,27 @@
-/* 写真の承認専用画面。パスワードとセッショントークンは永続保存しない。 */
+/* 投稿専用管理画面。パスワードとセッショントークンは永続保存しない。 */
 (() => {
   'use strict';
   const loginPanel=document.querySelector('#login-panel');
   const postPanel=document.querySelector('#post-panel');
   const loginForm=document.querySelector('#login-form');
+  const postForm=document.querySelector('#post-form');
   const loginButton=document.querySelector('#login-button');
+  const publishButton=document.querySelector('#publish-button');
   const passwordInput=document.querySelector('#admin-password');
   const loginStatus=document.querySelector('#login-status');
+  const postStatus=document.querySelector('#post-status');
   const setupStatus=document.querySelector('#setup-status');
+  const publishedLink=document.querySelector('#published-link');
   const logout=document.querySelector('#logout-button');
+  const managementTabs={
+    news:document.querySelector('#admin-tab-news'),
+    photos:document.querySelector('#admin-tab-photos')
+  };
+  const managementPanels={
+    news:document.querySelector('#admin-news-panel'),
+    photos:document.querySelector('#admin-photos-panel')
+  };
+  let activeManagementTab='news';
   let accessToken='';
   let expiresAt=0;
   let photoFilter='pending';
@@ -34,18 +47,24 @@
   function showLogin(message,type){
     accessToken='';expiresAt=0;
     passwordInput.value='';
+    postForm.reset();
+    publishedLink.hidden=true;
     loginPanel.hidden=false;
     postPanel.hidden=true;
     status(loginStatus,message||'',type||'');
+    status(postStatus,'','');
     clearPhotoPreviews();
     document.querySelector('#photo-mod-list').replaceChildren();
+    switchManagementTab('news');
   }
   function showPost(){
     passwordInput.value='';
     loginPanel.hidden=true;
     postPanel.hidden=false;
     status(loginStatus,'','');
-    loadModeration();
+    status(postStatus,'','');
+    switchManagementTab('news');
+    document.querySelector('#notice-title').focus();
   }
   async function readResponse(response){
     let data;
@@ -89,6 +108,89 @@
       loginButton.disabled=false;
     }
   });
+  postForm.addEventListener('submit',async event=>{
+    event.preventDefault();
+    if(!postForm.reportValidity()||publishButton.disabled)return;
+    if(!accessToken||Math.floor(Date.now()/1000)>=expiresAt){
+      showLogin('ログインの有効期限が切れました。もう一度ログインしてください。','error');
+      return;
+    }
+    const title=document.querySelector('#notice-title').value.trim();
+    const body=document.querySelector('#notice-body').value.trim();
+    const important=document.querySelector('#notice-important').checked;
+    if(title.length<2||title.length>120||body.length<1||body.length>1500){
+      status(postStatus,'タイトル2〜120文字、本文1〜1500文字で入力してください。','error');
+      return;
+    }
+    publishButton.disabled=true;
+    publishedLink.hidden=true;
+    status(postStatus,'投稿中…','');
+    try{
+      const response=await fetch(api+'/api/announcements',{
+        method:'POST',mode:'cors',credentials:'omit',cache:'no-store',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+accessToken},
+        body:JSON.stringify({title,body,important})
+      });
+      const data=await readResponse(response);
+      if(data.ok!==true)throw new Error('投稿の確認に失敗しました。');
+      postForm.reset();
+      status(postStatus,'お知らせを投稿しました。','success');
+      publishedLink.hidden=false;
+    }catch(error){
+      if(error.status===401){
+        showLogin('ログインの有効期限が切れました。もう一度ログインしてください。','error');
+      }else{
+        status(postStatus,error instanceof TypeError?'通信できませんでした。通信状態をご確認ください。':error.message,'error');
+      }
+    }finally{
+      publishButton.disabled=false;
+    }
+  });
+
+  /* 上位タブ：お知らせ投稿／写真承認。どちらも同じ認証セッションを利用する。 */
+  function switchManagementTab(name,focusTab=false,swipeDirection=''){
+    if(name!=='news'&&name!=='photos')return;
+    const previous=activeManagementTab;
+    activeManagementTab=name;
+    for(const key of ['news','photos']){
+      const selected=key===name;
+      managementTabs[key].classList.toggle('is-active',selected);
+      managementTabs[key].setAttribute('aria-selected',String(selected));
+      managementTabs[key].tabIndex=selected?0:-1;
+      managementPanels[key].hidden=!selected;
+    }
+    if(previous==='photos'&&name!=='photos'){
+      clearPhotoPreviews();
+      modList.replaceChildren();
+    }
+    const newPanel=managementPanels[name];
+    newPanel.classList.remove('swipe-in-from-left','swipe-in-from-right');
+    if(swipeDirection==='left'||swipeDirection==='right'){
+      // タブの移動方向に応じて、中身が滑り込むアニメーションを表示。
+      requestAnimationFrame(()=>{
+        if(!newPanel.hidden)newPanel.classList.add(
+          swipeDirection==='left'?'swipe-in-from-right':'swipe-in-from-left'
+        );
+      });
+    }
+    if(name==='photos'&&previous!=='photos'&&accessToken)loadModeration();
+    if(focusTab)managementTabs[name].focus();
+  }
+  const managementKeys=['news','photos'];
+  for(const [index,key] of managementKeys.entries()){
+    managementTabs[key].addEventListener('click',()=>switchManagementTab(key));
+    managementTabs[key].addEventListener('keydown',event=>{
+      let target=-1;
+      if(event.key==='ArrowRight')target=(index+1)%managementKeys.length;
+      if(event.key==='ArrowLeft')target=(index+managementKeys.length-1)%managementKeys.length;
+      if(event.key==='Home')target=0;
+      if(event.key==='End')target=managementKeys.length-1;
+      if(target<0)return;
+      event.preventDefault();
+      switchManagementTab(managementKeys[target],true);
+    });
+  }
+
   function attachHorizontalSwipe(surface,onSwipe,exclude=''){
     let start=null;
     surface.addEventListener('touchstart',event=>{
@@ -112,6 +214,15 @@
       onSwipe(dx<0?'left':'right');
     },{passive:true});
   }
+  // 大きな管理者タブ：左右のスワイプ。フォーム入力中や画像操作は除外。
+  const changeManagementBySwipe=direction=>{
+    const target=direction==='left'?'photos':'news';
+    if(target!==activeManagementTab)switchManagementTab(target,false,direction);
+  };
+  attachHorizontalSwipe(document.querySelector('.admin-tabs'),changeManagementBySwipe);
+  attachHorizontalSwipe(postPanel,changeManagementBySwipe,
+    'input,textarea,select,label,a,button,.admin-tabs,.photo-mod-list,.photo-mod-tabs,.photo-mod-card');
+
   /* 生徒写真の承認画面。ログイン時の同じ署名付きトークンを利用する。 */
   const modStatus=document.querySelector('#photo-mod-status');
   const modList=document.querySelector('#photo-mod-list');
@@ -225,7 +336,7 @@
       if(error.status===401){
         showLogin('ログインの有効期限が切れました。もう一度ログインしてください。','error');
       }else{
-        status(modStatus,'写真の承認機能は準備中、または通信できません。','error');
+        status(modStatus,'写真の承認機能は準備中、または通信できません。お知らせの投稿は引き続き利用できます。','error');
       }
     }
   }
@@ -233,6 +344,7 @@
   tabApproved.addEventListener('click',()=>setPhotoFilter('approved'));
   // 写真承認タブの「承認待ち」「公開中」も左右スワイプで切り替えられる。
   const changePhotoFilterBySwipe=direction=>{
+    if(activeManagementTab!=='photos')return;
     const target=direction==='left'?'approved':'pending';
     if(target!==photoFilter){
       setPhotoFilter(target);
