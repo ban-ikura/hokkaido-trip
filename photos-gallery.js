@@ -43,5 +43,6 @@
     finally{refresh.disabled=false}
   }
   refresh.addEventListener('click',load);
+  window.HOKKAIDO_REFRESH_GALLERY=load;
   load();
 })();
