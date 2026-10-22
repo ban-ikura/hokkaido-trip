@@ -162,7 +162,7 @@ function renderTimeline(day,course){
     });
     controls.append(button);
   }
-  toolbar.append(left,controls);wrapper.append(toolbar);
+  toolbar.append(controls);wrapper.append(toolbar);
   const viewport=node('div','timeline-viewport');
   viewport.tabIndex=0;viewport.setAttribute('role','region');
   viewport.setAttribute('aria-label',day.date+' '+course.label+'の横スクロール行程表');
@@ -359,7 +359,7 @@ function renderDay(day){
 function renderSchedule(){
   const host=$('#schedule-root');if(!host)return;
   host.replaceChildren();
-  const selected=host.dataset.day;
+  const selected=host.dataset.day||document.body.dataset.day;
   days.filter(day=>!selected||day.id===selected).forEach(day=>host.append(renderDay(day)));
 }
 function eventsForCourse(){
@@ -383,7 +383,7 @@ function renderNextSchedule(){
   box.append(node('p','next-title',event.title));
   const bottom=node('div','next-bottom');bottom.append(node('span','next-course',event.course));
   const link=node('a','next-jump','この日の予定を見る ↗');
-  link.href='day'+(event.index+1)+'.html#timeline';
+  link.href='day'+(event.index+1)+'.html#schedule';
   bottom.append(link);box.append(bottom);
 }
 const packingList=['学生証・学校指定の書類','財布・現金','スマートフォン','充電器・モバイルバッテリー','着替え・下着・靴下','防寒着・手袋・帽子','滑りにくい靴','洗面用具・タオル','常備薬（必要な人）','筆記用具・旅行のしおり','スキー用品・防寒小物（該当者）','その他学校指定の持ち物'];
