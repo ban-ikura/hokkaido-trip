@@ -99,7 +99,7 @@
     // Keep the universal navigation and website style available on every tab.
     await stylesheet('style.css','20261021-hokkaido-scrollbar-news');
     if(page==='photos.html'){
-      await stylesheet('photos.css','20261022-single-column-gallery-1');
+      await stylesheet('photos.css','20261023-alpine-v1');
     }
     if(page==='index.html')await stylesheet('photos-home.css','20261022-home-photo-post-2');
     if(page==='stay.html')await stylesheet('allergy-link.css','20261022-clickable-docs-2');
@@ -121,7 +121,7 @@
       const initializedApp=typeof window.HOKKAIDO_REINIT_PUBLIC_PAGE==='function';
       if(!initializedApp){
         await script('trip-data.js','20261021-nihontravel-priority-r2');
-        await script('app.js','20261022-clean-labels-1');
+        await script('app.js','20261023-no-news-v1');
       }else if(!pack.initialized){
         window.HOKKAIDO_REINIT_PUBLIC_PAGE();
       }
