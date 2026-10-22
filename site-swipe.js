@@ -110,13 +110,16 @@
         await js('admin-config.js','20261021-worker-connected-1');
       if(typeof window.HOKKAIDO_REINIT_PUBLIC_PAGE!=='function'){
         await js('trip-data.js','20261023-focus-v2');
-        await js('app.js','20261023-focus-v3');
+        await js('app.js','20261023-focus-v4');
       }else if(!item.ready){
         window.HOKKAIDO_REINIT_PUBLIC_PAGE();
       }
       if(name==='index.html'){
         if(!item.ready)await js('photos-home.js','20261022-home-refresh-1');
-        else if(returning)window.HOKKAIDO_REFRESH_HOME_PHOTOS?.();
+        else if(returning){
+          window.HOKKAIDO_REFRESH_PUBLIC_HOME?.();
+          window.HOKKAIDO_REFRESH_HOME_PHOTOS?.();
+        }
       }
       if(name==='stay.html'&&!item.ready)
         await js('allergy-link.js','20261022-2');
