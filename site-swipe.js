@@ -69,6 +69,8 @@
     const task=new Promise(resolve=>{
       const link=document.createElement('link');
       link.rel='stylesheet';link.href=file+'?v='+version;
+      // Prefetched gallery styles must not restyle the current tab before it slides.
+      if(file==='photos.css')link.media='not all';
       link.onload=()=>resolve(link);
       link.onerror=()=>resolve(link);
       document.head.append(link);
@@ -95,13 +97,7 @@
     // Keep the universal navigation and website style available on every tab.
     await stylesheet('style.css','20261021-hokkaido-scrollbar-news');
     if(page==='photos.html'){
-      const link=await stylesheet('photos.css','20261022-single-column-gallery-1');
-      link.disabled=false;
-      // Gallery-specific rules should follow the standard site's common CSS.
-      document.head.append(link);
-    }else{
-      const photoStyle=findResource('link[rel="stylesheet"]','photos.css');
-      if(photoStyle)photoStyle.disabled=true;
+      await stylesheet('photos.css','20261022-single-column-gallery-1');
     }
     if(page==='index.html')await stylesheet('photos-home.css','20261022-home-photo-post-2');
     if(page==='stay.html')await stylesheet('allergy-link.css','20261022-clickable-docs-2');
@@ -175,6 +171,11 @@
     delete document.body.dataset.page;
     if(page==='photos.html')document.body.dataset.photoPage='gallery';
     else document.body.dataset.page=page==='index.html'?'home':page.slice(0,-5);
+    const photoStyle=findResource('link[rel="stylesheet"]','photos.css');
+    if(photoStyle){
+      photoStyle.media=page==='photos.html'?'all':'not all';
+      if(page==='photos.html')document.head.append(photoStyle);
+    }
     document.title=pack.title;
     currentPage=page;
   }
@@ -227,6 +228,14 @@
       delete document.documentElement.dataset.tabDirection;
     }
   }
+
+  window.addEventListener('hashchange',()=>{
+    const route=parseRoute(location.href);
+    if(route&&route.page===currentPage){
+      currentRoute=route.route;
+      selectTab(currentRoute);
+    }
+  });
 
   document.addEventListener('click',event=>{
     if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
