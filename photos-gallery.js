@@ -23,12 +23,12 @@
       const data=await response.json();
       const items=Array.isArray(data.items)?data.items.filter(x=>
         x && typeof x.id==='string' && /^[0-9a-f-]{36}$/.test(x.id)):[];
-      count.textContent=items.length?' / '+items.length:'';
+      count.textContent='· '+items.length+'枚';
       if(!items.length){
         status.textContent='まだ公開された写真はありません。最初の1枚を待っています。';
         return;
       }
-      status.textContent='管理者の承認を受けた'+items.length+'枚の写真';
+      status.textContent='';
       for(const p of items){
         const card=document.createElement('article');card.className='photo-card';
         const img=document.createElement('img');img.loading='lazy';img.decoding='async';
