@@ -26,8 +26,10 @@
     let url;
     try{url=new URL(value,location.href)}catch{return null}
     if(url.origin!==location.origin)return null;
-    const page=url.pathname.slice(base.length);
-    if(!url.pathname.startsWith(base)||!pages.includes(page)||url.pathname!==base+page)return null;
+    const indexAlias=url.pathname===base;
+    const page=indexAlias?'index.html':url.pathname.slice(base.length);
+    if(!url.pathname.startsWith(base)||!pages.includes(page)||
+       (!indexAlias&&url.pathname!==base+page))return null;
     const route=page==='index.html'&&url.hash==='#schedule'?'index.html#schedule':page;
     return {page,route,hash:url.hash,url};
   }
