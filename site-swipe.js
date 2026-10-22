@@ -44,7 +44,7 @@
     'a','button','input','textarea','select','label','summary','details',
     '[contenteditable]','[role="button"]','[role="slider"]',
     '.timeline-viewport','.timeline-track','.timeline-controls',
-    '.photo-grid','.home-photo-grid','.checklist-grid','.course-tabs',
+    '.home-photo-grid','.checklist-grid','.course-tabs',
     '.scroll-button','.route-event','.day-card',
     '.carousel','.gallery','.swipe-exempt'
   ].join(',');
