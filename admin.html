@@ -9,9 +9,9 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob:; connect-src 'self' https://*.workers.dev; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; upgrade-insecure-requests">
   <title>管理者ダッシュボード｜北海道研修旅行 2026</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="admin.css?v=20261023-photo-only-v1">
+  <link rel="stylesheet" href="admin.css?v=20261023-full-menu-v2">
   <script src="admin-config.js?v=20261021-worker-connected-1" defer></script>
-  <script src="admin.js?v=20261023-photo-only-v1" defer></script>
+  <script src="admin.js?v=20261023-full-menu-v2" defer></script>
 </head>
 <body>
   <header class="admin-header">
@@ -20,8 +20,8 @@
   </header>
   <main class="admin-main">
     <div class="admin-kicker">ADMIN / DASHBOARD</div>
-    <h1>写真の管理・承認</h1>
-    <p class="admin-intro">承認待ちの写真を確認し、公開・却下・掲載取り消しを行う管理者専用ページです。</p>
+    <h1>管理者ダッシュボード</h1>
+    <p class="admin-intro">共通パスワードでログインし、「お知らせ投稿」と「写真の承認」を切り替えて操作できます。既存のお知らせや行程表の編集・削除はできません。</p>
     <div id="setup-status" class="setup-status" hidden role="status">
       認証用サーバーの初期設定がまだ完了していません。設定担当者が接続先を登録するとログインできます。
     </div>
@@ -37,17 +37,38 @@
       <p id="login-status" class="form-status" role="status" aria-live="polite"></p>
       <p class="admin-small">共通パスワードはサイトには保存されません。ログイン状態はページを開いている間のみ有効です。</p>
     </section>
-    <section id="post-panel" class="admin-panel admin-dashboard" aria-label="写真の管理" hidden>
+    <section id="post-panel" class="admin-panel admin-dashboard" aria-label="管理者メニュー" hidden>
       <div class="session-header">
         <span class="session-label"><span class="green-dot"></span>ログイン中</span>
         <button type="button" id="logout-button" class="logout-button">ログアウト</button>
       </div>
-      <section id="admin-photos-panel" class="admin-tab-panel photo-moderation" aria-labelledby="photo-moderation-heading" tabindex="0">
+      <div class="admin-tabs" role="tablist" aria-label="管理する内容">
+        <button id="admin-tab-news" class="admin-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="admin-news-panel" tabindex="0"><span class="admin-tab-icon" aria-hidden="true">✉</span><span>お知らせ投稿</span></button>
+        <button id="admin-tab-photos" class="admin-tab" type="button" role="tab" aria-selected="false" aria-controls="admin-photos-panel" tabindex="-1"><span class="admin-tab-icon" aria-hidden="true">▧</span><span>写真の承認</span></button>
+      </div>
+      <p class="admin-swipe-hint">左右にスワイプしてタブを切り替えられます</p>
+      <section id="admin-news-panel" class="admin-tab-panel" role="tabpanel" aria-labelledby="admin-tab-news" tabindex="0">
+      <h2 id="post-heading">新しいお知らせを投稿</h2>
+      <p>送信すると公開サイトに追加され、前のお知らせは履歴に残ります。</p>
+      <form id="post-form">
+        <label for="notice-title">タイトル <small>必須・120文字以内</small></label>
+        <input id="notice-title" name="title" minlength="2" maxlength="120" required placeholder="例：集合時刻について">
+        <label for="notice-body">本文 <small>必須・1500文字以内</small></label>
+        <textarea id="notice-body" name="body" maxlength="1500" required rows="7" placeholder="お知らせの内容を入力"></textarea>
+        <label class="checkbox-row"><input type="checkbox" id="notice-important">重要なお知らせとして表示</label>
+        <button id="publish-button" class="primary-button" type="submit">お知らせを投稿</button>
+      </form>
+      <p id="post-status" class="form-status" role="status" aria-live="polite"></p>
+      <a id="published-link" class="published-link" href="index.html#news" hidden>公開サイトで確認する →</a>
+      <p class="admin-small">投稿済みお知らせの編集・削除機能はありません。内容をよく確認してから送信してください。</p>
+      </section>
+
+      <section id="admin-photos-panel" class="admin-tab-panel photo-moderation" role="tabpanel" aria-labelledby="admin-tab-photos" tabindex="0" hidden>
         <div class="photo-mod-title">
           <div><div class="admin-kicker dark">PHOTO REVIEW</div><h2 id="photo-moderation-heading">生徒の写真を承認</h2></div>
           <button type="button" id="photo-mod-reload" class="logout-button">再読み込み ↻</button>
         </div>
-        <p>承認した写真だけが公開アルバムに表示されます。公開後も掲載を取り消せます。</p>
+        <p>承認した写真だけが公開アルバムに表示されます。公開後も掲載を取り消せます。お知らせの編集・削除はできません。</p>
         <p class="mod-rule"><strong>承認前のチェック：</strong> 顔（自撮り・集合写真・反射を含む）や個人を特定できるものがないか確認。氏名・名札・学生証・部屋番号・連絡先・車のナンバー、誹謗中傷・いじめ・差別・危険行為・迷惑行為・無断転載は承認しないでください。判断できない場合は却下してください。</p>
         <div class="photo-mod-tabs">
           <button type="button" id="photo-tab-pending" class="photo-mod-tab selected" aria-pressed="true">承認待ち</button>
@@ -59,6 +80,6 @@
       </section>
     </section>
   </main>
-  <footer class="admin-footer">HOKKAIDO 2026 · 写真管理者専用</footer>
+  <footer class="admin-footer">HOKKAIDO 2026 · 管理者専用（お知らせ投稿・写真承認）</footer>
 </body>
 </html>
