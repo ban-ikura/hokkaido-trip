@@ -54,5 +54,6 @@
       status.textContent='写真を読み込めませんでした。アルバムからも確認できます。';
     }
   }
+  window.HOKKAIDO_REFRESH_HOME_PHOTOS=loadLatest;
   loadLatest();
 })();
