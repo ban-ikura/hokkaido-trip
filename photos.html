@@ -8,7 +8,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https://*.workers.dev; connect-src 'self' https://*.workers.dev; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; upgrade-insecure-requests">
 <title>みんなのフォトアルバム｜北海道研修旅行 2026</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="photos.css?v=20261022-gallery-separate-2">
+<link rel="stylesheet" href="photos.css?v=20261022-photos-overlay-1">
 <script src="admin-config.js?v=20261021-worker-connected-1" defer></script>
 <script src="photos-gallery.js?v=20261022-gallery-separate-2" defer></script>
 </head>
@@ -19,18 +19,9 @@
   <a class="photos-header-link" href="photos-post.html">投稿する <span aria-hidden="true">↗</span></a>
 </header>
 <main class="photos-main">
-  <section class="album-hero" aria-labelledby="gallery-title">
-    <div class="album-hero-inner">
-      <p class="eyebrow">OUR MEMORIES <span class="eyebrow-rule"></span> HOKKAIDO 2026</p>
-      <h1 id="gallery-title">旅の一瞬を、<br><em>ひとつのアルバムに。</em></h1>
-      <p class="lead">北海道で見つけた絶景、おいしかったもの、忘れたくない景色。みんなの思い出をここに集めよう。</p>
-      <div class="album-hero-foot"><span class="hero-pill"><span class="hero-dot"></span> 管理者の承認済み写真のみ掲載</span><span class="hero-date">DEC 07—10, 2026</span></div>
-    </div>
-    <div class="snow-deco snow-a" aria-hidden="true">✳</div><div class="snow-deco snow-b" aria-hidden="true">✳</div>
-  </section>
-  <section class="album-content" aria-labelledby="approved-heading">
+  <section class="album-content" aria-label="承認済みの写真一覧">
     <div class="album-content-head">
-      <div><p class="section-kicker">GALLERY / APPROVED POSTS</p><h2 id="approved-heading">みんなの写真 <span id="photo-count" class="photo-count"></span></h2></div>
+      <div class="album-mini-label"><span class="hero-dot" aria-hidden="true"></span><span>承認済みの写真</span><span id="photo-count" class="photo-count"></span></div>
       <button type="button" class="refresh-button" id="photo-reload"><span aria-hidden="true">↻</span> 更新</button>
     </div>
     <p id="gallery-status" class="gallery-status" role="status" aria-live="polite">アルバムを読み込み中…</p>
