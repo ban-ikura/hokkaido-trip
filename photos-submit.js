@@ -86,20 +86,25 @@
       }
       const width=source.width||source.naturalWidth,height=source.height||source.naturalHeight;
       if(!width||!height||width>12000||height>12000)throw Error('この画像の大きさを処理できません。');
-      const factor=Math.min(1,1600/Math.max(width,height));
-      const canvas=document.createElement('canvas');
-      canvas.width=Math.max(1,Math.round(width*factor));
-      canvas.height=Math.max(1,Math.round(height*factor));
-      const context=canvas.getContext('2d',{alpha:false});
-      if(!context)throw Error('このブラウザーでは写真の変換ができません。');
-      context.fillStyle='#ffffff';context.fillRect(0,0,canvas.width,canvas.height);
-      context.drawImage(source,0,0,canvas.width,canvas.height);
-      const blob=await new Promise((resolve,reject)=>{
-        canvas.toBlob(output=>output?resolve(output):reject(Error('WebP画像を作れませんでした。')),'image/webp',0.82);
-      });
-      if(blob.type!=='image/webp')throw Error('WebP変換に対応したブラウザーでお試しください。');
-      if(blob.size>5*1024*1024)throw Error('写真が5MBを超えています。別の写真を選んでください。');
-      return blob;
+      // D1無料枠に収まる小容量の画像に圧縮。画像メタデータは描画時に除去される。
+      const sizes=[1350,1150,950,800,650,480];
+      const qualities=[0.76,0.68,0.59,0.53,0.47,0.43];
+      for(let i=0;i<sizes.length;i++){
+        const factor=Math.min(1,sizes[i]/Math.max(width,height));
+        const canvas=document.createElement('canvas');
+        canvas.width=Math.max(1,Math.round(width*factor));
+        canvas.height=Math.max(1,Math.round(height*factor));
+        const context=canvas.getContext('2d',{alpha:false});
+        if(!context)throw Error('このブラウザーでは写真の変換ができません。');
+        context.fillStyle='#ffffff';context.fillRect(0,0,canvas.width,canvas.height);
+        context.drawImage(source,0,0,canvas.width,canvas.height);
+        const blob=await new Promise((resolve,reject)=>{
+          canvas.toBlob(output=>output?resolve(output):reject(Error('WebP画像を作れませんでした。')),'image/webp',qualities[i]);
+        });
+        if(blob.type!=='image/webp')throw Error('WebP変換に対応したブラウザーでお試しください。');
+        if(blob.size<=300000)return blob;
+      }
+      throw Error('画像を十分に小さくできませんでした。別の写真を選んでください。');
     }finally{
       if(source&&typeof source.close==='function')source.close();
       free();
