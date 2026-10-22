@@ -79,3 +79,34 @@ body[data-photo-page="gallery"] .photos-main{animation:none}
   html[data-tab-direction]::view-transition-old(hokkaido-main),
   html[data-tab-direction]::view-transition-new(hokkaido-main){animation:none}
 }
+
+
+/* Reduced explanatory copy: tighter subpage headings, quiet source disclosure. */
+body[data-page="guide"] .subhero,
+body[data-page="stay"] .subhero,
+body[data-page="safety"] .subhero{padding-bottom:18px}
+body[data-page="guide"] .subhero h1,
+body[data-page="stay"] .subhero h1,
+body[data-page="safety"] .subhero h1{margin-bottom:0}
+.source-disclosure{
+  margin:9px 0 0;
+  border-top:1px solid rgba(208,236,248,.19);
+  padding-top:8px;
+  color:#cfe7f5;
+}
+.source-disclosure summary{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 2px;
+  list-style:none;
+  cursor:pointer;
+  font-size:11px;
+  font-weight:750;
+  color:#d8e8f6;
+}
+.source-disclosure summary::-webkit-details-marker{display:none}
+.source-disclosure summary::before{content:"＋";font-size:15px;line-height:1}
+.source-disclosure[open] summary::before{content:"−"}
+.source-disclosure summary:focus-visible{outline:2px solid #9bdaf5;outline-offset:3px}
+.source-disclosure .section-footnote{padding:4px 2px 6px;line-height:1.7}
