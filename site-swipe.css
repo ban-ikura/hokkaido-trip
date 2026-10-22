@@ -376,3 +376,39 @@ body[data-photo-page="gallery"] .privacy{color:#586f79}
  .site-header,.day-page-nav,.home-photos-section{display:none!important}
  .day-card,.day-fact,.info-card,.home-day-link{box-shadow:none}
 }
+
+/* Compact in-page packing checklist */
+.packing-disclosure{border-top:1px solid #e2ebee;padding:6px 0 0}
+.packing-disclosure>summary{
+  display:flex;align-items:center;justify-content:space-between;
+  min-height:45px;padding:10px 2px;cursor:pointer;list-style:none;
+  font-size:13px;font-weight:900;color:#245b74
+}
+.packing-disclosure>summary::-webkit-details-marker{display:none}
+.packing-disclosure>summary::after{content:"＋";font-size:17px}
+.packing-disclosure[open]>summary::after{content:"−"}
+.packing-disclosure .checklist-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
+  margin:11px 0 15px
+}
+.packing-disclosure .checklist-item{background:#f6fafb;border:1px solid #e0eaee;border-radius:9px;box-shadow:none;padding:11px;min-height:49px}
+.packing-reset{min-height:39px;padding:10px 13px;border-radius:8px;border:1px solid #c8dce5;background:#f7fbfc;color:#31657c;font-size:12px;font-weight:800}
+.site-header .brand{display:flex;align-items:center;gap:10px;white-space:nowrap;text-decoration:none}
+.site-header .brand-symbol{display:grid;place-items:center;flex:0 0 34px}
+/* The dedicated photo-upload page uses the same small menu and solid background. */
+body[data-photo-page="post"]{
+ background:#f3f6f7!important;background-image:none!important;color:#183743
+}
+body[data-photo-page="post"] .post-intro{color:#173b49}
+body[data-photo-page="post"] .post-intro h1{color:#173b49;text-shadow:none}
+body[data-photo-page="post"] .post-intro .eyebrow{color:#468397}
+body[data-photo-page="post"] .photos-footer{color:#607985}
+body[data-photo-page="post"] .privacy{color:#5d737e}
+body[data-photo-page="post"] .post-main{margin-top:19px}
+body[data-photo-page="post"] .post-form-panel,
+body[data-photo-page="post"] .rules-panel,
+body[data-photo-page="post"] .how-it-works{box-shadow:none}
+@media(max-width:680px){
+ .packing-disclosure .checklist-grid{grid-template-columns:1fr}
+ body[data-photo-page="post"] .post-main{margin-top:14px}
+}
