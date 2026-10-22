@@ -304,7 +304,8 @@ function renderTimeline(day,course){
     agenda.append(row);
   });list.append(agenda);wrapper.append(list);
   if(course.unknown.length){
-    const unknown=node('div','unknown-box');unknown.append(node('strong','','未確定・要確認'));
+    const unknown=node('details','unknown-box');
+    unknown.append(node('summary','','未確定・要確認'));
     const ul=node('ul');course.unknown.forEach(x=>ul.append(node('li','',x)));
     unknown.append(ul);wrapper.append(unknown);
   }
