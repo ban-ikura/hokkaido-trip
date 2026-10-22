@@ -1,82 +1,93 @@
-# 写真投稿・管理者承認の有効化（Cloudflareダッシュボード）
+# 写真投稿・承認機能を無料プランで有効化（R2不要）
 
-この機能のコードはGitHubに準備済みです。**既存のお知らせ機能を残したまま**有効化します。
-順番は **D1 → 非公開R2 → Turnstile → Workerのコード更新 → 動作確認** です。
-**生徒用の投稿コードは不要です。**
+このサイトの写真保存には、すでに使用中の **Cloudflare D1（無料枠）** を利用します。
+**R2を契約・作成する必要はありません。支払い情報も新たに登録しないでください。**
 
-## 1. 既存D1に写真テーブルを追加
+現在の構成：
+- `photos.html` — アルバム（承認済み写真だけ）
+- `photos-post.html` — 生徒の投稿画面（投稿コードなし）
+- `admin.html` — 管理者の既存共通パスワードでログインし、写真を承認・却下・取り消し
+- `hokkaido-trip-news-api` — 既存のWorker。お知らせAPIを維持
+- `hokkaido-trip-news` — 既存D1に投稿情報と写真データを保存
 
-Cloudflare → Storage & databases → D1 → **hokkaido-trip-news** → Console を開く。
+## 1. D1に「画像用テーブル」を1つ追加する
 
-GitHubの [photos-schema.sql](photos-schema.sql) の**全SQL**を実行する。
-既存の `announcements` と `login_attempts` は変更・削除しない。
+Cloudflareダッシュボード → **D1** → **hokkaido-trip-news** → **Console**。
 
-## 2. 非公開R2バケットを作成
+次のSQLをそのまま貼って **Execute** を押す。
 
-Cloudflare → R2 Object Storage → **Create bucket**。
+```sql
+CREATE TABLE IF NOT EXISTS photo_images (
+  id TEXT PRIMARY KEY,
+  data BLOB NOT NULL CHECK(length(data) BETWEEN 32 AND 300000),
+  FOREIGN KEY(id) REFERENCES photo_submissions(id)
+);
+```
 
-- バケット名: `hokkaido-trip-photos`
-- **Public URL / r2.dev / Custom Domains は有効にしない。**
-- 初期状態の **Private** のまま使用する。
+すでに作成した `photo_submissions`、`photo_upload_limits` と2つのインデックスは
+**そのまま使います。消さないでください。**
+既存のお知らせデータは一切消しません。
 
-Workers & Pages → 既存Worker **hokkaido-trip-news-api** → Settings → Bindings → Add binding → R2 bucket。
+## 2. Cloudflare Turnstileを作る（無料のスパム対策）
 
-- Variable name (Key): **`PHOTOS`**
-- R2 bucket: **`hokkaido-trip-photos`**
+Cloudflare → **Turnstile** → **Add widget / Create widget**。
 
-大文字小文字を含めて名前を一致させて保存する。
+- Widget name：`hokkaido-trip-photos`（任意の名前でも可）
+- Hostname：`ban-ikura.github.io`（後ろに `/hokkaido-trip` は付けない）
+- Widget mode：**Managed（推奨）**
 
-## 3. Cloudflare Turnstileで自動投稿を防ぐ（生徒用コードなし）
+作成後、Site keyとSecret keyが表示されます。
 
-**Cloudflareダッシュボード → Turnstile → Add widget / Create widget**。
-
-- 表示名：`hokkaido-trip-photos`（好きな名前でも構いません）
-- 対象Hostname：**`ban-ikura.github.io`**（`/hokkaido-trip` のようなパスは不要）
-- ウィジェットの種類：**Managed（推奨）**
-- 作成後の**Site key（公開キー）**と**Secret key（秘密キー）**を区別する
-
-Site keyは公開してよいものです。GitHubの **[../photos-config.js](../photos-config.js)** の
+**Site key（公開用）**：
+GitHub `photos-config.js` の
 `window.HOKKAIDO_PHOTO_TURNSTILE_SITE_KEY = '';`
-の空欄に **Site keyだけ** を入力してGitHubに保存します。
+の空欄に**Site keyだけ**を入力して保存。
 
-Secret key は絶対にGitHubやチャットに書かないでください。
-同じWorkerの Settings → Runtime variables and secrets → Add variable から登録します。
+**Secret key（非公開）**：
+Cloudflare → Workers & Pages → `hokkaido-trip-news-api` →
+Settings → Runtime variables and secrets → Add variable。
 
 - Type：**Secret**
-- Key：**`TURNSTILE_SECRET`**
-- Value：先ほどの **Secret key**
+- Key：`TURNSTILE_SECRET`
+- Value：TurnstileのSecret key
 
-既存の **ADMIN_PASSWORD / SESSION_SECRET** は**変更不要**です。
-写真は生徒用コード無しで送信できますが、毎回Cloudflareの安全確認を通過する必要があります。アルバムと投稿フォームは別ページです（`photos.html` → `photos-post.html`）。
-バックエンドはTurnstileのSiteverifyで成功／hostname／actionを検証します。
-IPごとの送信上限（1時間20回）も残しています。学校Wi-Fiでは複数の生徒に同じ上限が適用されることがあります。
-**投稿の身元を特定するものではなく、写真の内容は管理者が審査する必要があります。**
+**Secret key / ADMIN_PASSWORD / SESSION_SECRETをGitHubやチャットに書かないでください。**
+既存の `ADMIN_PASSWORD`・`SESSION_SECRET`・D1バインディング `DB` は変更不要です。
 
-## 4. Workerのプログラムを更新
+## 3. 既存Workerのコードを更新する
 
-Workers & Pages → **hokkaido-trip-news-api** → Edit code。
+Cloudflare → Workers & Pages → **hokkaido-trip-news-api** → **Edit code**。
 
-GitHubの [src/index.js](src/index.js) のコード**全体**で、現在の `worker.js` を置き換えてDeploy。
+GitHubの `admin-backend/src/index.js` の**全文**をコード編集画面に貼り付けて **Deploy**。
 
-*既存のWorkerを削除したり、別Workerを作成したりしない。*
-お知らせAPI（GET/POST）とログインAPIの既存機能は保持される。
+既存Workerを削除したり、新しいWorkerを作ったりする必要はありません。
+既存のお知らせ機能はそのまま維持します。
 
-## 5. 動作確認（写真機能が未準備なら503が返る）
+## 4. 動作確認
 
-1. `https://hokkaido-trip-news-api.banse-oji.workers.dev/api/announcements` → 既存のお知らせが表示される。
-2. `https://hokkaido-trip-news-api.banse-oji.workers.dev/api/photos` → `{"items":[]}`（まだ写真がない場合）。
-3. `https://ban-ikura.github.io/hokkaido-trip/photos.html` → アルバムの右下の「写真を投稿」ボタンを押す。`photos-post.html` でTurnstileの安全確認後に写真を送信する。承認待ちになる。
-4. `https://ban-ikura.github.io/hokkaido-trip/admin.html` → 既存の管理者共通パスワードでログイン → 「生徒の写真を承認」から承認。
-5. `photos.html` を再読み込みして、**承認済みの写真だけ**表示されることを確認。
-6. テスト写真を「掲載取り消し」したら一覧から消えることを確認。
+1. `https://hokkaido-trip-news-api.banse-oji.workers.dev/api/announcements` で従来のお知らせを確認。
+2. `https://hokkaido-trip-news-api.banse-oji.workers.dev/api/photos` で、写真がなければ `{"items":[]}` と表示。
+3. `https://ban-ikura.github.io/hokkaido-trip/photos.html` の右下「写真を投稿」から `photos-post.html` へ。
+4. 顔や個人情報が写らないテスト画像を選んで投稿。Turnstileの安全確認が必要。送信後は「承認待ち」。
+5. `https://ban-ikura.github.io/hokkaido-trip/admin.html` でログインして「生徒の写真を承認」から承認。
+6. アルバムに承認済み写真だけが表示されることを確認。掲載取り消しもテスト。
 
-**投稿ルール／重要な運用上の注意**
-- 公開サイトはURLを知る人以外にも閲覧可能。検索エンジン向けのnoindexはアクセス制御ではない。
-- **顔が写っている写真は一切投稿・承認しない。** 自撮り・集合写真・鏡や窓の反射も同様。
-- 名札、制服で本人を特定できるもの、氏名、学生証、連絡先、住所、部屋番号、車のナンバーなどの個人情報を掲載しない。
-- いじめ、差別、誹謗中傷、無断撮影、危険・迷惑行為、他人の写真の無断転載、著作権侵害は投稿禁止。
-- **顔の自動検出機能はありません。** 管理者は承認前に写真とコメントを1件ずつ確認する。
-- 投稿者の本名、学籍情報、連絡先などは入力させない。
-- 投稿写真はブラウザ側でリサイズしてメタデータを除去したWebP形式に変換し、サーバーでは追加のWebPチェックを行う。画像の内容そのものの安全性・著作権・個人情報は管理者が判断する必要がある。
-- R2バケットは必ず非公開のままにする。公開・却下の判定はWorker経由でのみ行う。
-- 承認後に掲載を取り消しても、すでに保存・撮影されたコピーまで削除できるわけではない。
+## 無料プランの制約・安全管理
+
+- **写真は1枚あたり300KB以下**に圧縮（原本の高画質画像は保存されません）。大きな写真でも端末のブラウザーで段階的に圧縮します。
+- D1無料プランは**1データベース最大500MB、アカウント合計5GB**。お知らせと写真が同じデータベースなので、容量を分け合います。写真が増えれば容量上限になる可能性があります。
+- D1無料プランには読み書き回数の上限もあります。上限に達すると一時的に利用できなくなる場合があります。
+- 写真の保存はD1のBLOB。読み取りAPIは投稿の**承認状態をDBで確認**し、承認前の画像データを返しません。
+- **顔（小さな写り込み・鏡の反射を含む）や個人情報を含む写真は公開禁止**。顔を自動検出する機能はないため、管理者が1枚ずつ確認します。
+- 投稿コードは不要ですが、Turnstileによるボット対策、IPごとの時間当たり制限、管理者の承認が必須です。これらは完全な本人確認・荒らし対策ではありません。
+- 公開サイトは誰でも閲覧可能で、`noindex` はアクセス制限ではありません。学校の方針を確認して運用してください。
+- 掲載を取り消しても、すでに閲覧者が保存した写真のコピーまで回収できません。
+
+## トラブルシューティング
+
+- `/api/photos` が503：追加SQLが未実行、Workerコード未更新、`TURNSTILE_SECRET` 未設定などを確認。
+- 投稿ボタンが無効：公開用Site keyの登録・Turnstileウィジェットの読み込みを確認。
+- 送信時403：TurnstileのHostnameとSecret key、サイトに設定したSite keyの対応を確認。
+- ストレージ不足：D1の容量を確認し、不要な写真は管理者画面から掲載取り消しするか、上限内に写真を収める。
+
+公式情報：https://developers.cloudflare.com/d1/platform/limits/
