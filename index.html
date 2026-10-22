@@ -28,60 +28,48 @@
       <nav aria-label="サイト内ナビゲーション"><a href="index.html" aria-current="page" >ホーム</a><a href="index.html#schedule" >行程表</a><a href="guide.html" >旅行ガイド</a><a href="stay.html" >宿泊・食事</a><a href="safety.html" >安全・荷物</a><a href="photos.html">写真アルバム</a><a href="admin.html" class="nav-admin" aria-label="管理者ページ（ログインが必要）">管理者</a></nav>
     </div>
   </header>
-  <main id="main">
-  <section class="hero" id="top"><div class="shell hero-inner">
-    <div class="hero-copy"><span class="overline overline-light"><span class="line-mark"></span> 2026 · DECEMBER 07—10</span>
-      <h1 class="stroke-title" aria-label="北海道研修旅行"><span class="stroke-title-line" aria-hidden="true"><svg viewBox="0 0 300 112" role="presentation"><text x="0" y="93">北</text><text x="100" y="93">海</text><text x="200" y="93">道</text></svg></span><span class="stroke-title-line" aria-hidden="true"><svg viewBox="0 0 400 112" role="presentation"><text x="0" y="93">研</text><text x="100" y="93">修</text><text x="200" y="93">旅</text><text x="300" y="93">行</text></svg></span></h1>
-      <p class="hero-lead">仲間と協力し、学びを深め、思い出に残る4日間に。</p>
-      <div class="hero-chips"><span>12.07 MON — 12.10 THU</span><span>3泊4日</span></div>
-      <div class="hero-actions"><a href="#schedule" class="button button-primary">行程表を見る <span aria-hidden="true">↗</span></a><a href="stay.html" class="button button-outline">宿泊・食事 <span aria-hidden="true">↗</span></a><a href="photos.html" class="button button-outline">みんなの写真 ↗</a></div>
-    </div>
-    <aside class="next-card" id="next-schedule" aria-live="polite" aria-atomic="true">
-      <span class="next-label"><span class="pulse-dot"></span> NEXT / 次の行程</span>
-      <p class="next-wait">予定を読み込み中</p>
-    </aside>
-  </div></section>
-  <section class="section-section photo-promo" id="memories"><div class="shell">
-    <div class="section-heading home-photo-heading">
-      <div><div class="overline">TRIP MEMORIES</div><div class="home-photo-title-row"><h2>みんなの北海道フォト</h2><a class="home-photo-post" href="photos-post.html" aria-label="写真を投稿する"><span aria-hidden="true">＋</span> 写真を投稿</a></div></div>
-      <a class="home-photo-all" href="photos.html">すべての写真を見る <span aria-hidden="true">↗</span></a>
-    </div>
-    <p id="home-photo-status" class="home-photo-status" role="status" aria-live="polite">写真を読み込み中…</p>
-    <div id="home-photo-grid" class="home-photo-grid" aria-label="承認済みの最新写真"></div>
-    <a class="button button-primary home-photo-more" href="photos.html">みんなのアルバムへ <span aria-hidden="true">↗</span></a>
-  </div></section>
-  <section class="section-section overview-section" id="overview"><div class="shell">
-    <div class="section-heading"><div><div class="overline">4 DAYS / OVERVIEW</div><h2>4日間の予定</h2></div></div>
-    <div class="overview-grid">
-      <a class="overview-tile" href="#day1"><span class="tile-number">01</span><span class="tile-copy"><small>12/7 MON</small><strong>羽田・小樽・ニセコ</strong></span><span class="tile-arrow">↗</span></a>
-      <a class="overview-tile" href="#day2"><span class="tile-number">02</span><span class="tile-copy"><small>12/8 TUE</small><strong>ニセコ・洞爺湖・登別</strong></span><span class="tile-arrow">↗</span></a>
-      <a class="overview-tile" href="#day3"><span class="tile-number">03</span><span class="tile-copy"><small>12/9 WED</small><strong>小樽・札幌</strong></span><span class="tile-arrow">↗</span></a>
-      <a class="overview-tile" href="#day4"><span class="tile-number">04</span><span class="tile-copy"><small>12/10 THU</small><strong>札幌・帰京</strong></span><span class="tile-arrow">↗</span></a>
-    </div>
-  </div></section>
-  <section class="section-section schedule-section" id="schedule"><div class="shell">
-    <div class="section-heading"><div><div class="overline">ITINERARY</div><h2>日別行程表</h2></div></div>
-    <div id="schedule-root" class="schedule-root"></div>
-    <details class="source-disclosure"><summary>行程表の出典・確認事項</summary><p class="section-footnote">日本旅行の2026年10月5日付行程表を優先し、学内「北海道 行程表.pdf」の2〜5ページから不足項目を補完しています。異なる時刻・未確定・参考移動枠は各日の「未確定・要確認」を参照。学校・旅行会社の最終案内を優先してください。</p></details>
-  </div></section>
-  <section class="section-section" id="checklist"><div class="shell">
-    <div class="section-heading"><div><div class="overline">PACKING LIST</div><h2>持ち物チェック</h2></div><button class="subtle-button" id="reset-checklist" type="button">チェックをリセット</button></div>
-    <div id="checklist-root" class="checklist-grid"></div>
-  </div></section>
-  <section class="section-section link-section"><div class="shell link-grid">
-    <a class="feature-link" href="guide.html"><span class="feature-index">01 / GUIDE</span><strong>旅行ガイド</strong><span>空港・バス・全体の心がけ</span><span class="feature-arrow">↗</span></a>
-    <a class="feature-link" href="stay.html"><span class="feature-index">02 / STAY</span><strong>宿泊・食事</strong><span>ホテル・食事・アレルギー</span><span class="feature-arrow">↗</span></a>
-    <a class="feature-link" href="photos.html"><span class="feature-index">04 / PHOTOS</span><strong>写真アルバム</strong><span>みんなの写真を投稿・閲覧</span><span class="feature-arrow">↗</span></a>
-    <a class="feature-link" href="safety.html"><span class="feature-index">03 / SAFETY</span><strong>安全・荷物</strong><span>緊急時・禁止品・荷物</span><span class="feature-arrow">↗</span></a>
-  </div></section>
+  <main id="main" class="home-page">
+<section class="home-lead"><div class="shell home-lead-grid">
+  <div class="home-lead-copy"><span class="eyebrow">HOKKAIDO / DECEMBER 07–10, 2026</span>
+    <h1>北海道研修旅行<span>2026</span></h1>
+    <p>必要な情報を、必要なときに。</p>
+    <div class="home-primary-actions"><a href="day1.html" class="home-main-button">4日間の行程を見る <span aria-hidden="true">↗</span></a><a href="#news" class="home-text-button">最新のお知らせ ↓</a></div>
+  </div>
+  <aside class="next-card" id="next-schedule" aria-live="polite" aria-atomic="true"><span class="next-label"><span class="pulse-dot"></span> NEXT / 次の行程</span><p class="next-wait">予定を読み込み中…</p></aside>
+</div></section>
+<section class="home-news-section" id="news"><div class="shell">
+  <div class="home-section-heading"><div><span class="eyebrow">INFORMATION</span><h2>お知らせ <span class="news-count" id="announcement-count"></span></h2></div></div>
+  <div id="announcement-list" class="news-list" aria-live="polite"><p class="news-empty">お知らせを読み込み中…</p></div>
+</div></section>
+<section class="home-days-section" id="overview"><div class="shell">
+  <div class="home-section-heading"><div><span class="eyebrow">THE FOUR DAYS</span><h2>4日間の予定</h2></div><span class="home-heading-side">タップして各日の行程へ</span></div>
+  <div class="home-day-list">
+    <a href="day1.html" class="home-day-link"><span class="home-day-count">01</span><span class="home-day-text"><small>12月7日 月曜日</small><strong>出発・小樽</strong></span><span class="home-day-arrow" aria-hidden="true">↗</span></a>
+    <a href="day2.html" class="home-day-link"><span class="home-day-count">02</span><span class="home-day-text"><small>12月8日 火曜日</small><strong>ニセコで研修</strong></span><span class="home-day-arrow" aria-hidden="true">↗</span></a>
+    <a href="day3.html" class="home-day-link"><span class="home-day-count">03</span><span class="home-day-text"><small>12月9日 水曜日</small><strong>小樽・札幌</strong></span><span class="home-day-arrow" aria-hidden="true">↗</span></a>
+    <a href="day4.html" class="home-day-link"><span class="home-day-count">04</span><span class="home-day-text"><small>12月10日 木曜日</small><strong>札幌・帰京</strong></span><span class="home-day-arrow" aria-hidden="true">↗</span></a>
+  </div>
+</div></section>
+<section class="home-photos-section" id="memories"><div class="shell">
+  <div class="home-section-heading"><div><span class="eyebrow">MEMORIES</span><h2>みんなの写真</h2></div><a href="photos-post.html" class="home-post-link"><span aria-hidden="true">＋</span> 写真を投稿</a></div>
+  <p id="home-photo-status" class="home-photo-status" role="status" aria-live="polite">写真を確認しています…</p>
+  <div class="home-photo-grid" id="home-photo-grid" aria-label="承認済みの最新写真"></div>
+  <a href="photos.html" class="home-photos-all">写真アルバムを見る <span aria-hidden="true">↗</span></a>
+</div></section>
+<section class="home-useful-section"><div class="shell">
+  <div class="home-section-heading"><div><span class="eyebrow">QUICK LINKS</span><h2>すぐに確認</h2></div></div>
+  <div class="home-quick-links">
+    <a href="stay.html"><span>宿泊先・地図・食事</span><span aria-hidden="true">↗</span></a>
+    <a href="safety.html"><span>持ち物・安全</span><span aria-hidden="true">↗</span></a>
+    <a href="guide.html"><span>集合・空港の案内</span><span aria-hidden="true">↗</span></a>
+  </div>
+</div></section>
 </main>
   <footer class="site-footer"><div class="shell footer-inner">
-    <div class="footer-top"><strong>HOKKAIDO <span>2026</span></strong><p>旅行日程・集合場所は、学校と旅行会社の最新案内を優先。</p></div>
-    <div class="footer-links"><a href="index.html#schedule">行程表</a><a href="guide.html">旅行ガイド</a><a href="stay.html">宿泊・食事</a><a href="safety.html">安全・荷物</a><a href="photos.html">写真アルバム</a></div>
-    <details class="credits" id="image-credits"><summary>写真・資料の出典とライセンス</summary><div id="credits-list" class="credits-list"></div></details>
-    <p class="legal-note">背景：生成した冬景色のイメージ（実際の撮影地ではありません）。施設写真：Wikimedia Commonsの実写写真。撮影年代が異なるため、旅行当日の状態とは異なる場合があります。</p>
-    <p class="legal-note">公開用サイトに個人の連絡先、名簿、部屋番号、非公開配布資料は掲載していません。閲覧はリンクを知る人に限定されません。</p>
-  </div></footer>
-  <noscript><div class="no-script">JavaScriptが無効のため、行程表・持ち物チェックが表示できません。ブラウザのJavaScriptを有効にしてください。</div></noscript>
+ <div class="footer-top"><strong>HOKKAIDO <span>2026</span></strong><p>12月7日〜10日 · 北海道研修旅行</p></div>
+ <div class="footer-links"><a href="index.html">ホーム</a><a href="stay.html">宿泊・食事</a><a href="safety.html">安全・持ち物</a><a href="photos.html">アルバム</a></div>
+ <p class="legal-note">行程・集合場所は学校・旅行会社の最新案内を優先してください。サイトとアルバムは一般公開されています。</p>
+</div></footer>
+  <noscript><p class="no-script">最新情報の表示にはJavaScriptが必要です。</p></noscript>
 </body>
 </html>
