@@ -5,7 +5,7 @@
   const status=document.querySelector('#allergy-pdf-status');
   if(!link||!status)return;
   const path=link.getAttribute('href');
-  if(path!=='allergy-guide.pdf')return;
+  if(path!=='hokkaido_allergy_guide.pdf')return;
 
   fetch(path,{method:'HEAD',cache:'no-store',credentials:'omit'})
     .then(response=>{
