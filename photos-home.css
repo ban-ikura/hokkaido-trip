@@ -105,9 +105,9 @@
 
 /* Photo submission action next to the heading (desktop and mobile). */
 .home-photo-title-row{
-  display:flex;align-items:center;gap:13px;flex-wrap:wrap;
+  display:flex;align-items:center;gap:13px;flex-wrap:nowrap;
 }
-.home-photo-title-row h2{margin:0}
+.home-photo-title-row h2{margin:0;flex:1;min-width:0}
 .home-photo-post{
   display:inline-flex;
   align-items:center;
@@ -130,7 +130,7 @@
 .home-photo-post span{font-size:19px;line-height:1}
 @media(max-width:520px){
   .home-photo-title-row{gap:10px}
-  .home-photo-title-row h2{font-size:clamp(23px,6vw,29px)}
+  .home-photo-title-row h2{font-size:clamp(19px,5.4vw,29px)}
   .home-photo-post{padding:7px 11px;font-size:11px;min-height:35px}
 }
 @media(prefers-reduced-motion:reduce){.home-photo-post{transition:none}}
