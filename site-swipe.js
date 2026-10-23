@@ -96,7 +96,7 @@
       if(theme)document.head.append(theme);
     }
     if(name==='index.html'){
-      await css('photos-home.css','20261023-horizontal-v1');
+      await css('photos-home.css','20261023-tap-zoom-v1');
       await css('home-video.css','20261023-compact-toggle-v2');
     }
     if(name==='stay.html')await css('allergy-link.css','20261022-clickable-docs-2');
@@ -118,7 +118,7 @@
         window.HOKKAIDO_REINIT_PUBLIC_PAGE();
       }
       if(name==='index.html'){
-        if(!item.ready)await js('photos-home.js','20261023-horizontal-v1');
+        if(!item.ready)await js('photos-home.js','20261023-tap-zoom-v1');
         else if(returning){
           window.HOKKAIDO_REFRESH_PUBLIC_HOME?.();
           window.HOKKAIDO_REFRESH_HOME_PHOTOS?.();

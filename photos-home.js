@@ -35,7 +35,107 @@
   grid.setAttribute('role','region');
   grid.setAttribute('aria-label','承認済みの投稿写真。左右にスワイプするか、左右矢印キーで閲覧できます');
 
+  // 拡大表示はアルバムへの移動ではなく、ホーム上の全画面ダイアログで行う。
+  const viewer=document.createElement('dialog');
+  viewer.className='home-photo-lightbox';
+  viewer.setAttribute('aria-label','投稿写真の拡大表示');
+  const largeImage=document.createElement('img');
+  largeImage.className='home-photo-lightbox-image';
+  largeImage.alt='承認された北海道旅行の写真';
+  largeImage.referrerPolicy='no-referrer';
+  const stage=document.createElement('div');
+  stage.className='home-photo-lightbox-stage';
+  stage.append(largeImage);
+  const closeViewer=document.createElement('button');
+  closeViewer.type='button';
+  closeViewer.className='home-photo-lightbox-close';
+  closeViewer.setAttribute('aria-label','拡大表示を閉じる');
+  closeViewer.textContent='×';
+  const prevPhoto=document.createElement('button');
+  prevPhoto.type='button';
+  prevPhoto.className='home-photo-lightbox-prev';
+  prevPhoto.setAttribute('aria-label','前の写真を表示');
+  prevPhoto.textContent='‹';
+  const nextPhoto=document.createElement('button');
+  nextPhoto.type='button';
+  nextPhoto.className='home-photo-lightbox-next';
+  nextPhoto.setAttribute('aria-label','次の写真を表示');
+  nextPhoto.textContent='›';
+  const viewerInfo=document.createElement('div');
+  viewerInfo.className='home-photo-lightbox-info';
+  const viewerCount=document.createElement('span');
+  viewerCount.className='home-photo-lightbox-count';
+  viewerCount.setAttribute('aria-live','polite');
+  const viewerAuthor=document.createElement('strong');
+  const viewerCaption=document.createElement('p');
+  viewerInfo.append(viewerCount,viewerAuthor,viewerCaption);
+  viewer.append(stage,closeViewer,prevPhoto,nextPhoto,viewerInfo);
+  document.body.append(viewer);
+
   let api='',total=0,requestId=0,scrollPending=false;
+  let items=[],selected=0,returnFocus=null;
+
+  function showSelected(index){
+    if(!items.length)return;
+    selected=Math.max(0,Math.min(items.length-1,index));
+    const item=items[selected];
+    largeImage.src=api+'/api/photos/'+item.id+'/image';
+    viewerAuthor.textContent=typeof item.nickname==='string'?item.nickname:'匿名';
+    viewerCaption.textContent=typeof item.caption==='string'?item.caption:'';
+    viewerCount.textContent=(selected+1)+' / '+items.length;
+    prevPhoto.disabled=selected===0;
+    nextPhoto.disabled=selected===items.length-1;
+  }
+  function closeLightbox(){
+    if(viewer.open)viewer.close();
+  }
+  function openLightbox(index,card){
+    if(!items.length||typeof viewer.showModal!=='function')return;
+    returnFocus=card;
+    showSelected(index);
+    viewer.showModal();
+    document.documentElement.classList.add('home-photo-lightbox-open');
+    closeViewer.focus();
+  }
+  closeViewer.addEventListener('click',closeLightbox);
+  prevPhoto.addEventListener('click',()=>showSelected(selected-1));
+  nextPhoto.addEventListener('click',()=>showSelected(selected+1));
+  viewer.addEventListener('close',()=>{
+    document.documentElement.classList.remove('home-photo-lightbox-open');
+    largeImage.removeAttribute('src');
+    if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});
+    returnFocus=null;
+  });
+  viewer.addEventListener('click',event=>{
+    if(event.target===viewer)closeLightbox();
+  });
+  document.addEventListener('keydown',event=>{
+    if(!viewer.open)return;
+    if(event.key==='ArrowLeft'||event.key==='ArrowRight'){
+      event.preventDefault();
+      showSelected(selected+(event.key==='ArrowLeft'?-1:1));
+    }
+  });
+  window.addEventListener('popstate',closeLightbox);
+  window.addEventListener('pagehide',closeLightbox);
+  let swipeStart=null;
+  stage.addEventListener('touchstart',event=>{
+    swipeStart=event.touches.length===1?
+      {x:event.touches[0].clientX,y:event.touches[0].clientY}:null;
+  },{passive:true});
+  stage.addEventListener('touchend',event=>{
+    if(!swipeStart||event.changedTouches.length!==1)return;
+    const deltaX=event.changedTouches[0].clientX-swipeStart.x;
+    const deltaY=event.changedTouches[0].clientY-swipeStart.y;
+    swipeStart=null;
+    if(Math.abs(deltaX)>60&&Math.abs(deltaX)>Math.abs(deltaY)*1.2)
+      showSelected(selected+(deltaX<0?1:-1));
+  },{passive:true});
+  stage.addEventListener('touchcancel',()=>{swipeStart=null},{passive:true});
+  grid.addEventListener('click',event=>{
+    const card=event.target.closest('.home-photo-card');
+    if(card&&grid.contains(card))openLightbox([...grid.children].indexOf(card),card);
+  });
   try{
     const url=new URL(window.HOKKAIDO_NEWS_API_URL);
     if(url.protocol==='https:'&&!url.username&&!url.password&&!url.search&&!url.hash&&
@@ -85,7 +185,12 @@
     else if(event.key==='ArrowLeft'||event.key==='PageUp')target=currentIndex()-1;
     else if(event.key==='Home')target=0;
     else if(event.key==='End')target=total-1;
-    else return;
+    else if((event.key==='Enter'||event.key===' ')&&
+            event.target.classList.contains('home-photo-card')){
+      event.preventDefault();
+      openLightbox([...grid.children].indexOf(event.target),event.target);
+      return;
+    }else return;
     event.preventDefault();
     goTo(target);
   });
@@ -93,6 +198,8 @@
 
   async function loadLatest(){
     const request=++requestId;
+    closeLightbox();
+    items=[];
     frame.hidden=true;
     grid.replaceChildren();
     total=0;
@@ -119,7 +226,9 @@
       for(const [index,item] of approved.entries()){
         const card=document.createElement('article');
         card.className='home-photo-card';
-        card.setAttribute('aria-label','写真 '+(index+1)+' / '+approved.length);
+        card.tabIndex=0;
+        card.setAttribute('role','button');
+        card.setAttribute('aria-label','写真 '+(index+1)+' / '+approved.length+' を拡大表示');
         const img=document.createElement('img');
         img.src=api+'/api/photos/'+item.id+'/image';
         img.alt='承認された北海道旅行の写真';
@@ -139,6 +248,7 @@
         fragment.append(card);
       }
       grid.append(fragment);
+      items=approved;
       total=approved.length;
       frame.hidden=false;
       grid.scrollLeft=0;
