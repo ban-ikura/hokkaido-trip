@@ -445,9 +445,9 @@ body[data-page="home"] .home-days-section .home-section-heading{
  }
  /* Home: visually join DAY 1–4, news, memories and useful links together. */
  body[data-page="home"] .home-stack-card{
-  margin-top:18px;
+  margin-top:0;
   margin-bottom:46px;
-  padding:6px 0 12px;
+  padding:2px 0 12px;
  }
  body[data-page="home"] .home-stack-card > section,
  body.ambient-desktop-page[data-page="home"] .home-stack-card > section{
@@ -464,7 +464,7 @@ body[data-page="home"] .home-days-section .home-section-heading{
  }
  body[data-page="home"] .home-stack-card > section:first-child,
  body.ambient-desktop-page[data-page="home"] .home-stack-card > section:first-child{
-  padding-top:16px!important;
+  padding-top:9px!important;
  }
  body[data-page="home"] .home-stack-card > section + section{
   border-top:1px solid rgba(57,98,118,.16);
