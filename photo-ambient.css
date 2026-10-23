@@ -319,3 +319,105 @@ body[data-page="home"] .home-days-section .home-section-heading{
 .ambient-photo-target > .ambient-photo-background[hidden]{
  display:none!important;
 }
+
+
+/* Desktop 2026-10-23: use ONE approved submission as the wallpaper for the
+   ENTIRE public page, not a standalone photo strip or inserted photo section.
+   The source photo is fully sharp, unmasked, and covers the viewport while
+   the user scrolls. Information remains on readable, translucent surfaces. */
+@media (min-width:900px){
+ body.ambient-desktop-page[data-page]{
+  background-color:#dce8ed!important;
+  background-image:var(--ambient-desktop-photo)!important;
+  background-repeat:no-repeat!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-attachment:fixed!important;
+ }
+ body.ambient-desktop-page[data-page] main{
+  background:transparent!important;
+ }
+ /* Remove the previous scattered and dedicated full-screen break layers. */
+ body.ambient-desktop-page[data-page] .ambient-photo-break,
+ body.ambient-desktop-page[data-page] .ambient-photo-background{
+  display:none!important;
+ }
+ body.ambient-desktop-page[data-page="home"] .home-days-section,
+ body.ambient-desktop-page[data-page="home"] .home-news-section,
+ body.ambient-desktop-page[data-page="home"] .home-photos-section,
+ body.ambient-desktop-page[data-page="home"] .home-useful-section{
+  background:transparent!important;
+ }
+ body.ambient-desktop-page[data-page="home"] .home-days-section > .shell,
+ body.ambient-desktop-page[data-page="home"] .home-news-section > .shell,
+ body.ambient-desktop-page[data-page="home"] .home-photos-section > .shell,
+ body.ambient-desktop-page[data-page="home"] .home-useful-section > .shell{
+  position:relative;
+  background:rgba(248,252,254,.77);
+  border-radius:0;
+  padding:21px clamp(16px,3vw,33px);
+  box-shadow:none;
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+ }
+ body.ambient-desktop-page[data-page="home"] .home-section-heading h2,
+ body.ambient-desktop-page[data-page="home"] .home-section-heading .eyebrow,
+ body.ambient-desktop-page[data-page="home"] .home-heading-side{
+  color:#102735!important;
+ }
+ body.ambient-desktop-page[data-page="day"] .day-page{
+  background:transparent!important;
+ }
+ body.ambient-desktop-page[data-page="day"] .day-page > .shell{
+  position:relative;
+  background:rgba(248,252,254,.78);
+  padding:0 clamp(16px,2.5vw,28px) 30px;
+  -webkit-backdrop-filter:blur(7px);
+  backdrop-filter:blur(7px);
+ }
+ body.ambient-desktop-page[data-page="day"] .day-facts,
+ body.ambient-desktop-page[data-page="day"] .day-schedule-section{
+  background:rgba(247,251,253,.86)!important;
+ }
+ body.ambient-desktop-page[data-page="stay"] .section-section,
+ body.ambient-desktop-page[data-page="guide"] .section-section,
+ body.ambient-desktop-page[data-page="safety"] .section-section{
+  background:transparent!important;
+ }
+ body.ambient-desktop-page[data-page="stay"] .section-section > .shell,
+ body.ambient-desktop-page[data-page="guide"] .section-section > .shell,
+ body.ambient-desktop-page[data-page="safety"] .section-section > .shell{
+  position:relative;
+  background:rgba(248,252,254,.79);
+  padding:24px clamp(16px,3vw,34px);
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+ }
+ body.ambient-desktop-page[data-page="stay"] .subhero,
+ body.ambient-desktop-page[data-page="guide"] .subhero,
+ body.ambient-desktop-page[data-page="safety"] .subhero{
+  background-color:transparent!important;
+  background-image:none!important;
+ }
+ body.ambient-desktop-page[data-page="stay"] .subhero > .shell,
+ body.ambient-desktop-page[data-page="guide"] .subhero > .shell,
+ body.ambient-desktop-page[data-page="safety"] .subhero > .shell{
+  position:relative;
+  background:rgba(246,250,253,.80);
+  padding:20px clamp(16px,3vw,34px);
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+ }
+ body.ambient-desktop-page[data-page="stay"] .subhero h1,
+ body.ambient-desktop-page[data-page="guide"] .subhero h1,
+ body.ambient-desktop-page[data-page="safety"] .subhero h1,
+ body.ambient-desktop-page[data-page="stay"] .subhero .overline,
+ body.ambient-desktop-page[data-page="guide"] .subhero .overline,
+ body.ambient-desktop-page[data-page="safety"] .subhero .overline{
+  color:#142e3c!important;
+  text-shadow:none!important;
+ }
+}
+@media print{
+ body.ambient-desktop-page[data-page]{background-image:none!important}
+}
