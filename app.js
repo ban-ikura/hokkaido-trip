@@ -135,7 +135,7 @@ async function loadAnnouncements(){
       return date||String(b.created_at??'').localeCompare(String(a.created_at??''));
     }).slice(0,200);
     host.replaceChildren();
-    if(count)count.textContent=items.length+'件';
+    if(count)count.textContent=items.length?'最新':'';
     if(!items.length){host.append(node('p','news-empty','現在のお知らせはありません。'));return}
     const renderItem=item=>{
       const row=node('article','news-item'+(item.important===true?' important':''));
@@ -152,12 +152,6 @@ async function loadAnnouncements(){
     };
     const current=node('div','news-current');
     current.append(renderItem(items[0]));host.append(current);
-    const history=node('details','news-history');
-    const summary=node('summary','news-history-toggle','過去のお知らせの履歴（'+(items.length-1)+'件）を見る');
-    const older=node('div','news-history-list');
-    items.slice(1).forEach(item=>older.append(renderItem(item)));
-    if(items.length===1)older.append(node('p','news-empty','過去のお知らせはまだありません。'));
-    history.append(summary,older);host.append(history);
     if(api&&results[1]?.status==='rejected'){
       host.append(node('p','news-sync-warning','新しいお知らせの取得に失敗しました。公開済みのお知らせのみ表示しています。'));
     }
@@ -481,7 +475,7 @@ function syncHomeHeroVideo(){
     video.muted=true;
     const syncToggle=()=>{
       if(!toggle)return;
-      toggle.textContent=video.paused?'▶ 動画を再生':'❚❚ 動画を停止';
+      toggle.textContent=video.paused?'▶':'❚❚';
       toggle.setAttribute('aria-label',video.paused?'背景動画を再生':'背景動画を停止');
     };
     video.addEventListener('playing',()=>{
