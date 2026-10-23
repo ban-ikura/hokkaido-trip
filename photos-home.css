@@ -208,7 +208,7 @@ body[data-page="home"] .home-photos-section .home-photo-text{
 body[data-page="home"]{overflow-x:clip}
 body[data-page="home"] .home-photos-section .home-reels-frame{
   position:relative;left:50%;transform:translateX(-50%);
-  display:block;width:100vw;max-width:none;margin:0 0 18px;
+  width:100vw;max-width:none;margin:0 0 18px;
   border:0!important;border-radius:0!important;
   box-shadow:none!important;background:#090f16;
 }
