@@ -134,3 +134,71 @@
   .home-photo-post{padding:7px 11px;font-size:11px;min-height:35px}
 }
 @media(prefers-reduced-motion:reduce){.home-photo-post{transition:none}}
+
+
+/* Approved-photo vertical reels on the home page. */
+body[data-page="home"] .home-photos-section .home-reels-frame{
+  position:relative;width:min(100%,480px);margin:0 auto 18px;
+  border-radius:20px;overflow:hidden;background:#101c28;
+  box-shadow:0 20px 46px rgba(14,40,57,.24);
+}
+body[data-page="home"] .home-photos-section .home-photo-grid{
+  display:block!important;width:100%;height:clamp(350px,66dvh,690px);
+  margin:0!important;overflow-x:hidden;overflow-y:auto;
+  scroll-snap-type:y mandatory;overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  touch-action:pan-y;
+}
+body[data-page="home"] .home-photos-section .home-photo-grid::-webkit-scrollbar{display:none}
+body[data-page="home"] .home-photos-section .home-photo-card{
+  display:block;position:relative;height:100%;width:100%;
+  margin:0;aspect-ratio:auto!important;border:0;border-radius:0;
+  background:#101c28;box-shadow:none;scroll-snap-align:start;
+  scroll-snap-stop:always;transform:none!important;overflow:hidden;
+}
+body[data-page="home"] .home-photos-section .home-photo-card img{
+  display:block;width:100%;height:100%;object-fit:contain;
+}
+body[data-page="home"] .home-photos-section .home-photo-caption{
+  position:absolute;inset:auto 0 0;padding:80px 66px 24px 20px;
+  background:linear-gradient(180deg,transparent,rgba(1,13,23,.62) 46%,rgba(1,13,23,.92));
+  color:white;pointer-events:none;
+}
+body[data-page="home"] .home-photos-section .home-photo-author{font-size:13px;color:#bfeafc}
+body[data-page="home"] .home-photos-section .home-photo-text{
+  color:#fff;font-size:clamp(14px,2vw,17px);line-height:1.6;-webkit-line-clamp:4;
+}
+.home-reel-progress,.home-reel-hint,.photo-reel-progress,.photo-reel-hint{
+  position:absolute;z-index:3;top:16px;padding:5px 11px;
+  border-radius:30px;background:rgba(5,19,31,.64);color:white;
+  font-size:12px;font-weight:850;line-height:1.55;
+  pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.5);
+}
+.home-reel-progress,.photo-reel-progress{left:15px;font-variant-numeric:tabular-nums}
+.home-reel-hint,.photo-reel-hint{right:15px;font-size:11px}
+.home-reel-controls,.photo-reel-controls{
+  position:absolute;z-index:4;right:12px;top:50%;
+  display:grid;gap:12px;transform:translateY(-50%);
+}
+.home-reel-controls button,.photo-reel-controls button{
+  display:grid;place-items:center;width:43px;height:43px;
+  padding:0;border:1px solid rgba(255,255,255,.48);
+  border-radius:50%;background:rgba(8,29,42,.72);color:#fff;
+  font-size:23px;font-weight:850;box-shadow:0 4px 16px rgba(0,0,0,.22);
+  cursor:pointer;touch-action:manipulation;
+}
+.home-reel-controls button:hover:not(:disabled),
+.photo-reel-controls button:hover:not(:disabled){background:rgba(39,103,128,.92)}
+.home-reel-controls button:disabled,.photo-reel-controls button:disabled{opacity:.33;cursor:default}
+.home-reel-controls button:focus-visible,.photo-reel-controls button:focus-visible{
+  outline:3px solid #a8e7ff;outline-offset:2px;
+}
+@media(max-width:520px){
+  body[data-page="home"] .home-photos-section .home-reels-frame{border-radius:14px}
+  body[data-page="home"] .home-photos-section .home-photo-grid{height:clamp(340px,69dvh,610px)}
+  body[data-page="home"] .home-photos-section .home-photo-caption{padding:70px 58px 19px 16px}
+  .home-reel-controls button,.photo-reel-controls button{width:39px;height:39px}
+}
+@media(prefers-reduced-motion:reduce){
+  body[data-page="home"] .home-photos-section .home-photo-grid{scroll-behavior:auto}
+}
