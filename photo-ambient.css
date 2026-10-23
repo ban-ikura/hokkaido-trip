@@ -90,8 +90,9 @@ body[data-page="safety"] .subhero.ambient-photo-target .overline{
  }
  .ambient-photo-target > .ambient-photo-background.ambient-desktop-pick{
   display:block!important;
-  width:clamp(350px,36vw,510px);
-  height:clamp(250px,25vw,330px);
+  /* Inline JS placement may shrink this only when controls need clearance. */
+  width:min(91%,980px);
+  height:min(95%,560px);
  }
  .ambient-desktop-pick.ambient-art-left{left:clamp(3px,4vw,64px)}
  .ambient-desktop-pick.ambient-art-right{right:clamp(3px,4vw,64px)}
