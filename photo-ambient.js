@@ -119,6 +119,12 @@ function findSafePosition(layer,desktop){
  if(!host||!host.isConnected)return null;
  const bounds=host.getBoundingClientRect();
  if(bounds.width<120||bounds.height<128)return null;
+ // The desktop photo-only band contains no buttons or text: fill it edge-to-edge.
+ // This avoids clipping the photograph into a centered 980px rectangle.
+ if(desktop&&host.classList.contains('ambient-photo-break')){
+  return {x:0,y:0,w:bounds.width,h:bounds.height,
+          side:'full',area:bounds.width*bounds.height};
+ }
  const blockers=[...host.querySelectorAll(blockedSelector)]
   .filter(e=>!layer.contains(e)&&!e.closest('.ambient-photo-background'))
   .map(e=>e.getBoundingClientRect())
