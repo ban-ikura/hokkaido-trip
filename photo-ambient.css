@@ -14,12 +14,16 @@
 .ambient-photo-background img{
  display:block;width:100%;height:100%;object-fit:cover;
  border:0!important;border-radius:0!important;box-shadow:none!important;
- /* Keep the core crisp and fully opaque, then fade only toward the edges. */
+ /* Stay sharp vertically; fade from the photo toward the page only sideways. */
  filter:none;opacity:1;
- -webkit-mask-image:radial-gradient(ellipse closest-side at center,
-  #000 0%,#000 58%,rgba(0,0,0,.95) 69%,rgba(0,0,0,.5) 84%,transparent 100%);
- mask-image:radial-gradient(ellipse closest-side at center,
-  #000 0%,#000 58%,rgba(0,0,0,.95) 69%,rgba(0,0,0,.5) 84%,transparent 100%);
+}
+.ambient-photo-background.ambient-art-left img{
+ -webkit-mask-image:linear-gradient(to right,#000 0%,#000 67%,rgba(0,0,0,.96) 75%,rgba(0,0,0,.52) 88%,transparent 100%);
+ mask-image:linear-gradient(to right,#000 0%,#000 67%,rgba(0,0,0,.96) 75%,rgba(0,0,0,.52) 88%,transparent 100%);
+}
+.ambient-photo-background.ambient-art-right img{
+ -webkit-mask-image:linear-gradient(to left,#000 0%,#000 67%,rgba(0,0,0,.96) 75%,rgba(0,0,0,.52) 88%,transparent 100%);
+ mask-image:linear-gradient(to left,#000 0%,#000 67%,rgba(0,0,0,.96) 75%,rgba(0,0,0,.52) 88%,transparent 100%);
 }
 body[data-page="home"] .ambient-photo-target > .shell,
 body[data-page="stay"] .ambient-photo-target > .shell,
@@ -77,6 +81,8 @@ body[data-page="safety"] .subhero.ambient-photo-target .overline{
  }
  .ambient-photo-background img{opacity:1}
 }
+/* A photo-only area exists on desktop, never obscuring links or cards. */
+.ambient-photo-break{display:none}
 /* Desktop: exactly one randomly chosen image, with a detailed sharp center. */
 @media(min-width:900px){
  .ambient-photo-target > .ambient-photo-background:not(.ambient-desktop-pick){
@@ -89,13 +95,16 @@ body[data-page="safety"] .subhero.ambient-photo-target .overline{
  }
  .ambient-desktop-pick.ambient-art-left{left:clamp(3px,4vw,64px)}
  .ambient-desktop-pick.ambient-art-right{right:clamp(3px,4vw,64px)}
- .ambient-desktop-pick img{
-  opacity:1;filter:none;
-  -webkit-mask-image:radial-gradient(ellipse closest-side at center,
-   #000 0%,#000 65%,rgba(0,0,0,.96) 73%,rgba(0,0,0,.53) 87%,transparent 100%);
-  mask-image:radial-gradient(ellipse closest-side at center,
-   #000 0%,#000 65%,rgba(0,0,0,.96) 73%,rgba(0,0,0,.53) 87%,transparent 100%);
+ /* The same strictly horizontal fade is used on desktop. */
+ .ambient-desktop-pick img{opacity:1;filter:none}
+ .ambient-photo-break{
+  position:relative;isolation:isolate;display:block;
+  width:100%;height:clamp(420px,42vw,585px);
+  overflow:hidden;background:#f5f8f9;pointer-events:none;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
  }
+ .ambient-photo-break > .ambient-photo-background{max-width:none!important}
+
 }
 @media print{.ambient-photo-background{display:none!important}}
 
