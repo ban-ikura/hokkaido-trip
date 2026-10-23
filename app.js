@@ -460,65 +460,9 @@ function renderHotelImages(){
   });
 }
 
-/* Decorative winter movie. Prefer a still image when motion or data saving is requested. */
-function syncHomeHeroVideo(){
-  const video=document.querySelector('.home-hero-video');
-  if(!video)return;
-  const credit=document.querySelector('.home-video-credit');
-  const toggle=document.querySelector('.home-video-toggle');
-  const prefersStill=window.matchMedia('(prefers-reduced-motion: reduce)').matches||
-    !!navigator.connection?.saveData;
-  if(prefersStill){
-    video.pause();video.classList.remove('is-playing');
-    if(credit)credit.hidden=true;
-    if(toggle)toggle.hidden=true;
-    return;
-  }
-  if(!video.dataset.initialized){
-    const source=video.querySelector('source[data-src]');
-    if(!source)return;
-    video.dataset.initialized='true';
-    video.muted=true;
-    const syncToggle=()=>{
-      if(!toggle)return;
-      toggle.textContent=video.paused?'▶':'❚❚';
-      toggle.setAttribute('aria-label',video.paused?'背景動画を再生':'背景動画を停止');
-    };
-    video.addEventListener('playing',()=>{
-      video.classList.add('is-playing');
-      if(credit)credit.hidden=false;
-      if(toggle)toggle.hidden=false;
-      syncToggle();
-    });
-    video.addEventListener('pause',syncToggle);
-    video.addEventListener('error',()=>{
-      video.classList.remove('is-playing');
-      if(credit)credit.hidden=true;
-      if(toggle)toggle.hidden=true;
-    });
-    if(toggle)toggle.addEventListener('click',()=>{
-      if(video.paused){
-        delete video.dataset.userPaused;
-        const replay=video.play();
-        if(replay&&typeof replay.catch==='function')replay.catch(()=>{});
-      }else{
-        video.dataset.userPaused='true';
-        video.pause();
-      }
-    });
-    source.src=source.dataset.src;
-    video.load();
-  }
-  if(video.dataset.userPaused==='true')return;
-  const result=video.play();
-  if(result&&typeof result.catch==='function')result.catch(()=>{
-    video.classList.remove('is-playing');
-    if(credit)credit.hidden=true;
-    if(toggle)toggle.hidden=true;
-  });
-}
-
-renderCredits();renderHotelImages();renderSchedule();renderChecklist();renderNextSchedule();loadAnnouncements();syncHomeHeroVideo();
+/* The hero now uses approved still-photo slides only. No video playback
+ * or pause control should be initialized on page load or SPA navigation. */
+renderCredits();renderHotelImages();renderSchedule();renderChecklist();renderNextSchedule();loadAnnouncements();
 // When a public tab is first loaded by the same-document router, hydrate
 // its locally rendered sections without rerunning this large data bundle.
 window.HOKKAIDO_REINIT_PUBLIC_PAGE=function(){
@@ -529,14 +473,12 @@ window.HOKKAIDO_REINIT_PUBLIC_PAGE=function(){
   if(host.querySelector('#schedule-root'))renderSchedule();
   if(host.querySelector('#checklist-root'))renderChecklist();
   if(host.querySelector('#next-schedule'))renderNextSchedule();
-  if(host.querySelector('.home-hero-video'))syncHomeHeroVideo();
   if(host.querySelector('#announcement-list'))loadAnnouncements();
 };
 
 // Returning to the home tab must refresh live information, even when its DOM is cached.
 window.HOKKAIDO_REFRESH_PUBLIC_HOME=function(){
   if($('#next-schedule'))renderNextSchedule();
-  if($('.home-hero-video'))syncHomeHeroVideo();
   if($('#announcement-list'))loadAnnouncements();
 };
 // Activate the clock on every entry page, not only when the initial document was home.
