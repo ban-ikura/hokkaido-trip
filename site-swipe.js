@@ -147,6 +147,7 @@
   }
 
   function swap(name,item){
+    document.querySelector('.home-hero-video')?.pause();
     document.querySelector('main').replaceWith(item.main);
     document.querySelector('footer').replaceWith(item.footer);
     delete document.body.dataset.day;
