@@ -507,3 +507,34 @@ body[data-photo-page="gallery"] .photo-reels-frame .photo-info p{
 @media(prefers-reduced-motion:reduce){
   body[data-photo-page="gallery"] .photo-reels-frame .photo-grid{scroll-behavior:auto}
 }
+
+
+/* Album reel overlay controls (self-contained, including direct gallery loads). */
+body[data-photo-page="gallery"] .photo-reel-progress,
+body[data-photo-page="gallery"] .photo-reel-hint{
+  position:absolute;z-index:3;top:16px;padding:5px 11px;
+  border-radius:30px;background:rgba(5,19,31,.64);color:#fff;
+  font-size:12px;font-weight:850;line-height:1.55;
+  pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.5);
+}
+body[data-photo-page="gallery"] .photo-reel-progress{left:15px;font-variant-numeric:tabular-nums}
+body[data-photo-page="gallery"] .photo-reel-hint{right:15px;font-size:11px}
+body[data-photo-page="gallery"] .photo-reel-controls{
+  position:absolute;z-index:4;right:12px;top:50%;
+  display:grid;gap:12px;transform:translateY(-50%);
+}
+body[data-photo-page="gallery"] .photo-reel-controls button{
+  display:grid;place-items:center;width:43px;height:43px;
+  padding:0;border:1px solid rgba(255,255,255,.48);
+  border-radius:50%;background:rgba(8,29,42,.72);color:#fff;
+  font-size:23px;font-weight:850;box-shadow:0 4px 16px rgba(0,0,0,.22);
+  cursor:pointer;touch-action:manipulation;
+}
+body[data-photo-page="gallery"] .photo-reel-controls button:hover:not(:disabled){background:rgba(39,103,128,.92)}
+body[data-photo-page="gallery"] .photo-reel-controls button:disabled{opacity:.33;cursor:default}
+body[data-photo-page="gallery"] .photo-reel-controls button:focus-visible{
+  outline:3px solid #a8e7ff;outline-offset:2px;
+}
+@media(max-width:520px){
+  body[data-photo-page="gallery"] .photo-reel-controls button{width:39px;height:39px}
+}
