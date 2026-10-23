@@ -97,7 +97,7 @@
     }
     if(name==='index.html'){
       await css('photos-home.css','20261022-home-photo-post-2');
-      await css('home-video.css','20261023-bg-film-v1');
+      await css('home-video.css','20261023-compact-toggle-v2');
     }
     if(name==='stay.html')await css('allergy-link.css','20261022-clickable-docs-2');
   }
@@ -113,7 +113,7 @@
         await js('admin-config.js','20261021-worker-connected-1');
       if(typeof window.HOKKAIDO_REINIT_PUBLIC_PAGE!=='function'){
         await js('trip-data.js','20261023-photo-layout-v1');
-        await js('app.js','20261023-hero-video-v1');
+        await js('app.js','20261023-no-news-history-v2');
       }else if(!item.ready){
         window.HOKKAIDO_REINIT_PUBLIC_PAGE();
       }
