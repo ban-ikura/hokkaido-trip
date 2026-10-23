@@ -574,3 +574,13 @@ body[data-page="home"] .home-days-section .home-section-heading{
   backdrop-filter:none!important;
  }
 }
+
+
+/* Legacy home movie controls must never reappear.
+ * Approved photo slideshow is now the sole animated hero media. */
+.home-lead .home-hero-video,
+.home-lead .home-video-toggle,
+.home-lead .home-video-credit{
+ display:none!important;
+ visibility:hidden!important;
+}
