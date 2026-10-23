@@ -41,14 +41,8 @@ function addBackground(target,item,position){
  img.src=url(item);img.alt='';
  img.decoding='async';img.loading='lazy';img.referrerPolicy='no-referrer';
  img.addEventListener('error',()=>{
-  const picked=layer.classList.contains('ambient-desktop-pick');
   layer.remove();
-  // If the featured image fails to load, pick another public approved photo.
-  if(picked){
-   const main=target.closest('main');
-   const options=main?[...main.querySelectorAll('.ambient-photo-background')]:[];
-   if(options.length)options[Math.floor(Math.random()*options.length)].classList.add('ambient-desktop-pick');
-  }
+  schedulePlacement();
  },{once:true});
  layer.append(img);
  target.classList.add('ambient-photo-target');
@@ -82,15 +76,118 @@ function decorate(main,items){
    used++;
   }
  }
- // Desktop shows exactly one random crisp ambient photo on each page.
- // Smaller screens keep the sparse, scattered photos.
- if(layers.length){
-  // Prefer a roomy section so the full sharp center is visible rather than clipped.
-  const roomy=layers.filter(layer=>layer.parentElement?.getBoundingClientRect().height>=280);
-  const pool=roomy.length?roomy:layers;
-  pool[Math.floor(Math.random()*pool.length)].classList.add('ambient-desktop-pick');
+ // Placement is validated against actual button, link and card geometry.
+ schedulePlacement();
+}
+
+/* Keep every decorative photo strictly outside interactive controls and content
+ * cards. Viewport and asynchronously loaded schedules are rechecked on change. */
+let placementFrame=0,layoutObserver=null;
+const blockedSelector=[
+ 'a','button','input','select','textarea','label','summary','[role="button"]',
+ '[role="link"]','[tabindex]:not([tabindex="-1"])',
+ '.home-section-heading','.home-day-list','.news-list','.home-quick-links',
+ '.home-photos-section','.home-photo-grid',
+ '.day-fact','.day-breadcrumb','.section-heading','.schedule-root',
+ '.day-notes','.day-page-nav','.info-card','.content-grid > article',
+ '.subhero .shell','.floating-post'
+].join(',');
+
+function collision(a,b,pad=15){
+ return a.left < b.right+pad && a.right > b.left-pad &&
+        a.top < b.bottom+pad && a.bottom > b.top-pad;
+}
+function findSafePosition(layer,desktop){
+ const host=layer.parentElement;
+ if(!host||!host.isConnected)return null;
+ const bounds=host.getBoundingClientRect();
+ if(bounds.width<120||bounds.height<128)return null;
+ const blockers=[...host.querySelectorAll(blockedSelector)]
+  .filter(e=>!layer.contains(e)&&!e.closest('.ambient-photo-background'))
+  .map(e=>e.getBoundingClientRect())
+  .filter(r=>r.width>2&&r.height>2);
+ const widths=desktop?[370,310,245,190,140]:[200,165,130,105];
+ const preference=layer.classList.contains('ambient-art-left')?'left':'right';
+ const sides=Math.random()<.15?[preference==='left'?'right':'left',preference]:
+   [preference,preference==='left'?'right':'left'];
+ const preferred=Number.parseFloat(layer.style.getPropertyValue('--ambient-art-top'))||50;
+ const tops=[preferred,18,78,48,35,64,9,90];
+ for(const width of widths){
+  const w=Math.min(width,bounds.width-18);
+  const h=Math.min(Math.round(w*.73),desktop?280:175);
+  if(w<95||h>bounds.height-12)continue;
+  const xs={
+   left:[9,Math.max(9,Math.round(bounds.width*.08))],
+   right:[bounds.width-w-9,Math.max(9,bounds.width-w-Math.round(bounds.width*.08))]
+  };
+  for(const side of sides){
+   for(const x of xs[side]){
+    if(x<0||x+w>bounds.width)continue;
+    for(const percent of tops){
+     const y=Math.max(7,Math.min(bounds.height-h-7,bounds.height*percent/100-h/2));
+     const candidate={
+      left:bounds.left+x,top:bounds.top+y,
+      right:bounds.left+x+w,bottom:bounds.top+y+h
+     };
+     if(blockers.every(blocker=>!collision(candidate,blocker))){
+      return {x,y,w,h,side,area:w*h};
+     }
+    }
+   }
+  }
+ }
+ return null;
+}
+function layoutPhotos(){
+ const main=document.querySelector('main');
+ if(!main)return;
+ const layers=[...main.querySelectorAll('.ambient-photo-background')];
+ if(!layers.length)return;
+ const desktop=window.matchMedia('(min-width:900px)').matches;
+ const feasible=[];
+ for(const layer of layers){
+  layer.hidden=true;
+  layer.classList.remove('ambient-desktop-pick');
+  const safe=findSafePosition(layer,desktop);
+  if(!safe)continue;
+  layer.style.left=safe.x+'px';
+  layer.style.right='auto';
+  layer.style.top=safe.y+'px';
+  layer.style.transform='none';
+  layer.style.width=safe.w+'px';
+  layer.style.height=safe.h+'px';
+  feasible.push({layer,area:safe.area});
+ }
+ if(desktop){
+  // One photo per desktop page; choose randomly from positions with room.
+  if(!feasible.length)return;
+  const largest=Math.max(...feasible.map(x=>x.area));
+  const roomy=feasible.filter(x=>x.area>=largest*.66);
+  const chosen=roomy[Math.floor(Math.random()*roomy.length)].layer;
+  chosen.classList.add('ambient-desktop-pick');
+  chosen.hidden=false;
+ }else{
+  for(const {layer} of feasible)layer.hidden=false;
  }
 }
+function schedulePlacement(){
+ if(placementFrame)return;
+ placementFrame=requestAnimationFrame(()=>{
+  placementFrame=0;
+  layoutPhotos();
+ });
+}
+function observeLayout(main){
+ if(layoutObserver)layoutObserver.disconnect();
+ layoutObserver=new MutationObserver(()=>schedulePlacement());
+ // Child additions from announcements or schedules may create new collision zones.
+ layoutObserver.observe(main,{childList:true,subtree:true});
+ schedulePlacement();
+}
+window.addEventListener('resize',schedulePlacement,{passive:true});
+window.addEventListener('load',schedulePlacement,{once:true});
+if(document.fonts?.ready)document.fonts.ready.then(schedulePlacement).catch(()=>{});
+
 function heroSlides(main,photos){
  const figure=main.querySelector('.home-lead .home-feature-photo'),hero=main.querySelector('.home-lead');
  if(!figure||!hero)return;
@@ -123,6 +220,8 @@ function heroSlides(main,photos){
 }
 async function render(){
  const ticket=++serial;
+ if(layoutObserver)layoutObserver.disconnect();
+ if(placementFrame){cancelAnimationFrame(placementFrame);placementFrame=0}
  if(timer){clearInterval(timer);timer=null}
  const main=document.querySelector('main');
  if(!main||!types.has(document.body.dataset.page))return;
@@ -140,9 +239,10 @@ async function render(){
   if(ticket!==serial||main!==document.querySelector('main')||!items.length)return;
   decorate(main,items);
   if(document.body.dataset.page==='home')heroSlides(main,items);
+  observeLayout(main);
  }catch{/* Decorative photos must not affect essential travel information. */}
 }
 document.addEventListener('hokkaido:pagechange',render);
-window.addEventListener('pagehide',()=>{++serial;if(timer)clearInterval(timer);timer=null});
+window.addEventListener('pagehide',()=>{++serial;if(timer)clearInterval(timer);timer=null;if(layoutObserver)layoutObserver.disconnect();if(placementFrame)cancelAnimationFrame(placementFrame)});
 render();
 })();
