@@ -33,6 +33,7 @@ function addBackground(target,item,position){
  const side=Math.random()<.5?'left':'right';
  const layer=document.createElement('div');
  layer.className='ambient-photo-background ambient-art-'+side;
+ layer.hidden=true; // Prevent any overlap while safe geometry is being calculated.
  layer.setAttribute('aria-hidden','true');
  layer.style.setProperty('--ambient-art-top',position+'%');
  // Natural size variance makes the spacing less repetitive.
