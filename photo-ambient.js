@@ -241,7 +241,6 @@ function heroSlides(main,photos){
  const token=serial;
  function activate(){
   if(token!==serial||!figure.isConnected)return;
-  figure.querySelector('video')?.pause();
   hero.classList.add('ambient-hero-ready');
   slides[0].classList.add('active');
   if(slides.length<=1||matchMedia('(prefers-reduced-motion: reduce)').matches||navigator.connection?.saveData)return;
