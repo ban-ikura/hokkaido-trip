@@ -289,3 +289,8 @@ body[data-page="home"] .home-days-section .home-section-heading{
 @media print{
  body[data-page="home"] .home-lead{padding:18px 0!important}
 }
+
+/* A failed collision check must never expose an ambient photo, including on desktop. */
+.ambient-photo-target > .ambient-photo-background[hidden]{
+ display:none!important;
+}
