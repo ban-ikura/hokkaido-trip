@@ -421,3 +421,156 @@ body[data-page="home"] .home-days-section .home-section-heading{
 @media print{
  body.ambient-desktop-page[data-page]{background-image:none!important}
 }
+
+
+/* Desktop connected glass foundation. A SINGLE tall translucent white card
+   carries all buttons and content. Independent section backgrounds are removed. */
+.desktop-stack-card{display:contents}
+@media(min-width:900px){
+ body[data-page="home"] .home-stack-card,
+ body[data-page="stay"] .guide-stack-card,
+ body[data-page="guide"] .guide-stack-card,
+ body[data-page="safety"] .guide-stack-card{
+  display:block;
+  width:min(1080px,calc(100% - 64px));
+  margin:0 auto 46px;
+  border:1px solid rgba(255,255,255,.80);
+  border-radius:22px;
+  background:rgba(249,253,255,.75);
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
+  box-shadow:0 18px 52px rgba(13,35,53,.13);
+  overflow:hidden;
+  isolation:isolate;
+ }
+ /* Home: visually join DAY 1–4, news, memories and useful links together. */
+ body[data-page="home"] .home-stack-card{
+  margin-top:18px;
+  margin-bottom:46px;
+  padding:6px 0 12px;
+ }
+ body[data-page="home"] .home-stack-card > section,
+ body.ambient-desktop-page[data-page="home"] .home-stack-card > section{
+  display:block;
+  width:100%;
+  margin:0!important;
+  padding:clamp(23px,2.7vw,36px) 0!important;
+  border:0;
+  border-radius:0;
+  background:transparent!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+ }
+ body[data-page="home"] .home-stack-card > section:first-child,
+ body.ambient-desktop-page[data-page="home"] .home-stack-card > section:first-child{
+  padding-top:16px!important;
+ }
+ body[data-page="home"] .home-stack-card > section + section{
+  border-top:1px solid rgba(57,98,118,.16);
+ }
+ body[data-page="home"] .home-stack-card > section > .shell,
+ body.ambient-desktop-page[data-page="home"] .home-stack-card > section > .shell{
+  width:100%!important;max-width:none!important;
+  margin:0!important;
+  padding:0 clamp(24px,4vw,50px)!important;
+  border:0!important;border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+ }
+ /* Preserve each button's own click target; only the shared foundation joins. */
+ body[data-page="home"] .home-stack-card .home-day-link,
+ body[data-page="home"] .home-stack-card .home-post-link,
+ body[data-page="home"] .home-stack-card .home-quick-links a,
+ body[data-page="home"] .home-stack-card .home-photos-all{
+  position:relative;
+ }
+ body[data-page="home"] .home-stack-card .home-section-heading h2,
+ body[data-page="home"] .home-stack-card .home-section-heading .eyebrow,
+ body[data-page="home"] .home-stack-card .home-heading-side{
+  color:#163444!important;
+ }
+ /* Inner pages: join title and action/info cards into the same long base. */
+ body[data-page="stay"] .guide-stack-card,
+ body[data-page="guide"] .guide-stack-card,
+ body[data-page="safety"] .guide-stack-card{
+  margin-top:28px;
+  padding:13px 0 24px;
+ }
+ body[data-page="stay"] .guide-stack-card > .subhero,
+ body[data-page="guide"] .guide-stack-card > .subhero,
+ body[data-page="safety"] .guide-stack-card > .subhero{
+  width:100%;
+  min-height:0!important;
+  margin:0!important;
+  padding:28px 0 16px!important;
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;border-radius:0!important;
+  color:#173443;
+ }
+ body[data-page="stay"] .guide-stack-card > .section-section,
+ body[data-page="guide"] .guide-stack-card > .section-section,
+ body[data-page="safety"] .guide-stack-card > .section-section{
+  background:transparent!important;
+  border:0!important;border-radius:0!important;
+  margin:0!important;padding:20px 0 0!important;
+ }
+ body[data-page="stay"] .guide-stack-card > .section-section{
+  padding-top:18px!important;
+ }
+ body[data-page="stay"] .guide-stack-card > .subhero > .shell,
+ body[data-page="guide"] .guide-stack-card > .subhero > .shell,
+ body[data-page="safety"] .guide-stack-card > .subhero > .shell,
+ body[data-page="stay"] .guide-stack-card > .section-section > .shell,
+ body[data-page="guide"] .guide-stack-card > .section-section > .shell,
+ body[data-page="safety"] .guide-stack-card > .section-section > .shell,
+ body.ambient-desktop-page[data-page="stay"] .guide-stack-card > .subhero > .shell,
+ body.ambient-desktop-page[data-page="guide"] .guide-stack-card > .subhero > .shell,
+ body.ambient-desktop-page[data-page="safety"] .guide-stack-card > .subhero > .shell,
+ body.ambient-desktop-page[data-page="stay"] .guide-stack-card > .section-section > .shell,
+ body.ambient-desktop-page[data-page="guide"] .guide-stack-card > .section-section > .shell,
+ body.ambient-desktop-page[data-page="safety"] .guide-stack-card > .section-section > .shell{
+  width:100%!important;max-width:none!important;
+  margin:0!important;
+  padding:0 clamp(22px,4vw,48px)!important;
+  background:transparent!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  border-radius:0!important;box-shadow:none!important;
+ }
+ body[data-page="stay"] .guide-stack-card > .subhero h1,
+ body[data-page="guide"] .guide-stack-card > .subhero h1,
+ body[data-page="safety"] .guide-stack-card > .subhero h1,
+ body[data-page="stay"] .guide-stack-card > .subhero .overline,
+ body[data-page="guide"] .guide-stack-card > .subhero .overline,
+ body[data-page="safety"] .guide-stack-card > .subhero .overline{
+  color:#143446!important;text-shadow:none!important;
+ }
+ body[data-page="stay"] .guide-stack-card > .section-section > .shell,
+ body[data-page="guide"] .guide-stack-card > .section-section > .shell,
+ body[data-page="safety"] .guide-stack-card > .section-section > .shell{
+  border-top:1px solid rgba(57,98,118,.16)!important;
+  padding-top:27px!important;
+ }
+ /* Daily pages already have one column: make its existing base match the glass. */
+ body[data-page="day"] .day-page > .shell,
+ body.ambient-desktop-page[data-page="day"] .day-page > .shell{
+  border:1px solid rgba(255,255,255,.75);
+  border-radius:22px;
+  background:rgba(249,253,255,.76)!important;
+  box-shadow:0 18px 52px rgba(13,35,53,.12);
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
+  overflow:hidden;
+  margin-top:24px;
+ }
+}
+@media print{
+ .desktop-stack-card{
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+ }
+}
