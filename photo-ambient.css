@@ -1,23 +1,22 @@
-/* Random approved travel photos as decor in whitespace, never as post cards.
- * Each region randomly fades in from the left or right, without author/caption. */
+/* Decorative approved photos: small, irregularly spaced, frameless and softly faded. */
 .ambient-photo-target{position:relative;isolation:isolate;overflow:hidden}
 .ambient-photo-target > .ambient-photo-background{
- position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+ position:absolute;z-index:0;pointer-events:none;
+ top:var(--ambient-art-top,50%);
+ width:min(var(--ambient-art-size,260px),62vw);
+ height:clamp(145px,19vw,225px);
+ transform:translateY(-50%);overflow:visible;
+ border:0!important;border-radius:0!important;
+ box-shadow:none!important;background:transparent!important;
 }
+.ambient-photo-background.ambient-art-left{left:clamp(0px,3vw,38px)}
+.ambient-photo-background.ambient-art-right{right:clamp(0px,3vw,38px)}
 .ambient-photo-background img{
- position:absolute;top:0;bottom:0;width:72%;height:100%;
- object-fit:cover;filter:saturate(.95);
- opacity:.84;
-}
-.ambient-side-left > .ambient-photo-background img{
- left:0;object-position:left center;
- -webkit-mask-image:linear-gradient(to right,#000 0%,#000 28%,transparent 100%);
- mask-image:linear-gradient(to right,#000 0%,#000 28%,transparent 100%);
-}
-.ambient-side-right > .ambient-photo-background img{
- right:0;object-position:right center;
- -webkit-mask-image:linear-gradient(to left,#000 0%,#000 28%,transparent 100%);
- mask-image:linear-gradient(to left,#000 0%,#000 28%,transparent 100%);
+ display:block;width:100%;height:100%;object-fit:cover;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+ filter:saturate(.9);opacity:.65;
+ -webkit-mask-image:radial-gradient(ellipse 82% 88% at center,#000 23%,rgba(0,0,0,.73) 43%,transparent 77%);
+ mask-image:radial-gradient(ellipse 82% 88% at center,#000 23%,rgba(0,0,0,.73) 43%,transparent 77%);
 }
 body[data-page="home"] .ambient-photo-target > .shell,
 body[data-page="stay"] .ambient-photo-target > .shell,
@@ -25,39 +24,55 @@ body[data-page="guide"] .ambient-photo-target > .shell,
 body[data-page="safety"] .ambient-photo-target > .shell{
  position:relative;z-index:1;
 }
-body[data-page="day"] .ambient-photo-target > :not(.ambient-photo-background){position:relative;z-index:1}
+body[data-page="day"] .ambient-photo-target > :not(.ambient-photo-background){
+ position:relative;z-index:1;
+}
+/* High contrast: all headlines and labels on light, photo-tinted backgrounds. */
 body[data-page="home"] .home-days-section,
 body[data-page="home"] .home-news-section,
 body[data-page="home"] .home-useful-section{
- background:#eef3f4;
+ background:#f5f8f9;color:#152d3b;
 }
-body[data-page="home"] .ambient-photo-target .home-section-heading h2{
- text-shadow:0 1px 18px rgba(255,255,255,.9);
+body[data-page="home"] .ambient-photo-target .home-section-heading h2,
+body[data-page="home"] .ambient-photo-target .home-section-heading .eyebrow,
+body[data-page="home"] .ambient-photo-target .home-heading-side,
+body[data-page="home"] .ambient-photo-target .news-count{
+ color:#102735!important;text-shadow:0 1px 10px rgba(255,255,255,.85);
 }
 body[data-page="day"] .day-facts.ambient-photo-target,
 body[data-page="day"] .day-schedule-section.ambient-photo-target{
- padding:22px 16px;border-radius:8px;
- background:#eef3f4;
+ background:#f5f8f9;
+ border:0;border-radius:0;
+}
+body[data-page="day"] .ambient-photo-target > .section-heading h2,
+body[data-page="day"] .ambient-photo-target > .section-heading .overline,
+body[data-page="day"] .ambient-photo-target .day-fact-heading{
+ color:#112b3a!important;
 }
 body[data-page="stay"] .section-section.ambient-photo-target,
 body[data-page="guide"] .section-section.ambient-photo-target,
 body[data-page="safety"] .section-section.ambient-photo-target{
- background:#eef3f4;
+ background:#f5f8f9;color:#172c39;
 }
 body[data-page="stay"] .subhero.ambient-photo-target,
 body[data-page="guide"] .subhero.ambient-photo-target,
 body[data-page="safety"] .subhero.ambient-photo-target{
- background:#dbe7ec;
+ background:#eaf1f5;color:#102a39;
 }
 body[data-page="stay"] .subhero.ambient-photo-target h1,
 body[data-page="guide"] .subhero.ambient-photo-target h1,
-body[data-page="safety"] .subhero.ambient-photo-target h1{
- text-shadow:0 2px 14px rgba(0,0,0,.35);
+body[data-page="safety"] .subhero.ambient-photo-target h1,
+body[data-page="stay"] .subhero.ambient-photo-target .overline,
+body[data-page="guide"] .subhero.ambient-photo-target .overline,
+body[data-page="safety"] .subhero.ambient-photo-target .overline{
+ color:#122a38!important;text-shadow:0 1px 11px rgba(255,255,255,.9)!important;
 }
 @media(max-width:680px){
- .ambient-photo-background img{width:95%;opacity:.58}
- body[data-page="day"] .day-facts.ambient-photo-target,
- body[data-page="day"] .day-schedule-section.ambient-photo-target{padding:14px 7px}
+ .ambient-photo-target > .ambient-photo-background{
+  width:min(var(--ambient-art-size,235px),63vw);
+  height:clamp(120px,32vw,170px);
+ }
+ .ambient-photo-background img{opacity:.56}
 }
 @media print{.ambient-photo-background{display:none!important}}
 
@@ -210,4 +225,44 @@ html.ambient-viewer-open{overflow:hidden!important}
   .ambient-prev,.ambient-next{width:35px;height:44px;font-size:30px}
   .ambient-prev{left:4px}.ambient-next{right:4px}
   .ambient-viewer-info{padding:52px 46px max(25px,env(safe-area-inset-bottom))}
+}
+
+
+/* Close up the gap between the NEXT schedule panel and the four-day overview. */
+body[data-page="home"] .home-lead{
+ min-height:0!important;
+ padding-top:clamp(44px,5.5vw,76px)!important;
+ padding-bottom:8px!important;
+ align-items:stretch;
+}
+body[data-page="home"] .home-lead-grid{
+ align-items:end;
+}
+body[data-page="home"] .home-lead .next-card{
+ margin-bottom:0!important;
+}
+body[data-page="home"] .home-days-section{
+ margin-top:0!important;
+ padding-top:12px!important;
+ padding-bottom:23px!important;
+}
+body[data-page="home"] .home-days-section .home-section-heading{
+ margin-top:0!important;margin-bottom:10px!important;
+}
+@media(max-width:820px){
+ body[data-page="home"] .home-lead{
+  min-height:0!important;padding-top:52px!important;padding-bottom:6px!important;
+ }
+ body[data-page="home"] .home-lead-grid{gap:24px!important}
+}
+@media(max-width:680px){
+ body[data-page="home"] .home-lead{
+  min-height:0!important;padding-top:42px!important;padding-bottom:5px!important;
+ }
+ body[data-page="home"] .home-lead-grid{gap:18px!important}
+ body[data-page="home"] .home-days-section{padding-top:9px!important;padding-bottom:17px!important}
+ body[data-page="home"] .home-days-section .home-section-heading{margin-bottom:8px!important}
+}
+@media print{
+ body[data-page="home"] .home-lead{padding:18px 0!important}
 }
