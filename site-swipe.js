@@ -90,7 +90,7 @@
   async function prepare(name){
     await css('style.css','20261023-focus-v2');
     if(name==='photos.html'){
-      await css('photos.css','20261023-fullbleed-v1');
+      await css('photos.css','20261023-gallery-grid-v2');
       // Keep the common minimal theme after the optional gallery stylesheet.
       const theme=resource('link[rel="stylesheet"]','site-swipe.css');
       if(theme)document.head.append(theme);
@@ -106,7 +106,7 @@
     if(name==='photos.html'){
       if(typeof window.HOKKAIDO_NEWS_API_URL!=='string')
         await js('admin-config.js','20261021-worker-connected-1');
-      if(!item.ready)await js('photos-gallery.js','20261023-photo-reels-v1');
+      if(!item.ready)await js('photos-gallery.js','20261023-gallery-grid-v2');
       else if(returning)window.HOKKAIDO_REFRESH_GALLERY?.();
     }else{
       if(name==='index.html'&&typeof window.HOKKAIDO_NEWS_API_URL!=='string')
@@ -278,10 +278,10 @@
   updateMenu();
   // Optional approved-photo decoration for public informational pages only.
   void (async()=>{
-    await css('photo-ambient.css','20261023-ambient-v1');
+    await css('photo-ambient.css','20261023-ambient-v2');
     if(typeof window.HOKKAIDO_NEWS_API_URL!=='string')
       await js('admin-config.js','20261021-worker-connected-1');
-    await js('photo-ambient.js','20261023-ambient-v1');
+    await js('photo-ambient.js','20261023-ambient-v2');
   })().catch(error=>console.warn('Optional photo decoration:',error));
   // Prefetch at most the neighbouring two HTML pages, not the full itinerary.
   const prefetch=()=>{
