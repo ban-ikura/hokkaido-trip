@@ -278,7 +278,7 @@
   updateMenu();
   // Optional approved-photo decoration for public informational pages only.
   void (async()=>{
-    await css('photo-ambient.css','20261023-ambient-v8');
+    await css('photo-ambient.css','20261023-ambient-v9');
     if(typeof window.HOKKAIDO_NEWS_API_URL!=='string')
       await js('admin-config.js','20261021-worker-connected-1');
     await js('photo-ambient.js','20261023-ambient-v8');
