@@ -34,17 +34,17 @@
 .home-lead .home-video-toggle{
   position:absolute;z-index:4;left:clamp(14px,3vw,38px);bottom:10px;
   display:inline-flex;align-items:center;justify-content:center;
-  min-height:44px;padding:8px 14px;
+  width:36px;height:36px;min-height:0;padding:0;
   border:1px solid rgba(255,255,255,.48);border-radius:5px;
   background:rgba(6,27,44,.60);backdrop-filter:blur(8px);
-  color:#fff;font:700 12px/1.4 system-ui,sans-serif;
+  color:#fff;font:700 12px/1 system-ui,sans-serif;
   box-shadow:0 3px 15px rgba(0,0,0,.18);cursor:pointer;
 }
 .home-lead .home-video-toggle:hover{background:rgba(6,27,44,.85)}
 .home-lead .home-video-toggle:focus-visible{outline:3px solid #b8f4ff;outline-offset:3px}
 .home-lead .home-video-toggle[hidden]{display:none!important}
 @media(max-width:680px){
-  .home-lead .home-video-toggle{left:13px;bottom:9px;min-height:42px;padding:7px 11px;font-size:11px}
+  .home-lead .home-video-toggle{left:13px;bottom:9px;width:34px;height:34px;font-size:11px}
 }
 @media(prefers-reduced-motion:reduce){.home-lead .home-video-toggle{display:none!important}}
 @media print{.home-lead .home-video-toggle{display:none!important}}
