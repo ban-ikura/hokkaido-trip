@@ -465,33 +465,56 @@ function syncHomeHeroVideo(){
   const video=document.querySelector('.home-hero-video');
   if(!video)return;
   const credit=document.querySelector('.home-video-credit');
+  const toggle=document.querySelector('.home-video-toggle');
   const prefersStill=window.matchMedia('(prefers-reduced-motion: reduce)').matches||
     !!navigator.connection?.saveData;
   if(prefersStill){
     video.pause();video.classList.remove('is-playing');
     if(credit)credit.hidden=true;
+    if(toggle)toggle.hidden=true;
     return;
   }
   if(!video.dataset.initialized){
-    video.dataset.initialized='true';
     const source=video.querySelector('source[data-src]');
     if(!source)return;
+    video.dataset.initialized='true';
     video.muted=true;
+    const syncToggle=()=>{
+      if(!toggle)return;
+      toggle.textContent=video.paused?'▶ 動画を再生':'❚❚ 動画を停止';
+      toggle.setAttribute('aria-label',video.paused?'背景動画を再生':'背景動画を停止');
+    };
     video.addEventListener('playing',()=>{
       video.classList.add('is-playing');
       if(credit)credit.hidden=false;
+      if(toggle)toggle.hidden=false;
+      syncToggle();
     });
+    video.addEventListener('pause',syncToggle);
     video.addEventListener('error',()=>{
       video.classList.remove('is-playing');
       if(credit)credit.hidden=true;
+      if(toggle)toggle.hidden=true;
+    });
+    if(toggle)toggle.addEventListener('click',()=>{
+      if(video.paused){
+        delete video.dataset.userPaused;
+        const replay=video.play();
+        if(replay&&typeof replay.catch==='function')replay.catch(()=>{});
+      }else{
+        video.dataset.userPaused='true';
+        video.pause();
+      }
     });
     source.src=source.dataset.src;
     video.load();
   }
+  if(video.dataset.userPaused==='true')return;
   const result=video.play();
   if(result&&typeof result.catch==='function')result.catch(()=>{
     video.classList.remove('is-playing');
     if(credit)credit.hidden=true;
+    if(toggle)toggle.hidden=true;
   });
 }
 
