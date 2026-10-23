@@ -85,7 +85,10 @@ function decorate(main,items){
  // Desktop shows exactly one random crisp ambient photo on each page.
  // Smaller screens keep the sparse, scattered photos.
  if(layers.length){
-  layers[Math.floor(Math.random()*layers.length)].classList.add('ambient-desktop-pick');
+  // Prefer a roomy section so the full sharp center is visible rather than clipped.
+  const roomy=layers.filter(layer=>layer.parentElement?.getBoundingClientRect().height>=280);
+  const pool=roomy.length?roomy:layers;
+  pool[Math.floor(Math.random()*pool.length)].classList.add('ambient-desktop-pick');
  }
 }
 function heroSlides(main,photos){
