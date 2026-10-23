@@ -421,15 +421,19 @@ function renderNextSchedule(){
   box.append(label);
   const event=upcoming||current;
   if(!event){
+    box.href='day1.html#schedule';
+    box.setAttribute('aria-label','4日間の行程表を開く');
     box.append(node('p','next-title','全日程終了'),node('p','next-day','2026年12月7日〜10日の行程を掲載。'));
+    box.append(node('span','next-jump','行程表を見る ↗'));
     return;
   }
   box.append(node('div','next-time',event.start));
   box.append(node('p','next-day',dateNames[event.index]+'　'+(upcoming?'開始予定':'進行中')));
   box.append(node('p','next-title',event.title));
   box.href='day'+(event.index+1)+'.html#schedule';
+  box.setAttribute('aria-label',dateNames[event.index]+'の行程表を開く：'+event.title);
   const bottom=node('div','next-bottom');bottom.append(node('span','next-course',event.course));
-  bottom.append(node('span','next-jump','この日の予定を見る ↗'));box.append(bottom);
+  bottom.append(node('span','next-jump','タップして行程表へ ↗'));box.append(bottom);
 }
 const packingList=['学生証・学校指定の書類','財布・現金','スマートフォン','充電器・モバイルバッテリー','着替え・下着・靴下','防寒着・手袋・帽子','滑りにくい靴','洗面用具・タオル','常備薬（必要な人）','筆記用具・旅行のしおり','スキー用品・防寒小物（該当者）','その他学校指定の持ち物'];
 const checklistKey='hokkaido26-checklist-public-v3';
