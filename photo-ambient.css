@@ -1,58 +1,126 @@
-/* Random approved photo thumbnails in spacious breaks between existing sections. */
-.ambient-photo-strip{
-  display:block;min-width:0;
-  margin:24px 0 30px;padding:15px 17px 17px;
-  background:#edf4f5;border:1px solid #d8e4e8;border-radius:13px;
-  color:#183c4c;
+/* Random approved travel photos as decor in whitespace, never as post cards.
+ * Each region randomly fades in from the left or right, without author/caption. */
+.ambient-photo-target{position:relative;isolation:isolate;overflow:hidden}
+.ambient-photo-target > .ambient-photo-background{
+ position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;
 }
-.ambient-strip-heading{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:10px;margin:0 0 12px;
+.ambient-photo-background img{
+ position:absolute;top:0;bottom:0;width:72%;height:100%;
+ object-fit:cover;filter:saturate(.95);
+ opacity:.84;
 }
-.ambient-strip-heading strong{font-size:14px;color:#244859;font-weight:850}
-.ambient-strip-heading small{font-size:11px;color:#66838e;font-weight:700}
-.ambient-strip-track{
-  display:flex;gap:11px;padding:2px 2px 7px;
-  overflow-x:auto;overflow-y:hidden;
-  scroll-snap-type:x proximity;overscroll-behavior-x:contain;
-  -webkit-overflow-scrolling:touch;scrollbar-width:thin;
-  touch-action:pan-x pan-y;
+.ambient-side-left > .ambient-photo-background img{
+ left:0;object-position:left center;
+ -webkit-mask-image:linear-gradient(to right,#000 0%,#000 28%,transparent 100%);
+ mask-image:linear-gradient(to right,#000 0%,#000 28%,transparent 100%);
 }
-.ambient-photo-card{
-  position:relative;display:block;
-  flex:0 0 clamp(140px,19vw,198px);
-  height:137px;padding:0;margin:0;
-  background:#163b50;border:1px solid #dfeaf0;
-  border-radius:10px;overflow:hidden;
-  cursor:zoom-in;scroll-snap-align:start;
-  box-shadow:0 3px 10px rgba(16,48,65,.12);
+.ambient-side-right > .ambient-photo-background img{
+ right:0;object-position:right center;
+ -webkit-mask-image:linear-gradient(to left,#000 0%,#000 28%,transparent 100%);
+ mask-image:linear-gradient(to left,#000 0%,#000 28%,transparent 100%);
 }
-.ambient-photo-card img{display:block;width:100%;height:100%;object-fit:cover}
-.ambient-photo-card span{
-  position:absolute;inset:auto 0 0;
-  padding:27px 10px 8px;
-  text-align:left;color:#fff;font-size:11px;font-weight:800;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  background:linear-gradient(transparent,rgba(2,14,26,.86));
+body[data-page="home"] .ambient-photo-target > .shell,
+body[data-page="stay"] .ambient-photo-target > .shell,
+body[data-page="guide"] .ambient-photo-target > .shell,
+body[data-page="safety"] .ambient-photo-target > .shell{
+ position:relative;z-index:1;
 }
-.ambient-photo-card:focus-visible{outline:3px solid #299dc8;outline-offset:2px}
-body[data-page="home"] .ambient-photo-strip{margin:26px 0 0}
-body[data-page="day"] .day-page .ambient-photo-strip{margin:22px 0 28px}
-body[data-page="stay"] .content-grid .ambient-photo-strip,
-body[data-page="guide"] .content-grid .ambient-photo-strip,
-body[data-page="safety"] .content-grid .ambient-photo-strip{
-  grid-column:1/-1;width:100%;margin:3px 0;
+body[data-page="day"] .ambient-photo-target > :not(.ambient-photo-background){position:relative;z-index:1}
+body[data-page="home"] .home-days-section,
+body[data-page="home"] .home-news-section,
+body[data-page="home"] .home-useful-section{
+ background:#eef3f4;
 }
-@media(max-width:650px){
-  .ambient-photo-strip{margin:18px 0 22px;padding:12px 10px;border-radius:10px}
-  .ambient-strip-heading{gap:7px;margin-bottom:9px}
-  .ambient-strip-heading strong{font-size:12px}
-  .ambient-strip-heading small{font-size:10px}
-  .ambient-strip-track{gap:9px}
-  .ambient-photo-card{flex-basis:133px;height:113px;border-radius:8px}
-  body[data-page="day"] .day-page .ambient-photo-strip{margin:17px 0 22px}
+body[data-page="home"] .ambient-photo-target .home-section-heading h2{
+ text-shadow:0 1px 18px rgba(255,255,255,.9);
 }
+body[data-page="day"] .day-facts.ambient-photo-target,
+body[data-page="day"] .day-schedule-section.ambient-photo-target{
+ padding:22px 16px;border-radius:8px;
+ background:#eef3f4;
+}
+body[data-page="stay"] .section-section.ambient-photo-target,
+body[data-page="guide"] .section-section.ambient-photo-target,
+body[data-page="safety"] .section-section.ambient-photo-target{
+ background:#eef3f4;
+}
+body[data-page="stay"] .subhero.ambient-photo-target,
+body[data-page="guide"] .subhero.ambient-photo-target,
+body[data-page="safety"] .subhero.ambient-photo-target{
+ background:#dbe7ec;
+}
+body[data-page="stay"] .subhero.ambient-photo-target h1,
+body[data-page="guide"] .subhero.ambient-photo-target h1,
+body[data-page="safety"] .subhero.ambient-photo-target h1{
+ text-shadow:0 2px 14px rgba(0,0,0,.35);
+}
+@media(max-width:680px){
+ .ambient-photo-background img{width:95%;opacity:.58}
+ body[data-page="day"] .day-facts.ambient-photo-target,
+ body[data-page="day"] .day-schedule-section.ambient-photo-target{padding:14px 7px}
+}
+@media print{.ambient-photo-background{display:none!important}}
 
+/* Home itinerary: four compact day cards above the news, including mobile. */
+body[data-page="home"] .home-days-section{padding-top:30px;padding-bottom:29px}
+body[data-page="home"] .home-days-section .home-section-heading{margin-bottom:12px}
+body[data-page="home"] .home-days-section .home-section-heading h2{font-size:clamp(20px,2.7vw,26px)}
+body[data-page="home"] .home-days-section .home-day-list{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:clamp(6px,1.2vw,14px)!important;
+}
+body[data-page="home"] .home-days-section .home-day-link,
+body[data-page="home"] .home-days-section .home-day-link:hover{
+ display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;
+ position:relative;isolation:isolate;overflow:hidden;
+ min-width:0;min-height:clamp(125px,16vw,190px)!important;
+ padding:12px!important;gap:4px!important;
+ border:1px solid rgba(255,255,255,.68)!important;border-radius:10px!important;
+ color:#fff;background:#2c5766;
+ box-shadow:0 6px 19px rgba(17,44,58,.19);
+}
+body[data-page="home"] .home-days-section .home-day-photo{
+ position:absolute;inset:0;z-index:-2;display:block;
+ width:100%;height:100%;max-width:none;min-width:0;
+ border-radius:0;
+}
+body[data-page="home"] .home-days-section .home-day-photo img{
+ width:100%;height:100%;object-fit:cover;
+}
+body[data-page="home"] .home-days-section .home-day-link::after{
+ content:"";position:absolute;inset:0;z-index:-1;
+ background:linear-gradient(180deg,rgba(2,15,25,.03) 5%,rgba(3,18,29,.87) 100%);
+}
+body[data-page="home"] .home-days-section .home-day-count{
+ font-size:clamp(16px,2.7vw,26px)!important;line-height:1.1;
+ color:#e5f2fa;
+}
+body[data-page="home"] .home-days-section .home-day-text{
+ display:grid;gap:2px;width:100%;min-width:0;
+}
+body[data-page="home"] .home-days-section .home-day-text small{
+ font-size:clamp(9px,1.1vw,11px);line-height:1.25;color:#e4eff7;
+}
+body[data-page="home"] .home-days-section .home-day-text strong{
+ font-size:clamp(11px,1.45vw,16px)!important;
+ line-height:1.35;color:#fff;overflow-wrap:anywhere;
+}
+body[data-page="home"] .home-days-section .home-day-arrow{
+ position:absolute;right:9px;top:8px;font-size:14px;
+ color:#fff;
+}
+@media(max-width:680px){
+ body[data-page="home"] .home-days-section{padding-top:18px;padding-bottom:18px}
+ body[data-page="home"] .home-days-section .home-day-list{gap:6px!important}
+ body[data-page="home"] .home-days-section .home-day-link,
+ body[data-page="home"] .home-days-section .home-day-link:hover{
+   min-height:122px!important;padding:8px 6px!important;border-radius:7px!important;
+ }
+ body[data-page="home"] .home-days-section .home-day-count{font-size:16px!important}
+ body[data-page="home"] .home-days-section .home-day-text small{font-size:9px}
+ body[data-page="home"] .home-days-section .home-day-text strong{font-size:10px!important}
+ body[data-page="home"] .home-days-section .home-day-arrow{font-size:11px;right:5px;top:4px}
+}
 /* Preserve the site's readable home title; only replace its large background
    after at least one approved image has actually loaded. */
 .home-lead .home-feature-photo .ambient-hero-images{
