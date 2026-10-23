@@ -27,33 +27,48 @@ async function load(){
  })();
  try{return await pending}finally{pending=null}
 }
-function addBackground(target,item){
+/* Scatter small, unframed photos into gaps. Soft edge masks are provided in CSS. */
+function addBackground(target,item,position){
  if(!target||!item)return;
  const side=Math.random()<.5?'left':'right';
  const layer=document.createElement('div');
- layer.className='ambient-photo-background';
+ layer.className='ambient-photo-background ambient-art-'+side;
  layer.setAttribute('aria-hidden','true');
+ layer.style.setProperty('--ambient-art-top',position+'%');
+ // Natural size variance makes the spacing less repetitive.
+ layer.style.setProperty('--ambient-art-size',Math.round(195+Math.random()*120)+'px');
  const img=document.createElement('img');
  img.src=url(item);img.alt='';
  img.decoding='async';img.loading='lazy';img.referrerPolicy='no-referrer';
  img.addEventListener('error',()=>layer.remove(),{once:true});
  layer.append(img);
- target.classList.add('ambient-photo-target','ambient-side-'+side);
+ target.classList.add('ambient-photo-target');
  target.prepend(layer);
 }
 function decorate(main,items){
  const page=document.body.dataset.page;
  let selectors=[];
  if(page==='home'){
-  selectors=['.home-days-section','.home-news-section','.home-useful-section'];
+  // Two of the three sections, never every section, to retain quiet whitespace.
+  selectors=random(['.home-days-section','.home-news-section','.home-useful-section']).slice(0,2);
  }else if(page==='day'){
   selectors=['.day-facts','.day-schedule-section'];
  }else if(page==='stay'||page==='guide'||page==='safety'){
   selectors=['.subhero','.section-section'];
  }
  const photos=random(items);
- for(const [index,selector] of selectors.entries()){
-  addBackground(main.querySelector(selector),photos[index%photos.length]);
+ let used=0;
+ for(const selector of selectors){
+  const target=main.querySelector(selector);
+  if(!target)continue;
+  const height=target.getBoundingClientRect().height;
+  // Extra photos only in genuinely long gaps, with substantial distance between.
+  const positions=height>1150?[24+Math.random()*10,68+Math.random()*10]:
+    [31+Math.random()*37];
+  for(const top of positions){
+   addBackground(target,photos[used%photos.length],top);
+   used++;
+  }
  }
 }
 function heroSlides(main,photos){
@@ -93,7 +108,7 @@ async function render(){
  if(!main||!types.has(document.body.dataset.page))return;
  main.querySelectorAll('.ambient-photo-background').forEach(n=>n.remove());
  main.querySelectorAll('.ambient-photo-target').forEach(n=>{
-  n.classList.remove('ambient-photo-target','ambient-side-left','ambient-side-right');
+  n.classList.remove('ambient-photo-target');
  });
  // Remove the outdated thumbnail strips left by any older cached page.
  main.querySelectorAll('.ambient-photo-strip').forEach(n=>n.remove());
