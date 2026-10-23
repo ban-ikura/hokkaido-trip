@@ -62,6 +62,22 @@ function decorate(main,items){
   selectors=['.subhero','.section-section'];
  }
  const photos=random(items);
+ // A single unframed, photo-only background break guarantees room for
+ // a large desktop image without putting it behind buttons or travel cards.
+ const anchors=page==='home'?
+  ['.home-news-section','.home-photos-section','.home-useful-section']:
+  page==='day'?['.day-facts','.day-schedule-section']:
+  ['.subhero'];
+ const available=anchors.map(selector=>main.querySelector(selector)).filter(Boolean);
+ if(available.length){
+  const anchor=available[Math.floor(Math.random()*available.length)];
+  const breakArea=document.createElement('div');
+  breakArea.className='ambient-photo-break ambient-photo-target';
+  breakArea.setAttribute('aria-hidden','true');
+  anchor.after(breakArea);
+  const featured=addBackground(breakArea,photos[0],50);
+  if(featured)featured.classList.add('ambient-desktop-feature');
+ }
  const layers=[];
  let used=0;
  for(const selector of selectors){
@@ -107,7 +123,12 @@ function findSafePosition(layer,desktop){
   .filter(e=>!layer.contains(e)&&!e.closest('.ambient-photo-background'))
   .map(e=>e.getBoundingClientRect())
   .filter(r=>r.width>2&&r.height>2);
- const widths=desktop?[370,310,245,190,140]:[200,165,130,105];
+ const featured=host.classList.contains('ambient-photo-break');
+ const big=Math.min(980,Math.floor(bounds.width*.91));
+ const widths=desktop?
+  (featured?[big,Math.floor(big*.88),Math.floor(big*.75),640,510,370]:
+            [Math.min(750,Math.floor(bounds.width*.7)),600,480,370,290,190]):
+  [200,165,130,105];
  const preference=layer.classList.contains('ambient-art-left')?'left':'right';
  const sides=Math.random()<.15?[preference==='left'?'right':'left',preference]:
    [preference,preference==='left'?'right':'left'];
@@ -115,7 +136,7 @@ function findSafePosition(layer,desktop){
  const tops=[preferred,18,78,48,35,64,9,90];
  for(const width of widths){
   const w=Math.min(width,bounds.width-18);
-  const h=Math.min(Math.round(w*.73),desktop?280:175);
+  const h=Math.min(Math.round(w*(desktop?.56:.73)),desktop?560:175,bounds.height-16);
   if(w<95||h>bounds.height-12)continue;
   const xs={
    left:[9,Math.max(9,Math.round(bounds.width*.08))],
@@ -160,10 +181,11 @@ function layoutPhotos(){
   feasible.push({layer,area:safe.area});
  }
  if(desktop){
-  // One photo per desktop page; choose randomly from positions with room.
+  // Prefer the large photo-only background zone; ordinary sections are fallback.
   if(!feasible.length)return;
+  const featured=feasible.filter(x=>x.layer.classList.contains('ambient-desktop-feature'));
   const largest=Math.max(...feasible.map(x=>x.area));
-  const roomy=feasible.filter(x=>x.area>=largest*.66);
+  const roomy=featured.length?featured:feasible.filter(x=>x.area>=largest*.66);
   const chosen=roomy[Math.floor(Math.random()*roomy.length)].layer;
   chosen.classList.add('ambient-desktop-pick');
   chosen.hidden=false;
@@ -227,6 +249,7 @@ async function render(){
  const main=document.querySelector('main');
  if(!main||!types.has(document.body.dataset.page))return;
  main.querySelectorAll('.ambient-photo-background').forEach(n=>n.remove());
+ main.querySelectorAll('.ambient-photo-break').forEach(n=>n.remove());
  main.querySelectorAll('.ambient-photo-target').forEach(n=>{
   n.classList.remove('ambient-photo-target');
  });
