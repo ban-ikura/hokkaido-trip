@@ -1,0 +1,145 @@
+/* Random approved photo thumbnails in spacious breaks between existing sections. */
+.ambient-photo-strip{
+  display:block;min-width:0;
+  margin:24px 0 30px;padding:15px 17px 17px;
+  background:#edf4f5;border:1px solid #d8e4e8;border-radius:13px;
+  color:#183c4c;
+}
+.ambient-strip-heading{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;margin:0 0 12px;
+}
+.ambient-strip-heading strong{font-size:14px;color:#244859;font-weight:850}
+.ambient-strip-heading small{font-size:11px;color:#66838e;font-weight:700}
+.ambient-strip-track{
+  display:flex;gap:11px;padding:2px 2px 7px;
+  overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x proximity;overscroll-behavior-x:contain;
+  -webkit-overflow-scrolling:touch;scrollbar-width:thin;
+  touch-action:pan-x pan-y;
+}
+.ambient-photo-card{
+  position:relative;display:block;
+  flex:0 0 clamp(140px,19vw,198px);
+  height:137px;padding:0;margin:0;
+  background:#163b50;border:1px solid #dfeaf0;
+  border-radius:10px;overflow:hidden;
+  cursor:zoom-in;scroll-snap-align:start;
+  box-shadow:0 3px 10px rgba(16,48,65,.12);
+}
+.ambient-photo-card img{display:block;width:100%;height:100%;object-fit:cover}
+.ambient-photo-card span{
+  position:absolute;inset:auto 0 0;
+  padding:27px 10px 8px;
+  text-align:left;color:#fff;font-size:11px;font-weight:800;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  background:linear-gradient(transparent,rgba(2,14,26,.86));
+}
+.ambient-photo-card:focus-visible{outline:3px solid #299dc8;outline-offset:2px}
+body[data-page="home"] .ambient-photo-strip{margin:26px 0 0}
+body[data-page="day"] .day-page .ambient-photo-strip{margin:22px 0 28px}
+body[data-page="stay"] .content-grid .ambient-photo-strip,
+body[data-page="guide"] .content-grid .ambient-photo-strip,
+body[data-page="safety"] .content-grid .ambient-photo-strip{
+  grid-column:1/-1;width:100%;margin:3px 0;
+}
+@media(max-width:650px){
+  .ambient-photo-strip{margin:18px 0 22px;padding:12px 10px;border-radius:10px}
+  .ambient-strip-heading{gap:7px;margin-bottom:9px}
+  .ambient-strip-heading strong{font-size:12px}
+  .ambient-strip-heading small{font-size:10px}
+  .ambient-strip-track{gap:9px}
+  .ambient-photo-card{flex-basis:133px;height:113px;border-radius:8px}
+  body[data-page="day"] .day-page .ambient-photo-strip{margin:17px 0 22px}
+}
+
+/* Preserve the site's readable home title; only replace its large background
+   after at least one approved image has actually loaded. */
+.home-lead .home-feature-photo .ambient-hero-images{
+  position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+}
+.home-lead .home-feature-photo img.ambient-hero-image{
+  position:absolute;inset:0;z-index:0;display:block;
+  width:100%;height:100%;object-fit:cover;object-position:center;
+  opacity:0;transition:opacity 1.65s ease-in-out;
+}
+.home-lead .home-feature-photo img.ambient-hero-image.active{opacity:1}
+.home-lead.ambient-hero-ready .home-feature-photo img.editorial-scene{
+  opacity:0;
+}
+.home-lead.ambient-hero-ready .home-feature-photo video.home-hero-video,
+.home-lead.ambient-hero-ready .home-video-toggle,
+.home-lead.ambient-hero-ready .home-video-credit{
+  display:none!important;
+}
+.home-lead.ambient-hero-ready .home-feature-photo::after{
+  background:linear-gradient(90deg,rgba(3,16,30,.84),rgba(3,20,35,.58) 56%,rgba(4,25,40,.57)),
+             linear-gradient(0deg,rgba(3,13,23,.59),transparent 55%);
+}
+@media(max-width:680px){
+  .home-lead.ambient-hero-ready .home-feature-photo::after{
+    background:linear-gradient(180deg,rgba(2,15,28,.74),rgba(4,19,33,.59) 40%,rgba(3,17,30,.87));
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .home-lead .home-feature-photo img.ambient-hero-image{transition:none!important}
+}
+@media print{
+  .ambient-photo-strip,.ambient-viewer{display:none!important}
+  .home-lead .home-feature-photo .ambient-hero-images{display:none!important}
+  .home-lead.ambient-hero-ready .home-feature-photo img.editorial-scene{opacity:1}
+}
+
+/* Tapping a random photo opens a full-screen, closeable image viewer. */
+html.ambient-viewer-open{overflow:hidden!important}
+.ambient-viewer{
+  box-sizing:border-box;position:fixed;inset:0;
+  width:100vw;max-width:none;height:100vh;max-height:none;height:100dvh;
+  margin:0;padding:0;border:0;border-radius:0;
+  background:#070c14;color:#fff;overflow:hidden;overscroll-behavior:contain;
+}
+.ambient-viewer[open]{display:block}
+.ambient-viewer::backdrop{background:rgba(2,8,15,.94)}
+.ambient-viewer-scene{
+  position:absolute;inset:0;display:flex;
+  align-items:center;justify-content:center;touch-action:pan-y;
+}
+.ambient-viewer-scene img{
+  display:block;width:100%;height:100%;object-fit:contain;
+  user-select:none;-webkit-user-drag:none;
+}
+.ambient-viewer button{
+  position:absolute;z-index:2;display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.32);
+  border-radius:50%;background:rgba(9,24,38,.7);color:#fff;
+  cursor:pointer;touch-action:manipulation;
+}
+.ambient-viewer button:disabled{opacity:.28;cursor:default}
+.ambient-viewer button:focus-visible{outline:3px solid #a5eaff;outline-offset:2px}
+.ambient-close{
+  top:calc(15px + env(safe-area-inset-top));right:18px;
+  width:44px;height:44px;font-size:32px;line-height:1;
+}
+.ambient-prev,.ambient-next{
+  top:50%;transform:translateY(-50%);
+  width:42px;height:50px;font-size:35px;line-height:1;
+}
+.ambient-prev{left:12px}.ambient-next{right:12px}
+.ambient-viewer-info{
+  position:absolute;inset:auto 0 0;z-index:1;
+  display:grid;gap:5px;padding:55px 68px max(24px,env(safe-area-inset-bottom));
+  background:linear-gradient(transparent,rgba(1,10,19,.87) 57%,rgba(1,10,19,.96));
+  pointer-events:none;color:#fff;
+}
+.ambient-viewer-info span{color:#bdeafc;font-size:11px;font-weight:850}
+.ambient-viewer-info strong{font-size:15px}
+.ambient-viewer-info p{
+  margin:0;max-height:20vh;overflow:auto;
+  white-space:pre-line;overflow-wrap:anywhere;
+  font-size:14px;line-height:1.55;
+}
+@media(max-width:520px){
+  .ambient-prev,.ambient-next{width:35px;height:44px;font-size:30px}
+  .ambient-prev{left:4px}.ambient-next{right:4px}
+  .ambient-viewer-info{padding:52px 46px max(25px,env(safe-area-inset-bottom))}
+}
