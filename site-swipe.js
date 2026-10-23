@@ -96,7 +96,7 @@
       if(theme)document.head.append(theme);
     }
     if(name==='index.html'){
-      await css('photos-home.css','20261023-fullbleed-v2');
+      await css('photos-home.css','20261023-compact-reels-v1');
       await css('home-video.css','20261023-compact-toggle-v2');
     }
     if(name==='stay.html')await css('allergy-link.css','20261022-clickable-docs-2');
