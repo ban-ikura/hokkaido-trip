@@ -1,4 +1,4 @@
-/* HOKKAIDO 2026 — focus-first interface. No external fonts, photos or animation libraries. */
+/* HOKKAIDO 2026 — focus-first interface. Rounded-font edition. No external JavaScript libraries. */
 :root{
  --page-bg:#f3f6f7;
  --page-white:#ffffff;
@@ -517,7 +517,7 @@ html{scroll-behavior:auto!important}
 
 
 /* Sanga-inspired full-bleed Hokkaido scenery: photographs behind, information in front.
-   Photos are existing credited Wikimedia Commons files. No remote CSS/font dependencies. */
+   Photos are existing credited Wikimedia Commons files. The selected open-source Japanese font is loaded from Google Fonts. */
 .home-lead{
   position:relative;isolation:isolate;overflow:hidden;
   min-height:min(820px,calc(100svh - 70px));
@@ -724,4 +724,88 @@ body[data-page="safety"] .subhero h1{
  .home-day-list .home-day-link{min-height:0;background:#fff!important;color:#000}
  .home-day-list .home-day-photo{display:none}
  .home-day-list .home-day-text strong,.home-day-list .home-day-text small{color:#000}
+}
+
+
+/* Pop rounded typography: cheerful headings, legible schedules, scenery unchanged. */
+:root{
+  --trip-pop-font:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN",
+    "Hiragino Sans","Yu Gothic","Meiryo",system-ui,sans-serif;
+}
+html,body,button,input,textarea,select{
+  font-family:var(--trip-pop-font);
+}
+body{font-weight:400;letter-spacing:.005em}
+.site-header .brand,
+.site-menu .menu-trigger,
+.site-header .site-menu nav a,
+.home-lead h1,
+.day-page .day-hero h1,
+body[data-page="stay"] .subhero h1,
+body[data-page="guide"] .subhero h1,
+body[data-page="safety"] .subhero h1,
+.home-section-heading h2,
+.home-day-list .home-day-text strong,
+.day-schedule-section>.section-heading h2,
+.day-schedule-section .day-titles h3,
+.info-card h2,
+.home-news-section .news-item h3,
+.day-schedule-section .destination-copy h4{
+  font-family:var(--trip-pop-font);
+  font-weight:800;
+}
+.home-lead h1{
+  letter-spacing:.02em;
+  font-size:clamp(41px,5.55vw,74px);
+  line-height:1.34;
+}
+.home-lead h1 span{
+  font-family:var(--trip-pop-font);
+  font-size:.45em;font-weight:700;letter-spacing:.07em;
+}
+.day-page .day-hero h1{
+  letter-spacing:.025em;
+  font-size:clamp(37px,4.8vw,61px);
+  line-height:1.32;
+}
+body[data-page="stay"] .subhero h1,
+body[data-page="guide"] .subhero h1,
+body[data-page="safety"] .subhero h1{
+  letter-spacing:.03em;
+  font-size:clamp(40px,5vw,62px);
+}
+.home-section-heading h2{
+  letter-spacing:.015em;line-height:1.4;
+}
+.home-day-list .home-day-text strong{
+  letter-spacing:.01em;
+  font-size:clamp(18px,2.4vw,26px);
+}
+.home-lead .home-lead-copy>p{letter-spacing:.06em;font-weight:700}
+.home-lead .home-lead-copy .eyebrow,
+.home-section-heading .eyebrow,.day-kicker{font-weight:800}
+.home-main-button,.home-post-link,.home-photos-all,
+.day-page-nav a,.day-fact .small-map-link,.day-fact .day-hotel-notes,
+.course-tab,.menu-title,.menu-group,.day-info-link,.day-info-value{
+  font-family:var(--trip-pop-font);
+  font-weight:700;
+}
+.home-lead .next-title,.home-lead .next-time,
+.day-fact-time,.next-jump,.next-label,.day-fact-heading{
+  font-family:var(--trip-pop-font);
+  font-weight:800;
+}
+.day-schedule-section .day-titles h3,
+.day-schedule-section>.section-heading h2{letter-spacing:.005em}
+.route-event-title,.agenda-label,.agenda-clock,
+.day-schedule-section .destination-copy p{
+  font-family:var(--trip-pop-font);
+}
+@media(max-width:680px){
+  .home-lead h1{font-size:clamp(33px,8vw,45px);letter-spacing:.006em}
+  .day-page .day-hero h1{font-size:clamp(33px,8.3vw,45px)}
+  .home-day-list .home-day-text strong{font-size:20px}
+  body[data-page="stay"] .subhero h1,
+  body[data-page="guide"] .subhero h1,
+  body[data-page="safety"] .subhero h1{font-size:clamp(34px,8.8vw,46px)}
 }
