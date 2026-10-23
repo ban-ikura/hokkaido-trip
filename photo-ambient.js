@@ -40,10 +40,20 @@ function addBackground(target,item,position){
  const img=document.createElement('img');
  img.src=url(item);img.alt='';
  img.decoding='async';img.loading='lazy';img.referrerPolicy='no-referrer';
- img.addEventListener('error',()=>layer.remove(),{once:true});
+ img.addEventListener('error',()=>{
+  const picked=layer.classList.contains('ambient-desktop-pick');
+  layer.remove();
+  // If the featured image fails to load, pick another public approved photo.
+  if(picked){
+   const main=target.closest('main');
+   const options=main?[...main.querySelectorAll('.ambient-photo-background')]:[];
+   if(options.length)options[Math.floor(Math.random()*options.length)].classList.add('ambient-desktop-pick');
+  }
+ },{once:true});
  layer.append(img);
  target.classList.add('ambient-photo-target');
  target.prepend(layer);
+ return layer;
 }
 function decorate(main,items){
  const page=document.body.dataset.page;
@@ -57,6 +67,7 @@ function decorate(main,items){
   selectors=['.subhero','.section-section'];
  }
  const photos=random(items);
+ const layers=[];
  let used=0;
  for(const selector of selectors){
   const target=main.querySelector(selector);
@@ -66,9 +77,15 @@ function decorate(main,items){
   const positions=height>1150?[24+Math.random()*10,68+Math.random()*10]:
     [31+Math.random()*37];
   for(const top of positions){
-   addBackground(target,photos[used%photos.length],top);
+   const layer=addBackground(target,photos[used%photos.length],top);
+   if(layer)layers.push(layer);
    used++;
   }
+ }
+ // Desktop shows exactly one random crisp ambient photo on each page.
+ // Smaller screens keep the sparse, scattered photos.
+ if(layers.length){
+  layers[Math.floor(Math.random()*layers.length)].classList.add('ambient-desktop-pick');
  }
 }
 function heroSlides(main,photos){
