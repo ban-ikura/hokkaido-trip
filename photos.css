@@ -449,3 +449,8 @@ body[data-photo-page="post"] .how-it-works{
 @media(prefers-reduced-motion:reduce){
   body[data-photo-page="post"] .upload-field{transition:none}
 }
+
+/* Place the submission flow after the form and privacy explanation on all screens. */
+body[data-photo-page="post"] .post-main > .how-it-works{margin-top:19px;padding:22px 24px}
+body[data-photo-page="post"] .post-main > .how-it-works p{font-size:13px;line-height:1.8}
+@media(max-width:760px){body[data-photo-page="post"] .post-main > .how-it-works{padding:18px 17px;margin-top:16px}}
