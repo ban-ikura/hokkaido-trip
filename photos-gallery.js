@@ -1,137 +1,174 @@
-/* 公開アルバム: 管理者承認済みの写真を縦スワイプで一枚ずつ表示。 */
-(() => {
-  'use strict';
-  const grid=document.querySelector('#photo-grid');
-  const status=document.querySelector('#gallery-status');
-  const count=document.querySelector('#photo-count');
-  const refresh=document.querySelector('#photo-reload');
-  if(!grid||!status||!count||!refresh)return;
+/* Approved gallery: square photo grid; tap any thumbnail for full-screen vertical reels. */
+(()=>{
+'use strict';
+const grid=document.querySelector('#photo-grid');
+const status=document.querySelector('#gallery-status');
+const count=document.querySelector('#photo-count');
+const refresh=document.querySelector('#photo-reload');
+if(!grid||!status||!count||!refresh)return;
+grid.classList.add('gallery-photo-grid','swipe-exempt');
+grid.setAttribute('aria-label','管理者承認済み写真のギャラリー');
 
-  const frame=document.createElement('div');
-  frame.className='photo-reels-frame swipe-exempt';
-  frame.hidden=true;
-  grid.before(frame);
-  frame.append(grid);
-  grid.tabIndex=0;
-  grid.setAttribute('role','region');
-  grid.setAttribute('aria-label','承認済み写真。上下にスワイプするか、上下矢印キーで切り替えられます');
+let api='';
+try{
+ const u=new URL(window.HOKKAIDO_NEWS_API_URL);
+ if(u.protocol==='https:'&&!u.username&&!u.password&&!u.search&&!u.hash&&
+ (u.pathname==='/'||u.pathname===''))api=u.origin;
+}catch{}
+const valid=/^[0-9a-f-]{36}$/;
+const photoUrl=p=>api+'/api/photos/'+p.id+'/image';
+const name=p=>typeof p.nickname==='string'&&p.nickname.trim()?p.nickname:'匿名';
+const caption=p=>typeof p.caption==='string'?p.caption:'';
 
-  const progress=document.createElement('span');
-  progress.className='photo-reel-progress';
-  progress.setAttribute('aria-live','polite');
-  const hint=document.createElement('span');
-  hint.className='photo-reel-hint';
-  hint.textContent='上下にスワイプ';
-  const controls=document.createElement('div');
-  controls.className='photo-reel-controls';
-  const previous=document.createElement('button');
-  const next=document.createElement('button');
-  for(const [button,symbol,label] of [[previous,'↑','前の写真'],[next,'↓','次の写真']]){
-    button.type='button';
-    button.textContent=symbol;
-    button.setAttribute('aria-label',label);
-    controls.append(button);
-  }
-  frame.append(progress,hint,controls);
+const dialog=document.createElement('dialog');
+dialog.className='gallery-reel-dialog swipe-exempt';
+dialog.setAttribute('aria-label','全画面の写真リール');
+const viewport=document.createElement('div');
+viewport.className='gallery-reel-viewport swipe-exempt';
+viewport.tabIndex=0;
+viewport.setAttribute('role','region');
+viewport.setAttribute('aria-label','上下にスワイプして写真を切り替え');
+const close=document.createElement('button');
+close.type='button';close.className='gallery-reel-close';
+close.setAttribute('aria-label','アルバムに戻る');close.textContent='×';
+const progress=document.createElement('span');
+progress.className='gallery-reel-progress';
+progress.setAttribute('aria-live','polite');
+const hint=document.createElement('span');
+hint.className='gallery-reel-hint';hint.textContent='上下にスワイプ';
+const controls=document.createElement('div');
+controls.className='gallery-reel-controls';
+const up=document.createElement('button');
+const down=document.createElement('button');
+for(const [button,symbol,label] of [[up,'↑','前の写真'],[down,'↓','次の写真']]){
+ button.type='button';button.textContent=symbol;
+ button.setAttribute('aria-label',label);controls.append(button);
+}
+dialog.append(viewport,progress,hint,close,controls);
+document.body.append(dialog);
 
-  let api='',total=0,active=0,scrollPending=false;
-  try{
-    const target=new URL(window.HOKKAIDO_NEWS_API_URL);
-    if(target.protocol==='https:'&&!target.username&&!target.password&&!target.search&&!target.hash&&
-       (target.pathname===''||target.pathname==='/'))api=target.origin;
-  }catch{}
-  function update(index){
-    active=Math.max(0,Math.min(total-1,index));
-    progress.textContent=(active+1)+' / '+total;
-    previous.disabled=active===0;
-    next.disabled=active===total-1;
-  }
-  function go(index){
-    if(!total)return;
-    const target=Math.max(0,Math.min(total-1,index));
-    update(target);
-    grid.scrollTo({
-      top:target*grid.clientHeight,
-      behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'
-    });
-  }
-  previous.addEventListener('click',()=>go(active-1));
-  next.addEventListener('click',()=>go(active+1));
-  grid.addEventListener('scroll',()=>{
-    if(scrollPending||!total)return;
-    scrollPending=true;
-    requestAnimationFrame(()=>{
-      scrollPending=false;
-      if(grid.clientHeight)update(Math.round(grid.scrollTop/grid.clientHeight));
-    });
-  },{passive:true});
-  grid.addEventListener('keydown',event=>{
-    let destination;
-    if(event.key==='ArrowDown'||event.key==='PageDown')destination=active+1;
-    else if(event.key==='ArrowUp'||event.key==='PageUp')destination=active-1;
-    else if(event.key==='Home')destination=0;
-    else if(event.key==='End')destination=total-1;
-    else return;
-    event.preventDefault();
-    go(destination);
-  });
+let photos=[],selected=0,lastFocus=null,requestId=0,scrollScheduled=false;
+function update(index){
+ if(!photos.length)return;
+ selected=Math.max(0,Math.min(photos.length-1,index));
+ progress.textContent=(selected+1)+' / '+photos.length;
+ up.disabled=selected===0;
+ down.disabled=selected===photos.length-1;
+}
+function stepTo(index,animate=true){
+ if(!photos.length)return;
+ const target=Math.max(0,Math.min(photos.length-1,index));
+ update(target);
+ viewport.scrollTo({
+  top:target*viewport.clientHeight,
+  behavior:animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches?'smooth':'instant'
+ });
+}
+function dismiss(){if(dialog.open)dialog.close()}
+function show(index,button){
+ if(!photos.length||typeof dialog.showModal!=='function')return;
+ lastFocus=button;
+ dialog.showModal();
+ document.documentElement.classList.add('gallery-reel-open');
+ // Reset the scroll position immediately, even on repeat openings.
+ requestAnimationFrame(()=>{
+  if(!dialog.open)return;
+  stepTo(index,false);
+  close.focus({preventScroll:true});
+ });
+}
+close.addEventListener('click',dismiss);
+up.addEventListener('click',()=>stepTo(selected-1));
+down.addEventListener('click',()=>stepTo(selected+1));
+dialog.addEventListener('close',()=>{
+ document.documentElement.classList.remove('gallery-reel-open');
+ if(lastFocus?.isConnected)lastFocus.focus({preventScroll:true});
+ lastFocus=null;
+});
+viewport.addEventListener('scroll',()=>{
+ if(scrollScheduled||!dialog.open)return;
+ scrollScheduled=true;
+ requestAnimationFrame(()=>{
+  scrollScheduled=false;
+  if(viewport.clientHeight)update(Math.round(viewport.scrollTop/viewport.clientHeight));
+ });
+},{passive:true});
+dialog.addEventListener('keydown',event=>{
+ if(event.key==='ArrowDown'||event.key==='PageDown'){
+  event.preventDefault();stepTo(selected+1);
+ }else if(event.key==='ArrowUp'||event.key==='PageUp'){
+  event.preventDefault();stepTo(selected-1);
+ }else if(event.key==='Home'){
+  event.preventDefault();stepTo(0);
+ }else if(event.key==='End'){
+  event.preventDefault();stepTo(photos.length-1);
+ }
+});
+document.addEventListener('hokkaido:pagechange',dismiss);
+window.addEventListener('pagehide',dismiss);
 
-  async function load(){
-    frame.hidden=true;
-    grid.replaceChildren();
-    total=0;
-    count.textContent='';
-    status.textContent='アルバムを読み込み中…';
-    refresh.disabled=true;
-    if(!api){
-      status.textContent='写真アルバムは準備中です。';
-      refresh.disabled=false;
-      return;
-    }
-    try{
-      const response=await fetch(api+'/api/photos',{method:'GET',cache:'no-store',credentials:'omit'});
-      if(!response.ok)throw Error('準備中');
-      const data=await response.json();
-      // 公開APIから取得できる承認済み写真だけを表示。
-      const items=Array.isArray(data.items)?data.items.filter(x=>
-        x && typeof x.id==='string' && /^[0-9a-f-]{36}$/.test(x.id)):[];
-      count.textContent='· '+items.length+'枚';
-      if(!items.length){
-        status.textContent='まだ公開された写真はありません。最初の1枚を待っています。';
-        return;
-      }
-      for(const [index,p] of items.entries()){
-        const card=document.createElement('article');
-        card.className='photo-card';
-        card.setAttribute('aria-label','写真 '+(index+1)+' / '+items.length);
-        const img=document.createElement('img');
-        img.loading=index===0?'eager':'lazy';
-        img.decoding='async';
-        img.alt='承認された北海道旅行の写真';
-        img.referrerPolicy='no-referrer';
-        img.src=api+'/api/photos/'+p.id+'/image';
-        const info=document.createElement('div');
-        info.className='photo-info';
-        const author=document.createElement('strong');
-        author.textContent=typeof p.nickname==='string'?p.nickname:'匿名';
-        const caption=document.createElement('p');
-        caption.textContent=typeof p.caption==='string'?p.caption:'';
-        info.append(author,caption);
-        card.append(img,info);
-        grid.append(card);
-      }
-      total=items.length;
-      frame.hidden=false;
-      grid.scrollTop=0;
-      update(0);
-      status.textContent='';
-    }catch{
-      status.textContent='写真アルバムは準備中です。少し時間をおいてお試しください。';
-    }finally{
-      refresh.disabled=false;
-    }
+function render(items){
+ grid.replaceChildren();
+ viewport.replaceChildren();
+ photos=items;
+ const tiles=document.createDocumentFragment();
+ const reels=document.createDocumentFragment();
+ items.forEach((p,index)=>{
+  const tile=document.createElement('button');
+  tile.type='button';tile.className='photo-card album-thumb';
+  tile.setAttribute('aria-label',name(p)+'さんの写真、'+(index+1)+' / '+items.length+'。拡大表示');
+  const preview=document.createElement('img');
+  preview.src=photoUrl(p);preview.alt='承認済みの旅行写真';
+  preview.loading=index<8?'eager':'lazy';
+  preview.decoding='async';preview.referrerPolicy='no-referrer';
+  const symbol=document.createElement('span');
+  symbol.className='album-thumb-expand';symbol.setAttribute('aria-hidden','true');symbol.textContent='↗';
+  tile.append(preview,symbol);
+  tile.addEventListener('click',()=>show(index,tile));
+  tiles.append(tile);
+
+  const slide=document.createElement('article');
+  slide.className='gallery-reel-slide';
+  slide.setAttribute('aria-label','写真 '+(index+1)+' / '+items.length);
+  const photo=document.createElement('img');
+  photo.src=photoUrl(p);photo.alt='承認された北海道旅行の写真';
+  photo.decoding='async';photo.loading='lazy';photo.referrerPolicy='no-referrer';
+  const info=document.createElement('div');
+  info.className='gallery-reel-info';
+  const author=document.createElement('strong');author.textContent=name(p);
+  const text=document.createElement('p');text.textContent=caption(p);
+  info.append(author,text);
+  slide.append(photo,info);reels.append(slide);
+ });
+ grid.append(tiles);
+ viewport.append(reels);
+}
+async function load(){
+ const call=++requestId;
+ dismiss();
+ grid.replaceChildren();viewport.replaceChildren();photos=[];
+ count.textContent='';status.textContent='アルバムを読み込み中…';
+ refresh.disabled=true;
+ if(!api){status.textContent='写真アルバムは準備中です。';refresh.disabled=false;return}
+ try{
+  const r=await fetch(api+'/api/photos',{method:'GET',cache:'no-store',credentials:'omit'});
+  if(!r.ok)throw Error('Public photos unavailable');
+  const data=await r.json();
+  if(call!==requestId)return;
+  const items=Array.isArray(data.items)?data.items.filter(p=>
+   p&&typeof p.id==='string'&&valid.test(p.id)):[];
+  count.textContent='· '+items.length+'枚';
+  if(!items.length){
+   status.textContent='まだ公開された写真はありません。最初の1枚を待っています。';
+   return;
   }
-  refresh.addEventListener('click',load);
-  window.HOKKAIDO_REFRESH_GALLERY=load;
-  load();
+  render(items);
+  status.textContent='';
+ }catch{
+  if(call===requestId)status.textContent='写真アルバムを取得できませんでした。更新してお試しください。';
+ }finally{if(call===requestId)refresh.disabled=false}
+}
+refresh.addEventListener('click',load);
+window.HOKKAIDO_REFRESH_GALLERY=load;
+load();
 })();
