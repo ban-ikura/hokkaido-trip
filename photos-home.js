@@ -1,4 +1,4 @@
-/* ホーム: 管理者承認済みの写真をリール風に一枚ずつ閲覧。公開APIのみ使用。 */
+/* ホーム: 管理者承認済みの写真を小さなカードで横スクロール表示。 */
 (() => {
   'use strict';
   const grid=document.querySelector('#home-photo-grid');
@@ -9,77 +9,97 @@
   frame.className='home-reels-frame swipe-exempt';
   frame.hidden=true;
   grid.before(frame);
-  frame.append(grid);
-  grid.tabIndex=0;
-  grid.setAttribute('role','region');
-  grid.setAttribute('aria-label','承認済み写真。上下にスワイプするか、上下矢印キーで切り替えられます');
 
+  const toolbar=document.createElement('div');
+  toolbar.className='home-reels-toolbar';
   const progress=document.createElement('span');
   progress.className='home-reel-progress';
   progress.setAttribute('aria-live','polite');
   const hint=document.createElement('span');
   hint.className='home-reel-hint';
-  hint.textContent='上下にスワイプ';
+  hint.textContent='左右にスワイプ';
   const controls=document.createElement('div');
   controls.className='home-reel-controls';
   const previous=document.createElement('button');
   const next=document.createElement('button');
-  for(const [button,symbol,label] of [[previous,'↑','前の写真'],[next,'↓','次の写真']]){
+  for(const [button,symbol,label] of [[previous,'←','前の写真'],[next,'→','次の写真']]){
     button.type='button';
     button.textContent=symbol;
     button.setAttribute('aria-label',label);
     controls.append(button);
   }
-  frame.append(progress,hint,controls);
+  toolbar.append(progress,hint,controls);
+  frame.append(toolbar,grid);
 
-  let api='',total=0,active=0,scrollPending=false;
+  grid.tabIndex=0;
+  grid.setAttribute('role','region');
+  grid.setAttribute('aria-label','承認済みの投稿写真。左右にスワイプするか、左右矢印キーで閲覧できます');
+
+  let api='',total=0,requestId=0,scrollPending=false;
   try{
     const url=new URL(window.HOKKAIDO_NEWS_API_URL);
     if(url.protocol==='https:'&&!url.username&&!url.password&&!url.search&&!url.hash&&
        (url.pathname===''||url.pathname==='/'))api=url.origin;
   }catch{}
 
-  function update(index){
-    active=Math.max(0,Math.min(total-1,index));
-    progress.textContent=(active+1)+' / '+total;
-    previous.disabled=active===0;
-    next.disabled=active===total-1;
+  function cardStep(){
+    const cards=grid.children;
+    if(cards.length>1)return Math.max(1,cards[1].offsetLeft-cards[0].offsetLeft);
+    return Math.max(1,cards[0]?.offsetWidth||grid.clientWidth);
   }
-  function go(index){
+  function currentIndex(){
+    return Math.max(0,Math.min(total-1,Math.round(grid.scrollLeft/cardStep())));
+  }
+  function updateControls(){
+    if(!total)return;
+    const maxLeft=Math.max(0,grid.scrollWidth-grid.clientWidth);
+    progress.textContent=(currentIndex()+1)+' / '+total;
+    previous.disabled=grid.scrollLeft<2;
+    next.disabled=grid.scrollLeft>=maxLeft-2;
+  }
+  function goTo(index){
     if(!total)return;
     const target=Math.max(0,Math.min(total-1,index));
-    update(target);
+    const cards=grid.children;
+    const first=cards[0]?.offsetLeft||0;
+    const maxLeft=Math.max(0,grid.scrollWidth-grid.clientWidth);
+    const left=Math.max(0,Math.min(maxLeft,cards[target].offsetLeft-first));
     grid.scrollTo({
-      top:target*grid.clientHeight,
-      behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'
+      left,
+      behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'
     });
   }
-  previous.addEventListener('click',()=>go(active-1));
-  next.addEventListener('click',()=>go(active+1));
+  previous.addEventListener('click',()=>goTo(currentIndex()-1));
+  next.addEventListener('click',()=>goTo(currentIndex()+1));
   grid.addEventListener('scroll',()=>{
-    if(scrollPending||!total)return;
+    if(scrollPending)return;
     scrollPending=true;
     requestAnimationFrame(()=>{
       scrollPending=false;
-      if(grid.clientHeight)update(Math.round(grid.scrollTop/grid.clientHeight));
+      updateControls();
     });
   },{passive:true});
   grid.addEventListener('keydown',event=>{
-    let destination;
-    if(event.key==='ArrowDown'||event.key==='PageDown')destination=active+1;
-    else if(event.key==='ArrowUp'||event.key==='PageUp')destination=active-1;
-    else if(event.key==='Home')destination=0;
-    else if(event.key==='End')destination=total-1;
+    let target;
+    if(event.key==='ArrowRight'||event.key==='PageDown')target=currentIndex()+1;
+    else if(event.key==='ArrowLeft'||event.key==='PageUp')target=currentIndex()-1;
+    else if(event.key==='Home')target=0;
+    else if(event.key==='End')target=total-1;
     else return;
     event.preventDefault();
-    go(destination);
+    goTo(target);
   });
+  window.addEventListener('resize',updateControls,{passive:true});
 
   async function loadLatest(){
+    const request=++requestId;
     frame.hidden=true;
     grid.replaceChildren();
     total=0;
-    if(!api){status.textContent='写真の読み込み先が設定されていません。';return}
+    if(!api){
+      status.textContent='写真の読み込み先が設定されていません。';
+      return;
+    }
     status.textContent='写真を確認しています…';
     try{
       const response=await fetch(api+'/api/photos',{
@@ -87,13 +107,15 @@
       });
       if(!response.ok)throw new Error('Photos API unavailable');
       const result=await response.json();
-      // 一般公開APIが返す承認済み写真のみ。承認待ちAPIにはアクセスしない。
+      if(request!==requestId)return;
+      // 公開APIから取得できる、管理者が承認済みの写真のみ。
       const approved=Array.isArray(result.items)?result.items.filter(item=>
         item && typeof item.id==='string' && /^[0-9a-f-]{36}$/.test(item.id)):[];
       if(!approved.length){
         status.textContent='まだ公開された写真はありません。アルバムから写真を投稿できます。';
         return;
       }
+      const fragment=document.createDocumentFragment();
       for(const [index,item] of approved.entries()){
         const card=document.createElement('article');
         card.className='home-photo-card';
@@ -101,7 +123,7 @@
         const img=document.createElement('img');
         img.src=api+'/api/photos/'+item.id+'/image';
         img.alt='承認された北海道旅行の写真';
-        img.loading=index===0?'eager':'lazy';
+        img.loading=index<3?'eager':'lazy';
         img.decoding='async';
         img.referrerPolicy='no-referrer';
         const info=document.createElement('div');
@@ -114,15 +136,16 @@
         caption.textContent=typeof item.caption==='string'?item.caption:'';
         info.append(author,caption);
         card.append(img,info);
-        grid.append(card);
+        fragment.append(card);
       }
+      grid.append(fragment);
       total=approved.length;
       frame.hidden=false;
-      grid.scrollTop=0;
-      update(0);
+      grid.scrollLeft=0;
+      updateControls();
       status.textContent='';
     }catch{
-      status.textContent='写真を読み込めませんでした。アルバムからも確認できます。';
+      if(request===requestId)status.textContent='写真を読み込めませんでした。アルバムからも確認できます。';
     }
   }
   window.HOKKAIDO_REFRESH_HOME_PHOTOS=loadLatest;
