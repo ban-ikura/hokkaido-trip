@@ -62,22 +62,6 @@ function decorate(main,items){
   selectors=['.subhero','.section-section'];
  }
  const photos=random(items);
- // A single unframed, photo-only background break guarantees room for
- // a large desktop image without putting it behind buttons or travel cards.
- const anchors=page==='home'?
-  ['.home-news-section','.home-photos-section','.home-useful-section']:
-  page==='day'?['.day-facts','.day-schedule-section']:
-  ['.subhero'];
- const available=anchors.map(selector=>main.querySelector(selector)).filter(Boolean);
- if(available.length){
-  const anchor=available[Math.floor(Math.random()*available.length)];
-  const breakArea=document.createElement('div');
-  breakArea.className='ambient-photo-break ambient-photo-target';
-  breakArea.setAttribute('aria-hidden','true');
-  anchor.after(breakArea);
-  const featured=addBackground(breakArea,photos[0],50);
-  if(featured)featured.classList.add('ambient-desktop-feature');
- }
  const layers=[];
  let used=0;
  for(const selector of selectors){
@@ -95,6 +79,30 @@ function decorate(main,items){
  }
  // Placement is validated against actual button, link and card geometry.
  schedulePlacement();
+}
+
+/* On desktop the approved photo covers the page background itself, instead of
+ * inserting a separate full-height photo-only section between information. */
+function clearDesktopBackground(){
+ document.body.classList.remove('ambient-desktop-page');
+ document.body.style.removeProperty('--ambient-desktop-photo');
+}
+function desktopBackground(items,ticket){
+ const chosen=random(items);
+ // Keep the original background when the photo API or all images fail.
+ function attempt(index){
+  if(index>=chosen.length||ticket!==serial)return;
+  const test=new Image();
+  test.referrerPolicy='no-referrer';
+  test.onload=()=>{
+   if(ticket!==serial||!document.querySelector('main'))return;
+   document.body.style.setProperty('--ambient-desktop-photo','url("'+url(chosen[index])+'")');
+   document.body.classList.add('ambient-desktop-page');
+  };
+  test.onerror=()=>attempt(index+1);
+  test.src=url(chosen[index]);
+ }
+ attempt(0);
 }
 
 /* Keep every decorative photo strictly outside interactive controls and content
@@ -214,6 +222,8 @@ function observeLayout(main){
  schedulePlacement();
 }
 window.addEventListener('resize',schedulePlacement,{passive:true});
+const desktopBreakpoint=window.matchMedia('(min-width:900px)');
+desktopBreakpoint.addEventListener?.('change',()=>render());
 window.addEventListener('load',schedulePlacement,{once:true});
 if(document.fonts?.ready)document.fonts.ready.then(schedulePlacement).catch(()=>{});
 
@@ -249,6 +259,7 @@ function heroSlides(main,photos){
 }
 async function render(){
  const ticket=++serial;
+ clearDesktopBackground();
  if(layoutObserver)layoutObserver.disconnect();
  if(placementFrame){cancelAnimationFrame(placementFrame);placementFrame=0}
  if(timer){clearInterval(timer);timer=null}
@@ -267,12 +278,17 @@ async function render(){
  try{
   const items=await load();
   if(ticket!==serial||main!==document.querySelector('main')||!items.length)return;
-  decorate(main,items);
+  if(window.matchMedia('(min-width:900px)').matches){
+   // One randomly chosen approved photo occupies the whole desktop background.
+   desktopBackground(items,ticket);
+  }else{
+   decorate(main,items);
+   observeLayout(main);
+  }
   if(document.body.dataset.page==='home')heroSlides(main,items);
-  observeLayout(main);
  }catch{/* Decorative photos must not affect essential travel information. */}
 }
 document.addEventListener('hokkaido:pagechange',render);
-window.addEventListener('pagehide',()=>{++serial;if(timer)clearInterval(timer);timer=null;if(layoutObserver)layoutObserver.disconnect();if(placementFrame)cancelAnimationFrame(placementFrame)});
+window.addEventListener('pagehide',()=>{++serial;clearDesktopBackground();if(timer)clearInterval(timer);timer=null;if(layoutObserver)layoutObserver.disconnect();if(placementFrame)cancelAnimationFrame(placementFrame)});
 render();
 })();
