@@ -228,6 +228,8 @@ window.addEventListener('load',schedulePlacement,{once:true});
 if(document.fonts?.ready)document.fonts.ready.then(schedulePlacement).catch(()=>{});
 
 function heroSlides(main,photos){
+ // Desktop uses the single shared page wallpaper, not a separate hero slideshow.
+ if(window.matchMedia('(min-width:900px)').matches)return;
  const figure=main.querySelector('.home-lead .home-feature-photo'),hero=main.querySelector('.home-lead');
  if(!figure||!hero)return;
  const selection=random(photos).slice(0,Math.min(6,photos.length));
