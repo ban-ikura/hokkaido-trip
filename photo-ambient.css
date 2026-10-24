@@ -584,3 +584,140 @@ body[data-page="home"] .home-days-section .home-section-heading{
  display:none!important;
  visibility:hidden!important;
 }
+
+
+/* Detailed live NEXT itinerary: between お知らせ and みんなの写真.
+   Responsive within the existing single translucent desktop foundation. */
+body[data-page="home"] .home-next-detail-section{
+ position:relative;
+ padding:36px 0 26px;
+ background:#f5f8f9;
+ color:#152f40;
+}
+body[data-page="home"] .home-next-detail-section .home-section-heading h2,
+body[data-page="home"] .home-next-detail-section .home-section-heading .eyebrow,
+body[data-page="home"] .home-next-detail-section .home-heading-side{
+ color:#18384a!important;
+}
+body[data-page="home"] .home-next-detail-content{
+ display:grid;grid-template-columns:minmax(0,1.55fr) minmax(240px,1fr);
+ gap:clamp(12px,1.8vw,20px);
+ align-items:stretch;
+}
+body[data-page="home"] .home-next-summary{
+ background:rgba(255,255,255,.89);
+ border:1px solid #d4e4eb;border-radius:16px;
+ padding:clamp(17px,2.6vw,28px);
+ box-shadow:0 7px 22px rgba(25,61,76,.055);
+ min-width:0;
+}
+body[data-page="home"] .home-next-status{
+ display:inline-flex;align-items:center;
+ border-radius:50px;background:#e5f3f8;
+ color:#17576f;font-size:11px;font-weight:900;
+ letter-spacing:.06em;padding:6px 11px;
+}
+body[data-page="home"] .home-next-date{
+ margin:17px 0 13px;color:#486f82;font-size:13px;font-weight:800;
+}
+body[data-page="home"] .home-next-event-row{
+ display:grid;grid-template-columns:auto minmax(0,1fr);gap:17px;
+ align-items:start;
+}
+body[data-page="home"] .home-next-event-time{
+ font-variant-numeric:tabular-nums;
+ font-size:clamp(22px,3.5vw,33px);
+ line-height:1.24;color:#174b63;white-space:nowrap;letter-spacing:-.035em;
+}
+body[data-page="home"] .home-next-event-title{
+ margin:0 0 8px;color:#153345;
+ font-size:clamp(19px,2.5vw,26px);font-weight:900;
+ line-height:1.42;overflow-wrap:anywhere;
+}
+body[data-page="home"] .home-next-meta{
+ margin:0;color:#476b7c;font-size:12px;font-weight:800;
+}
+body[data-page="home"] .home-next-note{
+ margin:20px 0 0;padding:14px 15px;
+ border-left:3px solid #70a5b9;border-radius:0 7px 7px 0;
+ background:#edf5f8;color:#294e60;font-size:13px;line-height:1.85;
+ white-space:pre-line;overflow-wrap:anywhere;
+}
+body[data-page="home"] .home-next-actions{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:12px;flex-wrap:wrap;margin-top:23px;
+}
+body[data-page="home"] .home-next-primary-link{
+ display:inline-flex;align-items:center;justify-content:center;
+ padding:12px 17px;min-height:45px;border-radius:9px;
+ background:#1b5f7a;color:#fff;font-weight:900;font-size:13px;
+ border:1px solid #1b5f7a;
+ text-decoration:none;
+}
+body[data-page="home"] .home-next-primary-link:hover,
+body[data-page="home"] .home-next-primary-link:focus-visible{
+ background:#124c65;color:#fff;
+}
+body[data-page="home"] .home-next-guidance{
+ font-size:11px;color:#506f7c;line-height:1.65;
+}
+body[data-page="home"] .home-next-later{
+ padding:20px;
+ border:1px solid #d4e4eb;border-radius:16px;
+ background:rgba(252,254,255,.86);min-width:0;
+ box-shadow:0 7px 22px rgba(25,61,76,.045);
+}
+body[data-page="home"] .home-next-later-title{
+ margin:0 0 14px;font-size:14px;font-weight:900;
+ color:#224a60;
+}
+body[data-page="home"] .home-next-later-list{
+ margin:0;padding:0;list-style:none;
+ display:grid;gap:0;
+}
+body[data-page="home"] .home-next-later-item{
+ border-top:1px solid #e0ecf0;
+}
+body[data-page="home"] .home-next-later-link{
+ display:grid;grid-template-columns:53px minmax(0,1fr) 15px;
+ gap:9px;align-items:center;padding:15px 1px;
+ text-decoration:none;color:#173a4d;
+}
+body[data-page="home"] .home-next-later-link:hover{
+ color:#0a7397;
+}
+body[data-page="home"] .home-next-later-time{
+ font-variant-numeric:tabular-nums;color:#1a5b76;
+ font-weight:900;font-size:13px;
+}
+body[data-page="home"] .home-next-later-text{
+ display:grid;gap:5px;min-width:0;
+}
+body[data-page="home"] .home-next-later-text strong{
+ line-height:1.4;font-size:13px;overflow-wrap:anywhere;
+}
+body[data-page="home"] .home-next-later-text small{
+ line-height:1.4;font-size:10px;color:#5c7987;
+}
+body[data-page="home"] .home-next-later-arrow{
+ color:#377e98;font-size:16px;
+}
+body[data-page="home"] .home-next-loading{
+ margin:0;color:#496978;font-size:13px;
+}
+@media(max-width:760px){
+ body[data-page="home"] .home-next-detail-content{grid-template-columns:1fr}
+ body[data-page="home"] .home-next-detail-section{padding:27px 0 14px}
+ body[data-page="home"] .home-next-summary{padding:19px}
+ body[data-page="home"] .home-next-event-row{
+  grid-template-columns:1fr;gap:8px;
+ }
+ body[data-page="home"] .home-next-event-time{font-size:30px}
+ body[data-page="home"] .home-next-later{padding:17px}
+}
+@media print{
+ body[data-page="home"] .home-next-summary,
+ body[data-page="home"] .home-next-later{
+  box-shadow:none;background:#fff;border:1px solid #cddce2;
+ }
+}
