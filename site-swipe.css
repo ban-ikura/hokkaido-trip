@@ -729,7 +729,7 @@ body[data-page="safety"] .subhero h1{
 
 /* Pop rounded typography: cheerful headings, legible schedules, scenery unchanged. */
 :root{
-  --trip-pop-font:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN",
+  --trip-pop-font:"Noto Sans JP","Hiragino Kaku Gothic ProN",
     "Hiragino Sans","Yu Gothic","Meiryo",system-ui,sans-serif;
 }
 html,body,button,input,textarea,select{
@@ -808,4 +808,66 @@ body[data-page="safety"] .subhero h1{
   body[data-page="stay"] .subhero h1,
   body[data-page="guide"] .subhero h1,
   body[data-page="safety"] .subhero h1{font-size:clamp(34px,8.8vw,46px)}
+}
+
+
+/* Crisp, formal Japanese typography: no rounded/handwritten faces.
+   Keep the established layout while strengthening the text hierarchy. */
+:root{
+ --trip-pop-font:"Noto Sans JP","Hiragino Kaku Gothic ProN",
+    "Hiragino Sans","Yu Gothic","Meiryo",system-ui,sans-serif;
+}
+html,body,button,input,textarea,select,summary{
+ font-family:var(--trip-pop-font);
+}
+body{
+ font-weight:500;
+ letter-spacing:.012em;
+}
+.site-header .brand,
+.site-menu .menu-trigger,
+.site-header .site-menu nav a,
+.home-lead h1,
+.home-section-heading h2,
+.home-day-list .home-day-text strong,
+.home-next-event-title,
+.home-next-later-title,
+.day-page .day-hero h1,
+.day-page .day-top h3,
+.day-page .section-heading h2,
+.day-schedule-section .destination-copy h4,
+body[data-page="stay"] .subhero h1,
+body[data-page="guide"] .subhero h1,
+body[data-page="safety"] .subhero h1,
+.info-card h2,
+.home-next-primary-link{
+ font-family:var(--trip-pop-font)!important;
+ font-weight:800;
+ letter-spacing:-.018em;
+}
+.home-lead h1 span,
+.home-day-list .home-day-count,
+.day-page .day-hero-index,
+.home-next-event-time,
+.day-fact-time{
+ font-family:var(--trip-pop-font)!important;
+ font-variant-numeric:tabular-nums;
+ letter-spacing:-.025em;
+}
+.home-section-heading .eyebrow,
+.home-lead-copy .eyebrow,
+.day-kicker,
+.subhero .overline,
+.next-label,
+.home-next-status{
+ font-family:var(--trip-pop-font);
+ font-weight:800;
+ letter-spacing:.09em;
+}
+.home-main-button,.home-text-button,
+.home-day-link,.home-post-link,.home-photos-all,
+.home-next-later-link,.day-info-link,.course-tab,
+.next-card,.home-quick-links a,
+button,input,select,textarea{
+ font-family:var(--trip-pop-font);
 }
