@@ -411,11 +411,76 @@ function renderSchedule(){
 function eventsForCourse(){
   return days.flatMap((day,idx)=>selectedCourse(day).events.map(e=>({...e,index:idx,dayId:day.id,course:selectedCourse(day).label,begin:dateOf(idx,e.start),finish:dateOf(idx,e.end)}))).sort((a,b)=>a.begin-b.begin);
 }
+/* Detailed home preview shares the same selected-course and JST clock data
+ * as the mini NEXT panel. Only source-provided notes are displayed. */
+function renderNextScheduleDetail(host,events,now,upcoming,current){
+  host.replaceChildren();
+  const event=upcoming||current;
+  if(!event){
+    const finished=node('div','home-next-summary');
+    finished.append(node('span','home-next-status','全行程'));
+    finished.append(node('h3','home-next-event-title','研修旅行の全日程'));
+    finished.append(node('p','home-next-note',
+      now<dateOf(0,'00:00')?'行程データを確認できません。':'予定されている全行程が終了しました。'));
+    const link=node('a','home-next-primary-link','4日間の行程を確認する ↗');
+    link.href='day1.html#schedule';
+    finished.append(link);
+    host.append(finished);
+    return;
+  }
+  const link='day'+(event.index+1)+'.html#schedule';
+  const summary=node('div','home-next-summary');
+  summary.append(node('span','home-next-status',upcoming?'次の予定':'現在の行程'));
+  summary.append(node('p','home-next-date',dateNames[event.index]+' · DAY '+String(event.index+1).padStart(2,'0')));
+  const row=node('div','home-next-event-row');
+  row.append(node('strong','home-next-event-time',
+    event.start+(event.end!==event.start?' 〜 '+event.end:'')));
+  const label=node('div','home-next-event-name');
+  label.append(node('h3','home-next-event-title',event.title));
+  const transport=transportFor(event);
+  const kind=transport?'移動':event.type==='food'?'食事':'活動';
+  label.append(node('p','home-next-meta',event.course+' ／ '+kind));
+  row.append(label);
+  summary.append(row);
+  if(event.note)summary.append(node('p','home-next-note',event.note));
+  const actions=node('div','home-next-actions');
+  const open=node('a','home-next-primary-link','この日の行程表を詳しく見る ↗');
+  open.href=link;
+  actions.append(open,node('span','home-next-guidance','集合場所・時刻は学校の最新案内を優先してください。'));
+  summary.append(actions);
+  host.append(summary);
+
+  const selected=events.indexOf(event);
+  const later=events.slice(selected+1).filter(e=>e.begin>now).slice(0,3);
+  if(!later.length)return;
+  const aside=node('div','home-next-later');
+  aside.append(node('h3','home-next-later-title','この後の予定'));
+  const list=node('ol','home-next-later-list');
+  later.forEach(e=>{
+    const item=node('li','home-next-later-item');
+    const time=node('span','home-next-later-time',e.start);
+    const detail=node('div','home-next-later-text');
+    detail.append(node('strong','',e.title));
+    detail.append(node('small','',dateNames[e.index]+' · '+e.course));
+    const a=node('a','home-next-later-link');
+    a.href='day'+(e.index+1)+'.html#schedule';
+    a.setAttribute('aria-label',dateNames[e.index]+' '+e.title+'の行程表を開く');
+    a.append(time,detail,node('span','home-next-later-arrow','↗'));
+    item.append(a);
+    list.append(item);
+  });
+  aside.append(list);
+  host.append(aside);
+}
 function renderNextSchedule(){
-  const box=$('#next-schedule');if(!box)return;
+  const box=$('#next-schedule');
+  const detailed=$('#next-detail-content');
+  if(!box&&!detailed)return;
   const events=eventsForCourse();const now=Date.now();
   const upcoming=events.find(e=>e.begin>now);
   const current=events.find(e=>e.begin<=now&&now<e.finish);
+  if(detailed)renderNextScheduleDetail(detailed,events,now,upcoming,current);
+  if(!box)return;
   box.replaceChildren();
   const label=node('span','next-label');label.append(node('span','pulse-dot'),document.createTextNode(upcoming?'NEXT / 次の行程':current?'NOW / 現在の行程':'TRIP / 全行程'));
   box.append(label);
@@ -472,18 +537,18 @@ window.HOKKAIDO_REINIT_PUBLIC_PAGE=function(){
   if(host.querySelector('[data-venue-photo]'))renderHotelImages();
   if(host.querySelector('#schedule-root'))renderSchedule();
   if(host.querySelector('#checklist-root'))renderChecklist();
-  if(host.querySelector('#next-schedule'))renderNextSchedule();
+  if(host.querySelector('#next-schedule')||host.querySelector('#next-detail-content'))renderNextSchedule();
   if(host.querySelector('#announcement-list'))loadAnnouncements();
 };
 
 // Returning to the home tab must refresh live information, even when its DOM is cached.
 window.HOKKAIDO_REFRESH_PUBLIC_HOME=function(){
-  if($('#next-schedule'))renderNextSchedule();
+  if($('#next-schedule')||$('#next-detail-content'))renderNextSchedule();
   if($('#announcement-list'))loadAnnouncements();
 };
 // Activate the clock on every entry page, not only when the initial document was home.
 setInterval(()=>{
-  if($('#next-schedule'))renderNextSchedule();
+  if($('#next-schedule')||$('#next-detail-content'))renderNextSchedule();
 },60_000);
 
 // Page content is immediately visible. Animations never hide or delay information.
