@@ -880,3 +880,104 @@ body[data-page="home"] .home-next-loading{
               0 3px 15px rgba(3,15,27,.8)!important;
  }
 }
+
+
+/* PC 2026-10-24: compact NEXT card alongside the oversized headline.
+   The larger title stays full size; only the right card footprint shrinks. */
+@media (min-width:900px){
+ body[data-page="home"] .home-lead .home-lead-grid{
+  grid-template-columns:minmax(0,1fr) minmax(205px,265px)!important;
+  gap:clamp(13px,2vw,27px)!important;
+  align-items:center!important;
+ }
+ body[data-page="home"] .home-lead .next-card{
+  align-self:center!important;
+  min-height:0!important;
+  width:100%;
+  padding:14px 16px!important;
+  border-radius:13px!important;
+  box-sizing:border-box;
+ }
+ body[data-page="home"] .home-lead .next-label{
+  margin:0 0 7px!important;
+  font-size:10px!important;
+ }
+ body[data-page="home"] .home-lead .next-time{
+  font-size:clamp(23px,2.3vw,29px)!important;
+  line-height:1.12!important;
+ }
+ body[data-page="home"] .home-lead .next-day{
+  margin:5px 0 0!important;
+  font-size:11px!important;
+ }
+ body[data-page="home"] .home-lead .next-title{
+  margin:7px 0 8px!important;
+  font-size:15px!important;
+  line-height:1.42!important;
+  overflow-wrap:anywhere;
+ }
+ body[data-page="home"] .home-lead .next-bottom{
+  padding-top:8px!important;
+  gap:5px!important;
+  flex-wrap:wrap;
+  align-items:center;
+ }
+ body[data-page="home"] .home-lead .next-course,
+ body[data-page="home"] .home-lead .next-jump,
+ body[data-page="home"] .home-lead .next-wait{
+  font-size:10px!important;
+  line-height:1.45!important;
+ }
+}
+
+/* Smartphone/tablet: restore photographic backgrounds in stay, travel
+   guide and safety. They must not depend on an uploaded-photo API response.
+   PC remains on its single approved-photo wallpaper and glass base. */
+@media screen and (max-width:899px){
+ body[data-page="stay"] main > .guide-stack-card,
+ body[data-page="guide"] main > .guide-stack-card,
+ body[data-page="safety"] main > .guide-stack-card{
+  display:block!important;
+  min-height:100vh;
+  min-height:100svh;
+  background-color:#304e60;
+  background-size:cover;
+  background-position:center top;
+  background-repeat:no-repeat;
+  background-attachment:scroll;
+  padding-bottom:24px;
+ }
+ body[data-page="stay"] main > .guide-stack-card{
+  background-image:linear-gradient(180deg,rgba(8,31,49,.12),rgba(10,34,49,.38)),
+   url("https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Niseko_Gondola_and_Hilton_Niseko_Village.jpg/960px-Niseko_Gondola_and_Hilton_Niseko_Village.jpg");
+ }
+ body[data-page="guide"] main > .guide-stack-card{
+  background-image:linear-gradient(180deg,rgba(8,31,49,.12),rgba(10,34,49,.38)),
+   url("https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Otaru_canal.jpg/960px-Otaru_canal.jpg");
+ }
+ body[data-page="safety"] main > .guide-stack-card{
+  background-image:linear-gradient(180deg,rgba(8,31,49,.12),rgba(10,34,49,.38)),
+   url("https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/New_Chitose_Airport.jpg/960px-New_Chitose_Airport.jpg");
+ }
+ body[data-page="stay"] .guide-stack-card > .subhero,
+ body[data-page="guide"] .guide-stack-card > .subhero,
+ body[data-page="safety"] .guide-stack-card > .subhero{
+  background-color:#274858;
+  background-position:center center;
+  background-size:cover;
+ }
+ body[data-page="stay"] .guide-stack-card > .section-section,
+ body[data-page="guide"] .guide-stack-card > .section-section,
+ body[data-page="safety"] .guide-stack-card > .section-section{
+  background:transparent!important;
+ }
+ body[data-page="stay"] .guide-stack-card > .subhero h1,
+ body[data-page="guide"] .guide-stack-card > .subhero h1,
+ body[data-page="safety"] .guide-stack-card > .subhero h1,
+ body[data-page="stay"] .guide-stack-card > .subhero .overline,
+ body[data-page="guide"] .guide-stack-card > .subhero .overline,
+ body[data-page="safety"] .guide-stack-card > .subhero .overline{
+  color:#fff!important;
+  text-shadow:0 2px 13px rgba(4,18,32,.78);
+ }
+}
