@@ -113,7 +113,7 @@
         await js('admin-config.js','20261021-worker-connected-1');
       if(typeof window.HOKKAIDO_REINIT_PUBLIC_PAGE!=='function'){
         await js('trip-data.js','20261023-photo-layout-v1');
-        await js('app.js','20261023-news-history-restored-v3');
+        await js('app.js','20261024-next-detail-v1');
       }else if(!item.ready){
         window.HOKKAIDO_REINIT_PUBLIC_PAGE();
       }
@@ -277,7 +277,7 @@
   updateMenu();
   // Optional approved-photo decoration for public informational pages only.
   void (async()=>{
-    await css('photo-ambient.css','20261023-ambient-v10');
+    await css('photo-ambient.css','20261024-ambient-next-detail-v1');
     if(typeof window.HOKKAIDO_NEWS_API_URL!=='string')
       await js('admin-config.js','20261021-worker-connected-1');
     await js('photo-ambient.js','20261023-ambient-v9');
