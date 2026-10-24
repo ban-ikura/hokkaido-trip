@@ -981,3 +981,26 @@ body[data-page="home"] .home-next-loading{
   text-shadow:0 2px 13px rgba(4,18,32,.78);
  }
 }
+
+
+/* Final mobile guard: ambient-photo-target previously applied an opaque
+   shorthand background to guide headers, erasing their travel photography.
+   The wrapper now owns the same photographic backdrop throughout the page. */
+@media screen and (max-width:899px){
+ body[data-page="stay"] main > .guide-stack-card > .subhero,
+ body[data-page="guide"] main > .guide-stack-card > .subhero,
+ body[data-page="safety"] main > .guide-stack-card > .subhero,
+ body[data-page="stay"] main > .guide-stack-card > .subhero.ambient-photo-target,
+ body[data-page="guide"] main > .guide-stack-card > .subhero.ambient-photo-target,
+ body[data-page="safety"] main > .guide-stack-card > .subhero.ambient-photo-target{
+  background:transparent!important;
+  background-image:none!important;
+ }
+ /* The title stays readable even when photos load asynchronously. */
+ body[data-page="stay"] main > .guide-stack-card > .subhero h1,
+ body[data-page="guide"] main > .guide-stack-card > .subhero h1,
+ body[data-page="safety"] main > .guide-stack-card > .subhero h1{
+  color:#fff!important;
+  text-shadow:0 2px 14px rgba(3,15,28,.94)!important;
+ }
+}
