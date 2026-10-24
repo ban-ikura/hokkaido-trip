@@ -802,3 +802,81 @@ body[data-page="home"] .home-next-loading{
   background:#fff!important;color:#173747!important;
  }
 }
+
+
+/* Desktop: unframed hard-gothic hero title directly on the page wallpaper.
+   Keep NEXT information as its separate readable glass card. */
+@media(min-width:900px){
+ body[data-page="home"] .home-lead .home-lead-grid{
+  grid-template-columns:minmax(0,1fr) minmax(250px,310px);
+  gap:clamp(24px,3.5vw,50px);
+  align-items:center;
+ }
+ body[data-page="home"] .home-lead .home-lead-copy{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  padding:18px 0!important;
+  margin:0;
+  min-width:0;
+  border:0!important;
+  border-radius:0!important;
+  background:none!important;
+  background-color:transparent!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+ }
+ body[data-page="home"] .home-lead .home-lead-copy h1{
+  font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif!important;
+  font-size:clamp(58px,6.8vw,100px)!important;
+  font-weight:900!important;
+  line-height:1.13!important;
+  letter-spacing:-.07em!important;
+  word-break:keep-all;
+  overflow-wrap:normal;
+  margin:0 0 19px!important;
+  color:#153849!important;
+  text-shadow:none!important;
+ }
+ body[data-page="home"] .home-lead .home-lead-copy h1 span{
+  font-family:inherit!important;
+  display:block;
+  margin-top:12px;
+  font-size:.34em!important;
+  font-weight:900!important;
+  line-height:1.1;
+  letter-spacing:.11em!important;
+  color:#19546b!important;
+  text-shadow:none!important;
+ }
+ body[data-page="home"] .home-lead .home-lead-copy .eyebrow{
+  font-size:clamp(11px,1.05vw,14px);
+  font-weight:900;
+  letter-spacing:.14em;
+ }
+ body[data-page="home"] .home-lead .home-lead-copy > p{
+  font-weight:700;
+  letter-spacing:.03em;
+ }
+ /* A random uploaded photo can be either light or dark. White lettering with
+    a solid dark shadow maintains contrast without putting a card behind it. */
+ body.ambient-desktop-page[data-page="home"] .home-lead .home-lead-copy h1,
+ body.ambient-desktop-page[data-page="home"] .home-lead .home-lead-copy h1 span{
+  color:#fff!important;
+  text-shadow:0 2px 3px rgba(5,22,33,.92),
+              0 5px 24px rgba(4,18,30,.85)!important;
+ }
+ body.ambient-desktop-page[data-page="home"] .home-lead .home-lead-copy .eyebrow,
+ body.ambient-desktop-page[data-page="home"] .home-lead .home-lead-copy > p{
+  color:#fff!important;
+  text-shadow:0 1px 3px rgba(3,15,27,.96),
+              0 3px 15px rgba(3,15,27,.8)!important;
+ }
+ body.ambient-desktop-page[data-page="home"] .home-lead .home-text-button{
+  color:#fff!important;
+  text-shadow:0 1px 3px rgba(3,15,27,.96),
+              0 3px 15px rgba(3,15,27,.8)!important;
+ }
+}
