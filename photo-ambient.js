@@ -1,5 +1,5 @@
 /* Approved photos: random left/right editorial backgrounds plus hero slideshow.
- * Public GET /api/photos is the only data source. No captions in backgrounds. */
+ * Public GET /api/photos is the only data source; wallpaper attribution uses approved caption and nickname. */
 (()=>{
 'use strict';
 const valid=/^[0-9a-f-]{36}$/,types=new Set(['home','day','stay','guide','safety']);
@@ -15,6 +15,32 @@ const random=items=>{const a=items.slice();for(let i=a.length-1;i>0;i--){
  const k=Math.floor(Math.random()*(i+1));[a[i],a[k]]=[a[k],a[i]]
 }return a};
 let cache=null,loadedAt=0,pending=null,serial=0,timer=null;
+
+/* The full-page wallpaper displays its own approved public author and caption.
+   This badge is created only after the actual selected image has loaded. */
+function clearBackgroundCredit(){
+ document.querySelectorAll('main > .ambient-photo-credit').forEach(node=>node.remove());
+}
+function showBackgroundCredit(item,ticket){
+ if(ticket!==serial||!item)return;
+ const main=document.querySelector('main');
+ if(!main||!types.has(document.body.dataset.page))return;
+ clearBackgroundCredit();
+ const badge=document.createElement('aside');
+ badge.className='ambient-photo-credit';
+ badge.setAttribute('aria-label','背景写真の情報');
+ const title=document.createElement('span');
+ title.className='ambient-photo-credit-title';
+ const caption=typeof item.caption==='string'&&item.caption.trim()?item.caption.trim():'無題';
+ title.textContent='「'+caption+'」';
+ title.title=caption;
+ const author=document.createElement('span');
+ author.className='ambient-photo-credit-author';
+ const nickname=typeof item.nickname==='string'&&item.nickname.trim()?item.nickname.trim():'匿名';
+ author.textContent='撮影：'+nickname;
+ badge.append(title,author);
+ main.prepend(badge);
+}
 async function load(){
  if(cache&&Date.now()-loadedAt<180000)return cache;
  if(pending)return pending;
@@ -98,6 +124,7 @@ function desktopBackground(items,ticket){
    if(ticket!==serial||!document.querySelector('main'))return;
    document.body.style.setProperty('--ambient-desktop-photo','url("'+url(chosen[index])+'")');
    document.body.classList.add('ambient-desktop-page');
+   showBackgroundCredit(chosen[index],ticket);
   };
   test.onerror=()=>attempt(index+1);
   test.src=url(chosen[index]);
@@ -128,6 +155,7 @@ function mobileHomeBackground(items,ticket){
    if(!img.naturalWidth){attempt(i+1);return}
    document.body.style.setProperty('--ambient-mobile-home-photo','url("'+url(choices[i])+'")');
    document.body.classList.add('ambient-mobile-home-page');
+   showBackgroundCredit(choices[i],ticket);
   };
   img.onerror=()=>attempt(i+1);
   img.src=url(choices[i]);
@@ -290,6 +318,7 @@ function heroSlides(main,photos){
 }
 async function render(){
  const ticket=++serial;
+ clearBackgroundCredit();
  clearDesktopBackground();
  clearMobileHomeBackground();
  if(layoutObserver)layoutObserver.disconnect();
@@ -323,6 +352,6 @@ async function render(){
  }catch{/* Decorative photos must not affect essential travel information. */}
 }
 document.addEventListener('hokkaido:pagechange',render);
-window.addEventListener('pagehide',()=>{++serial;clearDesktopBackground();clearMobileHomeBackground();if(timer)clearInterval(timer);timer=null;if(layoutObserver)layoutObserver.disconnect();if(placementFrame)cancelAnimationFrame(placementFrame)});
+window.addEventListener('pagehide',()=>{++serial;clearBackgroundCredit();clearDesktopBackground();clearMobileHomeBackground();if(timer)clearInterval(timer);timer=null;if(layoutObserver)layoutObserver.disconnect();if(placementFrame)cancelAnimationFrame(placementFrame)});
 render();
 })();
