@@ -170,6 +170,69 @@
     }
     return null;
   }
+  // Canvas encoders commonly embed an ICC color profile in JPEG/WebP.
+  // The current photo Worker rejects JPEG APP2 ICC_PROFILE even though this
+  // is harmless color information. Remove only auxiliary color/metadata blocks;
+  // original EXIF/GPS never reaches this encoder because Canvas redraws pixels.
+  async function scrubCanvasOutput(blob){
+    if(!blob)return null;
+    const bytes=new Uint8Array(await blob.arrayBuffer());
+    if(blob.type==='image/jpeg'){
+      if(bytes.length<4||bytes[0]!==0xff||bytes[1]!==0xd8)return blob;
+      let at=2,last=0,parts=[],removed=false;
+      while(at+4<bytes.length){
+        if(bytes[at]!==0xff)return blob;
+        const marker=bytes[at+1];
+        if(marker===0xda)break; // Keep the complete encoded image scan.
+        const size=(bytes[at+2]<<8)|bytes[at+3];
+        const next=at+2+size;
+        if(size<2||next>bytes.length)return blob;
+        const icc=marker===0xe2 && size>=16 &&
+          String.fromCharCode(...bytes.subarray(at+4,at+16))==='ICC_PROFILE\0';
+        if(icc){
+          parts.push(bytes.subarray(last,at));
+          last=next;removed=true;
+        }
+        at=next;
+      }
+      if(!removed)return blob;
+      parts.push(bytes.subarray(last));
+      return new Blob(parts,{type:'image/jpeg'});
+    }
+    if(blob.type==='image/webp'&&bytes.length>=32){
+      const ascii=(offset,value)=>[...value].every((c,i)=>bytes[offset+i]===c.charCodeAt(0));
+      if(!ascii(0,'RIFF')||!ascii(8,'WEBP'))return blob;
+      const read32=at=>(bytes[at]|(bytes[at+1]<<8)|(bytes[at+2]<<16)|(bytes[at+3]<<24))>>>0;
+      if(read32(4)!==bytes.length-8)return blob;
+      const header=bytes.slice(0,12),chunks=[header];
+      let at=12,removed=false;
+      while(at+8<=bytes.length){
+        const kind=String.fromCharCode(...bytes.subarray(at,at+4));
+        const size=read32(at+4);
+        const next=at+8+size+(size&1);
+        if(next>bytes.length)return blob;
+        if(kind==='ICCP'||kind==='EXIF'||kind==='XMP '){
+          removed=true;
+        }else{
+          const part=bytes.slice(at,next);
+          if(kind==='VP8X'){
+            part[8]&=~0x2c; // Clear ICC, EXIF and XMP feature bits.
+          }
+          chunks.push(part);
+        }
+        at=next;
+      }
+      if(at!==bytes.length||!removed)return blob;
+      const length=chunks.reduce((sum,part)=>sum+part.length,0);
+      const riffLength=length-8;
+      header[4]=riffLength&255;
+      header[5]=(riffLength>>>8)&255;
+      header[6]=(riffLength>>>16)&255;
+      header[7]=(riffLength>>>24)&255;
+      return new Blob(chunks,{type:'image/webp'});
+    }
+    return blob;
+  }
   async function compressPhoto(file){
     const media=await readMedia(file);
     try{
@@ -192,7 +255,8 @@
       for(let i=0;i<canvases.length;i++){
         const out=await encodeCanvas(canvases[i],'image/webp',qualities[i]);
         if(!out)break;
-        if(out.size<=300000)return out;
+        const clean=await scrubCanvasOutput(out);
+        if(clean.size<=300000)return clean;
       }
       // JPEG only when the API explicitly advertises secure JPEG support.
       if(!uploadFormats.includes('image/jpeg')){
@@ -201,7 +265,8 @@
       for(let i=0;i<canvases.length;i++){
         const out=await encodeCanvas(canvases[i],'image/jpeg',qualities[i]);
         if(!out)break;
-        if(out.size<=300000)return out;
+        const clean=await scrubCanvasOutput(out);
+        if(clean.size<=300000)return clean;
       }
       throw Error('画像を300KB以下に圧縮できませんでした。別の画像をお試しください。');
     }finally{
