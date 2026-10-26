@@ -72,6 +72,7 @@ GitHubの `admin-backend/src/index.js` の**全文**をコード編集画面に�
 
 - 旧WorkerのままでもWebPを出力できるブラウザーでは従来どおり投稿できます。
 - 新Workerは既存のWebP写真も配信し、JPEG写真は `image/jpeg` として返します。
+- 2026-10-26修正：一部のブラウザーはCanvas出力JPEGにICCカラープロファイルを付けます。古い検証コードはこれを誤って拒否していました。新しい `photos-submit.js` はICCを除去して送るため、JPEG対応Workerをすでにデプロイしていれば**追加のWorker更新なしで投稿を再試行できます**。`admin-backend/src/index.js` もICCを安全に受け入れるように更新済みですが、サーバー側の修正版を使うには別途Deployが必要です。位置情報・EXIF・XMPは引き続き禁止です。
 - 画像の上限は引き続き1枚300KBで、管理者の承認が必須です。
 - MP5は一般的な画像・動画形式ではありません。MP4・MOVをお試しください。
 
