@@ -871,3 +871,16 @@ body[data-page="safety"] .subhero h1,
 button,input,select,textarea{
  font-family:var(--trip-pop-font);
 }
+
+
+/* Mobile full-page wallpaper: suppress retired hero photo before async loading.
+   This file is render-blocking, unlike the approved-photo enhancement CSS.
+   Prevents the old hero image flashing on refresh or SPA navigation. */
+@media screen and (max-width:899px){
+ body[data-page="home"] .home-lead .home-feature-photo{
+  display:none!important;
+ }
+ body[data-page="home"] .home-lead{
+  background-color:#36566a!important;
+ }
+}
