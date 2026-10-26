@@ -1183,7 +1183,7 @@ body[data-page="home"] .home-next-loading{
 }
 
 
-/* Selected wallpaper attribution: top right, separate from menus and page cards. */
+/* Wallpaper credit: no card, just white text anchored to the page title. */
 body[data-page] main.ambient-photo-credited{
  position:relative;
 }
@@ -1195,18 +1195,19 @@ body[data-page] main > .ambient-photo-credit{
  display:flex;
  flex-direction:column;
  align-items:flex-end;
- gap:3px;
- box-sizing:border-box;
+ gap:2px;
  max-width:min(330px,calc(100% - 24px));
- padding:8px 12px;
+ padding:0;
  color:#fff;
  text-align:right;
- border:1px solid rgba(255,255,255,.53);
- border-radius:10px;
- background:rgba(7,26,40,.68);
- -webkit-backdrop-filter:blur(7px);
- backdrop-filter:blur(7px);
- box-shadow:0 4px 16px rgba(6,20,30,.15);
+ border:0;
+ border-radius:0;
+ background:transparent;
+ -webkit-backdrop-filter:none;
+ backdrop-filter:none;
+ box-shadow:none;
+ text-shadow:0 1px 4px rgba(1,12,25,.96),
+             0 2px 12px rgba(1,12,25,.78);
  pointer-events:none;
 }
 body[data-page] .ambient-photo-credit-title{
@@ -1218,7 +1219,7 @@ body[data-page] .ambient-photo-credit-title{
  overflow-wrap:anywhere;
  font-size:12px;
  font-weight:800;
- line-height:1.35;
+ line-height:1.4;
 }
 body[data-page] .ambient-photo-credit-author{
  display:block;
@@ -1228,20 +1229,14 @@ body[data-page] .ambient-photo-credit-author{
  white-space:nowrap;
  font-size:11px;
  font-weight:700;
- line-height:1.45;
+ line-height:1.4;
 }
 @media screen and (max-width:899px){
  body[data-page="home"] main > .ambient-photo-credit{
-  top:10px;
   right:12px;
-  max-width:min(220px,53vw);
-  padding:7px 9px;
-  border-radius:9px;
+  max-width:min(170px,44vw);
  }
- /* Reserve room above the home title so credits cannot cover the heading. */
- body[data-page="home"] main.ambient-photo-credited .home-lead{
-  padding-top:92px!important;
- }
+ /* No extra gap at the top: position is aligned with the 2026 title line. */
  body[data-page="home"] .ambient-photo-credit-title{
   font-size:11px;
  }
