@@ -20,7 +20,7 @@
     msg.className='message'+(error?' error':' success');
   }
   function submitState(){submit.disabled=!ready||working||!token||!siteKey}
-  const isVideo=file=>/^video\//.test(file.type)||/\.(mp4|mov)$/i.test(file.name);
+  const isVideo=file=>/^video\//.test(file.type)||/\.(mp4|mov|mp5)$/i.test(file.name);
   function clearPreview(){
     videoPreview.pause();videoPreview.hidden=true;videoPreview.removeAttribute('src');
     videoPreview.load();
@@ -42,7 +42,7 @@
     if(!movie && !(file.type.startsWith('image/')||/\.(heic|heif|avif|jpg|jpeg|png|webp|gif)$/i.test(file.name))){
       fileInput.value='';report('画像（JPEG・PNG・HEICなど）またはMP4・MOV動画を選んでください。',true);return;
     }
-    previewUrl=URL.createObjectURL(file);
+    previewUrl=URL.createObjectURL(/\.mp5$/i.test(file.name)?new Blob([file],{type:'video/mp4'}):file);
     if(movie){
       videoPreview.src=previewUrl;videoPreview.hidden=false;
     }else{
@@ -101,7 +101,7 @@
     const movie=isVideo(file);
     const maximum=movie?50:30;
     if(file.size>maximum*1024*1024)throw Error('ファイルは'+maximum+'MB以下にしてください。');
-    const srcUrl=URL.createObjectURL(file);
+    const srcUrl=URL.createObjectURL(/\.mp5$/i.test(file.name)?new Blob([file],{type:'video/mp4'}):file);
     let source=null;
     const release=()=>{
       if(typeof ImageBitmap!=='undefined' && source instanceof ImageBitmap)source.close();
@@ -114,9 +114,9 @@
         video.muted=true;video.playsInline=true;video.preload='auto';
         source=video;
         await new Promise((resolve,reject)=>{
-          const timer=setTimeout(()=>reject(Error('動画の読み込みができません。MP4・MOVをお試しください。')),15000);
+          const timer=setTimeout(()=>reject(Error('動画の読み込みができません。MP4に変換してお試しください。')),15000);
           video.addEventListener('loadeddata',()=>{clearTimeout(timer);resolve()},{once:true});
-          video.addEventListener('error',()=>{clearTimeout(timer);reject(Error('この動画はブラウザーで開けません。MP4・MOVをお試しください。'))},{once:true});
+          video.addEventListener('error',()=>{clearTimeout(timer);reject(Error('この動画を再生できません。MP5形式の場合はMP4に変換してお試しください。'))},{once:true});
           video.src=srcUrl;video.load();
         });
         if(Number.isFinite(video.duration)&&video.duration>1){
