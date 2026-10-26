@@ -170,10 +170,107 @@
     }
     return null;
   }
-  // Canvas encoders commonly embed an ICC color profile in JPEG/WebP.
-  // The current photo Worker rejects JPEG APP2 ICC_PROFILE even though this
-  // is harmless color information. Remove only auxiliary color/metadata blocks;
-  // original EXIF/GPS never reaches this encoder because Canvas redraws pixels.
+  // Validate pixels against the same strict image parser as Cloudflare Worker.
+  // Never send a compressed image unless the server's format validator accepts
+  // its exact bytes. This avoids a wasted Turnstile token on unsupported output.
+  const PHOTO_LIMIT_BYTES=300000;
+  function workerCompatibleWebp(bytes){
+    // WebPのRIFF構造を確認。Chrome等の単純形式に加えて、スマホなどが生成する
+    // VP8X（拡張静止画）も許可する。アニメーションとEXIF/XMPは受け付けない。
+    if(!(bytes instanceof Uint8Array)||bytes.length<32||bytes.length>PHOTO_LIMIT_BYTES)return false;
+    const ascii=(n,s)=>[...s].every((c,i)=>bytes[n+i]===c.charCodeAt(0));
+    const le32=n=>(bytes[n]|(bytes[n+1]<<8)|(bytes[n+2]<<16)|(bytes[n+3]<<24))>>>0;
+    if(!ascii(0,'RIFF')||!ascii(8,'WEBP')||le32(4)!==bytes.length-8)return false;
+    let at=12, imageCount=0, extended=false, alpha=false, colorProfile=false, flags=0;
+    let imageSeen=false;
+    while(at+8<=bytes.length){
+      const kind=String.fromCharCode(...bytes.subarray(at,at+4));
+      const size=le32(at+4);
+      const next=at+8+size+(size&1);
+      if(size>PHOTO_LIMIT_BYTES||next>bytes.length)return false;
+      if(kind==='VP8X'){
+        if(at!==12||extended||size!==10)return false;
+        extended=true;
+        flags=bytes[at+8];
+        // animation, EXIF, XMP and reserved bits are disallowed.
+        if(flags&0xCF)return false; // 0xC0 reserved, 0x08 EXIF, 0x04 XMP, 0x02 animation, 0x01 reserved
+        const w=1+bytes[at+12]+(bytes[at+13]<<8)+(bytes[at+14]<<16);
+        const h=1+bytes[at+15]+(bytes[at+16]<<8)+(bytes[at+17]<<16);
+        if(w>4096||h>4096)return false;
+      }else if(kind==='ICCP'){
+        if(!extended||colorProfile||imageSeen||size<1||size>32768)return false;
+        colorProfile=true;
+      }else if(kind==='ALPH'){
+        if(!extended||alpha||imageSeen||size<1)return false;
+        alpha=true;
+      }else if(kind==='VP8 '||kind==='VP8L'){
+        if(imageSeen||size<(kind==='VP8 '?10:5))return false;
+        imageCount++;
+        imageSeen=true;
+        const start=at+8;
+        if(kind==='VP8 '){
+          // VP8 lossy key-frame signature.
+          if(bytes[start+3]!==0x9d||bytes[start+4]!==0x01||bytes[start+5]!==0x2a)return false;
+        }else{
+          if(alpha||bytes[start]!==0x2f)return false;
+        }
+      }else{
+        // EXIF/XMP/ANIM/ANMF and unknown chunks are forbidden.
+        return false;
+      }
+      at=next;
+    }
+    if(at!==bytes.length||imageCount!==1)return false;
+    if(extended){
+      if(Boolean(flags&0x10)!==alpha)return false;
+      if(Boolean(flags&0x20)!==colorProfile)return false;
+    }else if(alpha||colorProfile)return false;
+    return true;
+  }
+  // Canvasで再描画した静止JPEGのみ受け付ける。EXIF、XMP、コメント、
+  // 埋め込みメタデータが含まれる元画像は拒否する。
+  function workerCompatibleJpeg(bytes){
+   if(!(bytes instanceof Uint8Array)||bytes.length<32||bytes.length>PHOTO_LIMIT_BYTES)return false;
+   const n=bytes.length;
+   if(bytes[0]!==0xff||bytes[1]!==0xd8||bytes[n-2]!==0xff||bytes[n-1]!==0xd9)return false;
+   let at=2,frame=false;
+   while(at+3<n){
+    if(bytes[at++]!==0xff)return false;
+    while(bytes[at]===0xff)at++;
+    const marker=bytes[at++];
+    if(marker===0xda){
+     const length=(bytes[at]<<8)|bytes[at+1];
+     return frame&&length>=6&&at+length<n-2;
+    }
+    if(marker===0xd8||marker===0xd9||marker===0x01||marker===0x00||
+       marker>=0xd0&&marker<=0xd7)return false;
+    if(at+2>n)return false;
+    const length=(bytes[at]<<8)|bytes[at+1];
+    if(length<2||at+length>n-2)return false;
+    // Canvas JPEG from Chromium and Safari may carry a standard ICC profile.
+    // ICC only describes colors; EXIF, XMP, comments and arbitrary APP markers
+    // still remain forbidden (including location/camera metadata).
+    if(marker===0xfe||marker>=0xe1&&marker<=0xef&&![0xe2,0xee].includes(marker))return false;
+    if(marker===0xe0){
+     if(length<7||String.fromCharCode(...bytes.subarray(at+2,at+7))!=='JFIF\0')return false;
+    }else if(marker===0xe2){
+     if(length<16||String.fromCharCode(...bytes.subarray(at+2,at+14))!=='ICC_PROFILE\0')return false;
+    }else if(marker===0xee){
+     if(length<14||String.fromCharCode(...bytes.subarray(at+2,at+8))!=='Adobe\0')return false;
+    }
+    if([0xc0,0xc1,0xc2].includes(marker)){
+     if(frame||length<11)return false;
+     const height=(bytes[at+3]<<8)|bytes[at+4];
+     const width=(bytes[at+5]<<8)|bytes[at+6];
+     if(width<1||height<1||width>4096||height>4096)return false;
+     frame=true;
+    }
+    at+=length;
+   }
+   return false;
+  }
+  
+
   async function scrubCanvasOutput(blob){
     if(!blob)return null;
     const bytes=new Uint8Array(await blob.arrayBuffer());
@@ -182,14 +279,19 @@
       let at=2,last=0,parts=[],removed=false;
       while(at+4<bytes.length){
         if(bytes[at]!==0xff)return blob;
-        const marker=bytes[at+1];
-        if(marker===0xda)break; // Keep the complete encoded image scan.
-        const size=(bytes[at+2]<<8)|bytes[at+3];
-        const next=at+2+size;
+        let cursor=at+1;
+        while(bytes[cursor]===0xff)cursor++;
+        const marker=bytes[cursor];
+        if(marker===0xda)break; // Preserve the entire encoded scan.
+        if(marker===0xd8||marker===0xd9||marker===0x00||
+           (marker>=0xd0&&marker<=0xd7))return blob;
+        if(cursor+2>=bytes.length)return blob;
+        const size=(bytes[cursor+1]<<8)|bytes[cursor+2];
+        const next=cursor+1+size;
         if(size<2||next>bytes.length)return blob;
-        const icc=marker===0xe2 && size>=16 &&
-          String.fromCharCode(...bytes.subarray(at+4,at+16))==='ICC_PROFILE\0';
-        if(icc){
+        // Discard every APPn/COM block: ICC, EXIF, XMP, Adobe and camera data.
+        // Re-encoding via Canvas has already removed the original EXIF/GPS.
+        if((marker>=0xe0&&marker<=0xef)||marker===0xfe){
           parts.push(bytes.subarray(last,at));
           last=next;removed=true;
         }
@@ -208,30 +310,33 @@
       let at=12,removed=false;
       while(at+8<=bytes.length){
         const kind=String.fromCharCode(...bytes.subarray(at,at+4));
-        const size=read32(at+4);
-        const next=at+8+size+(size&1);
+        const size=read32(at+4),next=at+8+size+(size&1);
         if(next>bytes.length)return blob;
         if(kind==='ICCP'||kind==='EXIF'||kind==='XMP '){
           removed=true;
         }else{
           const part=bytes.slice(at,next);
-          if(kind==='VP8X'){
-            part[8]&=~0x2c; // Clear ICC, EXIF and XMP feature bits.
-          }
+          if(kind==='VP8X')part[8]&=~0x2c;
           chunks.push(part);
         }
         at=next;
       }
       if(at!==bytes.length||!removed)return blob;
-      const length=chunks.reduce((sum,part)=>sum+part.length,0);
-      const riffLength=length-8;
-      header[4]=riffLength&255;
-      header[5]=(riffLength>>>8)&255;
-      header[6]=(riffLength>>>16)&255;
-      header[7]=(riffLength>>>24)&255;
+      const length=chunks.reduce((total,item)=>total+item.length,0)-8;
+      header[4]=length&255;header[5]=(length>>>8)&255;
+      header[6]=(length>>>16)&255;header[7]=(length>>>24)&255;
       return new Blob(chunks,{type:'image/webp'});
     }
     return blob;
+  }
+  async function verifiedOutput(blob){
+    if(!blob)return null;
+    const clean=await scrubCanvasOutput(blob);
+    if(!clean||clean.size<32||clean.size>PHOTO_LIMIT_BYTES)return null;
+    const bytes=new Uint8Array(await clean.arrayBuffer());
+    if(clean.type==='image/jpeg'&&workerCompatibleJpeg(bytes))return clean;
+    if(clean.type==='image/webp'&&workerCompatibleWebp(bytes))return clean;
+    return null;
   }
   async function compressPhoto(file){
     const media=await readMedia(file);
@@ -240,35 +345,33 @@
       if(width>12000||height>12000)throw Error('この画像の大きさを処理できません。');
       const sizes=[1350,1150,950,800,650,480,360];
       const qualities=[.76,.68,.59,.53,.47,.40,.34];
-      const canvases=sizes.map(size=>{
-        const factor=Math.min(1,size/Math.max(width,height));
+      const createCanvas=(limit)=>{
+        const factor=Math.min(1,limit/Math.max(width,height));
         const canvas=document.createElement('canvas');
         canvas.width=Math.max(1,Math.round(width*factor));
         canvas.height=Math.max(1,Math.round(height*factor));
         const ctx=canvas.getContext('2d',{alpha:false});
         if(!ctx)throw Error('このブラウザーでは画像を変換できません。');
-        ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle='#fff';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
         ctx.drawImage(source,0,0,canvas.width,canvas.height);
         return canvas;
-      });
-      // Continue sending WebP to existing Cloudflare installations.
-      for(let i=0;i<canvases.length;i++){
-        const out=await encodeCanvas(canvases[i],'image/webp',qualities[i]);
-        if(!out)break;
-        const clean=await scrubCanvasOutput(out);
-        if(clean.size<=300000)return clean;
+      };
+      // JPEG is better supported on iOS and Android and is the first choice
+      // when the server explicitly advertises support for it.
+      const types=uploadFormats.includes('image/jpeg')?
+        ['image/jpeg','image/webp']:['image/webp'];
+      for(const type of types){
+        for(let i=0;i<sizes.length;i++){
+          const canvas=createCanvas(sizes[i]);
+          const result=await encodeCanvas(canvas,type,qualities[i]);
+          canvas.width=0;canvas.height=0; // Release large phone canvases.
+          if(!result)break;
+          const clean=await verifiedOutput(result);
+          if(clean)return clean;
+        }
       }
-      // JPEG only when the API explicitly advertises secure JPEG support.
-      if(!uploadFormats.includes('image/jpeg')){
-        throw Error('このブラウザーではWebPを生成できないか、画像を300KBに圧縮できません。投稿サーバーのJPEG対応版が必要です。');
-      }
-      for(let i=0;i<canvases.length;i++){
-        const out=await encodeCanvas(canvases[i],'image/jpeg',qualities[i]);
-        if(!out)break;
-        const clean=await scrubCanvasOutput(out);
-        if(clean.size<=300000)return clean;
-      }
-      throw Error('画像を300KB以下に圧縮できませんでした。別の画像をお試しください。');
+      throw Error('このブラウザーの変換画像を送信形式にできませんでした。ページを更新し、JPEGまたはPNGの写真でもお試しください。');
     }finally{
       media.release();
     }
