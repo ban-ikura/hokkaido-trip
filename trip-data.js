@@ -37,7 +37,7 @@ const venuePhotos = {
     "year": "2010年"
   },
   "niseko": {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Niseko_Gondola_and_Hilton_Niseko_Village.jpg/960px-Niseko_Gondola_and_Hilton_Niseko_Village.jpg",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/Niseko_Gondola_and_Hilton_Niseko_Village.jpg/960px-Niseko_Gondola_and_Hilton_Niseko_Village.jpg",
     "label": "ニセコビレッジ（ゴンドラとホテル）",
     "source": "https://commons.wikimedia.org/wiki/File:Niseko_Gondola_and_Hilton_Niseko_Village.jpg",
     "author": "Excellent moniteur de ski",
