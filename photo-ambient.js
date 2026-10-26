@@ -22,6 +22,21 @@ function clearBackgroundCredit(){
  document.querySelectorAll('main > .ambient-photo-credit').forEach(node=>node.remove());
  document.querySelector('main')?.classList.remove('ambient-photo-credited');
 }
+/* Align the unboxed photo attribution with the visible page heading.
+ * On narrow home screens the 2026 line is the safe right-hand alignment row. */
+function alignBackgroundCredit(){
+ const main=document.querySelector('main');
+ const label=main?.querySelector(':scope > .ambient-photo-credit');
+ if(!main||!label)return;
+ const page=document.body.dataset.page;
+ const mobile=window.matchMedia('(max-width:899px)').matches;
+ const title=page==='home'
+  ?main.querySelector(mobile?'.home-lead h1 span':'.home-lead h1')
+  :main.querySelector(page==='day'?'.day-hero h1':'.subhero h1');
+ if(!title)return;
+ const top=title.getBoundingClientRect().top-main.getBoundingClientRect().top;
+ if(Number.isFinite(top))label.style.top=Math.max(8,Math.round(top))+'px';
+}
 function showBackgroundCredit(item,ticket){
  if(ticket!==serial||!item)return;
  const main=document.querySelector('main');
@@ -42,6 +57,7 @@ function showBackgroundCredit(item,ticket){
  badge.append(title,author);
  main.classList.add('ambient-photo-credited');
  main.prepend(badge);
+ alignBackgroundCredit();
 }
 async function load(){
  if(cache&&Date.now()-loadedAt<180000)return cache;
@@ -282,10 +298,11 @@ function observeLayout(main){
  schedulePlacement();
 }
 window.addEventListener('resize',schedulePlacement,{passive:true});
+window.addEventListener('resize',alignBackgroundCredit,{passive:true});
 const desktopBreakpoint=window.matchMedia('(min-width:900px)');
 desktopBreakpoint.addEventListener?.('change',()=>render());
 window.addEventListener('load',schedulePlacement,{once:true});
-if(document.fonts?.ready)document.fonts.ready.then(schedulePlacement).catch(()=>{});
+if(document.fonts?.ready)document.fonts.ready.then(()=>{schedulePlacement();alignBackgroundCredit()}).catch(()=>{});
 
 function heroSlides(main,photos){
  // Desktop uses the single shared page wallpaper, not a separate hero slideshow.
