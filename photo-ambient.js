@@ -20,6 +20,7 @@ let cache=null,loadedAt=0,pending=null,serial=0,timer=null;
    This badge is created only after the actual selected image has loaded. */
 function clearBackgroundCredit(){
  document.querySelectorAll('main > .ambient-photo-credit').forEach(node=>node.remove());
+ document.querySelector('main')?.classList.remove('ambient-photo-credited');
 }
 function showBackgroundCredit(item,ticket){
  if(ticket!==serial||!item)return;
@@ -39,6 +40,7 @@ function showBackgroundCredit(item,ticket){
  const nickname=typeof item.nickname==='string'&&item.nickname.trim()?item.nickname.trim():'匿名';
  author.textContent='撮影：'+nickname;
  badge.append(title,author);
+ main.classList.add('ambient-photo-credited');
  main.prepend(badge);
 }
 async function load(){
