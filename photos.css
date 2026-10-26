@@ -774,3 +774,19 @@ html.gallery-reel-open{overflow:hidden!important}
  .gallery-reel-close{right:11px}
 }
 @media(prefers-reduced-motion:reduce){.gallery-reel-viewport{scroll-behavior:auto}}
+
+/* Reliable still/video previews: author display rules must respect hidden. */
+body[data-photo-page="post"] #photo-preview[hidden],
+body[data-photo-page="post"] #photo-video-preview[hidden]{
+ display:none!important;
+}
+body[data-photo-page="post"] #photo-video-preview{
+ display:block;
+ width:min(100%,440px);
+ max-height:300px;
+ margin:10px auto;
+ object-fit:contain;
+ border:1px solid #d9e9ef;
+ border-radius:12px;
+ background:#122c3a;
+}
