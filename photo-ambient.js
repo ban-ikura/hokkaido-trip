@@ -118,8 +118,14 @@ function mobileHomeBackground(items,ticket){
   if(i>=choices.length||ticket!==serial||document.body.dataset.page!=='home')return;
   const img=new Image();
   img.referrerPolicy='no-referrer';
-  img.onload=()=>{
+  img.onload=async()=>{
+   // Decode the approved background fully before revealing it on mobile.
+   // Loading alone may still show one frame of the previous fallback.
+   if(typeof img.decode==='function'){
+    try{await img.decode()}catch{}
+   }
    if(ticket!==serial||document.body.dataset.page!=='home'||!document.querySelector('main.home-page'))return;
+   if(!img.naturalWidth){attempt(i+1);return}
    document.body.style.setProperty('--ambient-mobile-home-photo','url("'+url(choices[i])+'")');
    document.body.classList.add('ambient-mobile-home-page');
   };
