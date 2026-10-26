@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="site-swipe.css?v=20261024-crisp-type-v1">
 <script src="admin-config.js?v=20261021-worker-connected-1" defer></script>
 <script src="photos-config.js?v=20261022-nocode-1" defer></script>
-<script src="photos-submit.js?v=20261022-gallery-separate-2" defer></script>
+<script src="photos-submit.js?v=20261026-multi-format-v1" defer></script>
 </head>
 <body data-photo-page="post">
 <header class="site-header">
@@ -52,11 +52,12 @@
       <form id="photo-form">
         <label for="student-photo">写真を選ぶ <span class="required">必須</span></label>
         <div class="upload-field">
-          <input type="file" id="student-photo" accept="image/*,.heic,.heif" required aria-describedby="photo-size-hint">
+          <input type="file" id="student-photo" accept="image/*,.jpg,.jpeg,.png,.webp,.heic,.heif,.avif,video/mp4,video/quicktime,.mp4,.mov" required aria-describedby="photo-size-hint">
           <div class="upload-field-caption"><span aria-hidden="true">＋</span> カメラロールから写真を選択</div>
         </div>
-        <p id="photo-size-hint" class="hint">静止画1枚を最大300KBのWebP画像に自動圧縮します。画質やサイズを調整し、撮影位置情報などの元画像メタデータを除去します。</p>
+        <p id="photo-size-hint" class="hint">JPEG・PNG・WebP・HEICなどの写真に対応。MP4・MOV動画からは静止画1コマを取り出します（動画そのものは投稿されません）。画像は最大300KBのWebPまたはJPEGに自動圧縮し、撮影位置情報などの元画像メタデータを除去します。動画は50MB以下、写真は30MB以下を選んでください。</p>
         <img id="photo-preview" alt="投稿する写真のプレビュー" hidden>
+        <video id="photo-video-preview" controls muted playsinline preload="metadata" aria-label="静止画を切り出す動画のプレビュー" hidden></video>
         <label for="student-caption">コメント <span class="required">必須</span></label>
         <textarea id="student-caption" maxlength="200" rows="4" placeholder="例：小樽運河の夕景がとてもきれいだった！" required></textarea>
         <p class="field-footnote">200文字以内・実名や個人情報は書かないでください。</p>
