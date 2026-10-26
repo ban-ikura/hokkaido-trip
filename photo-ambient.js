@@ -105,6 +105,30 @@ function desktopBackground(items,ticket){
  attempt(0);
 }
 
+/* MOBILE HOME FULL-PAGE PHOTO TRIAL (2026-10-26).
+   One approved image remains behind the entire scrolling mobile homepage.
+   The previous hero slideshow is retained above for easy rollback. */
+function clearMobileHomeBackground(){
+ document.body.classList.remove('ambient-mobile-home-page');
+ document.body.style.removeProperty('--ambient-mobile-home-photo');
+}
+function mobileHomeBackground(items,ticket){
+ const choices=random(items);
+ function attempt(i){
+  if(i>=choices.length||ticket!==serial||document.body.dataset.page!=='home')return;
+  const img=new Image();
+  img.referrerPolicy='no-referrer';
+  img.onload=()=>{
+   if(ticket!==serial||document.body.dataset.page!=='home'||!document.querySelector('main.home-page'))return;
+   document.body.style.setProperty('--ambient-mobile-home-photo','url("'+url(choices[i])+'")');
+   document.body.classList.add('ambient-mobile-home-page');
+  };
+  img.onerror=()=>attempt(i+1);
+  img.src=url(choices[i]);
+ }
+ attempt(0);
+}
+
 /* Keep every decorative photo strictly outside interactive controls and content
  * cards. Viewport and asynchronously loaded schedules are rechecked on change. */
 let placementFrame=0,layoutObserver=null;
@@ -261,6 +285,7 @@ function heroSlides(main,photos){
 async function render(){
  const ticket=++serial;
  clearDesktopBackground();
+ clearMobileHomeBackground();
  if(layoutObserver)layoutObserver.disconnect();
  if(placementFrame){cancelAnimationFrame(placementFrame);placementFrame=0}
  if(timer){clearInterval(timer);timer=null}
@@ -280,16 +305,18 @@ async function render(){
   const items=await load();
   if(ticket!==serial||main!==document.querySelector('main')||!items.length)return;
   if(window.matchMedia('(min-width:900px)').matches){
-   // One randomly chosen approved photo occupies the whole desktop background.
+   // Desktop background unchanged.
    desktopBackground(items,ticket);
+  }else if(document.body.dataset.page==='home'){
+   // Trial: one full-page background replaces the small hero slideshow.
+   mobileHomeBackground(items,ticket);
   }else{
    decorate(main,items);
    observeLayout(main);
   }
-  if(document.body.dataset.page==='home')heroSlides(main,items);
  }catch{/* Decorative photos must not affect essential travel information. */}
 }
 document.addEventListener('hokkaido:pagechange',render);
-window.addEventListener('pagehide',()=>{++serial;clearDesktopBackground();if(timer)clearInterval(timer);timer=null;if(layoutObserver)layoutObserver.disconnect();if(placementFrame)cancelAnimationFrame(placementFrame)});
+window.addEventListener('pagehide',()=>{++serial;clearDesktopBackground();clearMobileHomeBackground();if(timer)clearInterval(timer);timer=null;if(layoutObserver)layoutObserver.disconnect();if(placementFrame)cancelAnimationFrame(placementFrame)});
 render();
 })();
