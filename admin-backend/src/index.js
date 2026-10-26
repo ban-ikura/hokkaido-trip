@@ -186,7 +186,7 @@ async function publicPhotos(request,env) {
     "SELECT id,nickname,caption,created_at,reviewed_at FROM photo_submissions "+
     "WHERE status='approved' ORDER BY reviewed_at DESC LIMIT 60"
   ).all();
-  return json({items:(result.results||[]).map(photoListRow)},200,request);
+  return json({items:(result.results||[]).map(photoListRow),upload_formats:['image/webp','image/jpeg']},200,request);
 }
 async function photoImage(request,env,id,requiresAdmin) {
   if(!photoReady(env))return photoError(request);
@@ -202,7 +202,8 @@ async function photoImage(request,env,id,requiresAdmin) {
   if(!row||!Array.isArray(row.data)||row.data.length<32||
      row.data.length>PHOTO_LIMIT_BYTES)return json({error:'Not found'},404,request);
   const headers=new Headers({
-    'Content-Type':'image/webp', 'X-Content-Type-Options':'nosniff',
+    'Content-Type':(row.data[0]===0xff&&row.data[1]===0xd8)?'image/jpeg':'image/webp',
+    'X-Content-Type-Options':'nosniff',
     'Content-Security-Policy':"default-src 'none'; sandbox",
     'Cache-Control':'no-store', 'Referrer-Policy':'no-referrer',
     'Content-Disposition':'inline'
@@ -328,6 +329,41 @@ function simpleWebp(bytes){
   }else if(alpha||colorProfile)return false;
   return true;
 }
+// Canvasで再描画した静止JPEGのみ受け付ける。EXIF、XMP、コメント、
+// 埋め込みメタデータが含まれる元画像は拒否する。
+function simpleJpeg(bytes){
+ if(!(bytes instanceof Uint8Array)||bytes.length<32||bytes.length>PHOTO_LIMIT_BYTES)return false;
+ const n=bytes.length;
+ if(bytes[0]!==0xff||bytes[1]!==0xd8||bytes[n-2]!==0xff||bytes[n-1]!==0xd9)return false;
+ let at=2,frame=false;
+ while(at+3<n){
+  if(bytes[at++]!==0xff)return false;
+  while(bytes[at]===0xff)at++;
+  const marker=bytes[at++];
+  if(marker===0xda){
+   const length=(bytes[at]<<8)|bytes[at+1];
+   return frame&&length>=6&&at+length<n-2;
+  }
+  if(marker===0xd8||marker===0xd9||marker===0x01||marker===0x00||
+     marker>=0xd0&&marker<=0xd7)return false;
+  if(at+2>n)return false;
+  const length=(bytes[at]<<8)|bytes[at+1];
+  if(length<2||at+length>n-2)return false;
+  if(marker===0xfe||marker>=0xe1&&marker<=0xef)return false;
+  if(marker===0xe0){
+   if(length<7||String.fromCharCode(...bytes.subarray(at+2,at+7))!=='JFIF\0')return false;
+  }
+  if([0xc0,0xc1,0xc2].includes(marker)){
+   if(frame||length<11)return false;
+   const height=(bytes[at+3]<<8)|bytes[at+4];
+   const width=(bytes[at+5]<<8)|bytes[at+6];
+   if(width<1||height<1||width>4096||height>4096)return false;
+   frame=true;
+  }
+  at+=length;
+ }
+ return false;
+}
 // Cloudflare Turnstileトークンを必ずサーバーで照合。無効なら保存しない。
 async function verifyPhotoTurnstile(request,env,token){
   if(typeof token!=='string'||token.length<10||token.length>2048)return false;
@@ -368,13 +404,16 @@ async function submitPhoto(request,env){
     return json({error:'コメントは1〜200文字、表示名は1〜24文字で入力してください。'},400,request);
   }
   if(permission!=='yes')return json({error:'顔写真禁止と投稿ルールを確認して同意してください。'},400,request);
-  if(!file || typeof file.arrayBuffer!=='function' || file.type!=='image/webp' ||
+  if(!file || typeof file.arrayBuffer!=='function' ||
+     !['image/webp','image/jpeg'].includes(file.type) ||
      file.size>PHOTO_LIMIT_BYTES || file.size<32){
-    return json({error:'写真を300KB以下のWebPに圧縮して送信してください。'},400,request);
+    return json({error:'写真を300KB以下のWebPまたはJPEGに圧縮して送信してください。'},400,request);
   }
   const bytes=new Uint8Array(await file.arrayBuffer());
-  if(!simpleWebp(bytes))return json({error:'画像を確認できません。別の写真をお試しください。'},400,request);
-  const id=crypto.randomUUID(),key='d1/'+id+'.webp';
+  if(!(file.type==='image/webp'?simpleWebp(bytes):simpleJpeg(bytes))){
+    return json({error:'画像の形式を確認できません。別の写真をお試しください。'},400,request);
+  }
+  const id=crypto.randomUUID(),key='d1/'+id+(file.type==='image/jpeg'?'.jpg':'.webp');
   // D1 batchはトランザクション。画像と投稿記録を一緒に保存する。
   await env.DB.batch([
     env.DB.prepare(
