@@ -104,7 +104,7 @@
     const srcUrl=URL.createObjectURL(file);
     let source=null;
     const release=()=>{
-      if(source instanceof ImageBitmap)source.close();
+      if(typeof ImageBitmap!=='undefined' && source instanceof ImageBitmap)source.close();
       if(source instanceof HTMLVideoElement){source.pause();source.removeAttribute('src');source.load();}
       URL.revokeObjectURL(srcUrl);
     };
