@@ -63,6 +63,18 @@ GitHubの `admin-backend/src/index.js` の**全文**をコード編集画面に�
 既存Workerを削除したり、新しいWorkerを作ったりする必要はありません。
 既存のお知らせ機能はそのまま維持します。
 
+
+## 画像形式の追加（2026年10月26日）
+
+新しい投稿画面では、JPEG・PNG・WebP・HEIC・HEIF・AVIFなどの写真をブラウザーで静止画に再描画し、位置情報等の原本メタデータを取り除いて保存します。MP4・MOV動画は動画そのものを保存せず、静止画1コマを切り出して処理します。ブラウザーがその画像・動画をデコードできる必要があります。
+
+通常はWebPで圧縮しますが、ブラウザーがWebPを書き出せない場合はJPEGで圧縮できます。**JPEGの投稿を有効にするには、ステップ3のCloudflare WorkerをGitHubの `admin-backend/src/index.js` の最新版に更新してDeployしてください。** GitHub Pagesを更新するだけではWorkerは更新されません。APIの `GET /api/photos` に `upload_formats: ["image/webp","image/jpeg"]` が含まれていることを確認してください。
+
+- 旧WorkerのままでもWebPを出力できるブラウザーでは従来どおり投稿できます。
+- 新Workerは既存のWebP写真も配信し、JPEG写真は `image/jpeg` として返します。
+- 画像の上限は引き続き1枚300KBで、管理者の承認が必須です。
+- MP5は一般的な画像・動画形式ではありません。MP4・MOVをお試しください。
+
 ## 4. 動作確認
 
 1. `https://hokkaido-trip-news-api.banse-oji.workers.dev/api/announcements` で従来のお知らせを確認。
