@@ -949,7 +949,7 @@ body[data-page="home"] .home-next-loading{
  }
  body[data-page="stay"] main > .guide-stack-card{
   background-image:linear-gradient(180deg,rgba(8,31,49,.12),rgba(10,34,49,.38)),
-   url("https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Niseko_Gondola_and_Hilton_Niseko_Village.jpg/960px-Niseko_Gondola_and_Hilton_Niseko_Village.jpg");
+   url("https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/Niseko_Gondola_and_Hilton_Niseko_Village.jpg/960px-Niseko_Gondola_and_Hilton_Niseko_Village.jpg");
  }
  body[data-page="guide"] main > .guide-stack-card{
   background-image:linear-gradient(180deg,rgba(8,31,49,.12),rgba(10,34,49,.38)),
