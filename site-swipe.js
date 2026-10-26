@@ -277,7 +277,7 @@
   updateMenu();
   // Optional approved-photo decoration for public informational pages only.
   void (async()=>{
-    await css('photo-ambient.css','20261026-mobile-next-glass-v1');
+    await css('photo-ambient.css','20261026-mobile-next-white-v1');
     if(typeof window.HOKKAIDO_NEWS_API_URL!=='string')
       await js('admin-config.js','20261021-worker-connected-1');
     await js('photo-ambient.js','20261024-hero-shared-bg-v1');
