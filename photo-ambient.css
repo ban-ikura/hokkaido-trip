@@ -1032,3 +1032,20 @@ body[data-page="home"] .home-next-loading{
   border-color:rgba(255,255,255,.45)!important;
  }
 }
+
+
+/* Brighter mobile hero scenery: ease the dark photo overlay, not the
+   translucent NEXT card. Strong text shadows preserve contrast. */
+@media screen and (max-width:899px){
+ body[data-page="home"] .home-lead .home-feature-photo::after,
+ body[data-page="home"] .home-lead.ambient-hero-ready .home-feature-photo::after{
+  background:linear-gradient(90deg,rgba(3,16,30,.55) 0%,rgba(3,20,35,.35) 56%,rgba(4,25,40,.49)),
+             linear-gradient(0deg,rgba(3,13,23,.28),transparent 65%)!important;
+ }
+}
+@media screen and (max-width:680px){
+ body[data-page="home"] .home-lead .home-feature-photo::after,
+ body[data-page="home"] .home-lead.ambient-hero-ready .home-feature-photo::after{
+  background:linear-gradient(180deg,rgba(2,15,28,.55) 0%,rgba(4,19,33,.46) 45%,rgba(3,17,30,.69) 100%)!important;
+ }
+}
