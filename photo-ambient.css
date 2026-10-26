@@ -1004,3 +1004,30 @@ body[data-page="home"] .home-next-loading{
   text-shadow:0 2px 14px rgba(3,15,28,.94)!important;
  }
 }
+
+
+/* Mobile home: let the hero photograph show through the NEXT card.
+   Desktop card and the following detailed itinerary remain unchanged. */
+@media screen and (max-width:899px){
+ body[data-page="home"] .home-lead .next-card{
+  background:rgba(255,255,255,.26)!important;
+  border:1px solid rgba(255,255,255,.58)!important;
+  box-shadow:0 5px 22px rgba(4,19,32,.17)!important;
+  -webkit-backdrop-filter:blur(2px)!important;
+  backdrop-filter:blur(2px)!important;
+  color:#132d3f!important;
+ }
+ body[data-page="home"] .home-lead .next-label,
+ body[data-page="home"] .home-lead .next-title,
+ body[data-page="home"] .home-lead .next-time,
+ body[data-page="home"] .home-lead .next-day,
+ body[data-page="home"] .home-lead .next-course,
+ body[data-page="home"] .home-lead .next-wait,
+ body[data-page="home"] .home-lead .next-jump{
+  color:#12354a!important;
+  text-shadow:0 1px 3px rgba(255,255,255,.9);
+ }
+ body[data-page="home"] .home-lead .next-bottom{
+  border-color:rgba(255,255,255,.45)!important;
+ }
+}
