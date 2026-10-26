@@ -1090,3 +1090,94 @@ body[data-page="home"] .home-next-loading{
   line-height:1.4!important;
  }
 }
+
+
+/* MOBILE FULL-PAGE PHOTO TRIAL 2026-10-26
+   Remove this isolated block and the named JS trial to restore the old
+   hero-only mobile background. The raw approved image is not darkened. */
+@media screen and (max-width:899px){
+ body.ambient-mobile-home-page[data-page="home"]{
+  background-color:#dce8ed!important;
+  background-image:none!important;
+ }
+ /* Fixed layer works on mobile Safari without background-attachment:fixed. */
+ body.ambient-mobile-home-page[data-page="home"]::before{
+  content:"";
+  display:block!important;
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background-image:var(--ambient-mobile-home-photo)!important;
+  background-size:cover;
+  background-position:center center;
+  background-repeat:no-repeat;
+  filter:none;
+  opacity:1;
+ }
+ body.ambient-mobile-home-page[data-page="home"] main.home-page{
+  position:relative;
+  z-index:1;
+  background:transparent!important;
+ }
+ body.ambient-mobile-home-page[data-page="home"] .home-lead{
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  min-height:0!important;
+  padding-bottom:28px!important;
+ }
+ /* The single page wallpaper replaces the original hero-only photo. */
+ body.ambient-mobile-home-page[data-page="home"] .home-lead .home-feature-photo,
+ body.ambient-mobile-home-page[data-page="home"] .ambient-photo-background{
+  display:none!important;
+ }
+ body.ambient-mobile-home-page[data-page="home"] .home-lead h1,
+ body.ambient-mobile-home-page[data-page="home"] .home-lead h1 span,
+ body.ambient-mobile-home-page[data-page="home"] .home-lead .eyebrow,
+ body.ambient-mobile-home-page[data-page="home"] .home-lead .home-lead-copy>p,
+ body.ambient-mobile-home-page[data-page="home"] .home-lead .home-text-button{
+  color:#fff!important;
+  text-shadow:0 2px 12px rgba(3,13,26,.85),
+              0 1px 3px rgba(3,13,26,.90)!important;
+ }
+ /* Every section shares one translucent foundation; the photo is visible
+    above, beside and through the content throughout the whole homepage. */
+ body.ambient-mobile-home-page[data-page="home"] .home-stack-card{
+  display:block!important;
+  position:relative;
+  width:calc(100% - 24px);
+  max-width:720px;
+  margin:0 auto 28px;
+  padding:5px 0 14px;
+  border:1px solid rgba(255,255,255,.67);
+  border-radius:17px;
+  background:rgba(249,253,255,.68);
+  -webkit-backdrop-filter:blur(4px);
+  backdrop-filter:blur(4px);
+  box-shadow:0 10px 30px rgba(4,22,36,.12);
+  overflow:hidden;
+ }
+ body.ambient-mobile-home-page[data-page="home"] .home-stack-card>section,
+ body.ambient-mobile-home-page[data-page="home"] .home-days-section,
+ body.ambient-mobile-home-page[data-page="home"] .home-news-section,
+ body.ambient-mobile-home-page[data-page="home"] .home-next-detail-section,
+ body.ambient-mobile-home-page[data-page="home"] .home-photos-section,
+ body.ambient-mobile-home-page[data-page="home"] .home-useful-section{
+  background:transparent!important;
+  background-image:none!important;
+ }
+ body.ambient-mobile-home-page[data-page="home"] .home-stack-card>section+section{
+  border-top:1px solid rgba(30,74,91,.11);
+ }
+ body.ambient-mobile-home-page[data-page="home"] .home-stack-card>section>.shell{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+ }
+}
+@media print{
+ body.ambient-mobile-home-page[data-page="home"]::before{
+  display:none!important;
+ }
+}
