@@ -884,3 +884,34 @@ button,input,select,textarea{
   background-color:#36566a!important;
  }
 }
+
+
+/* Typographic Hokkaido brand and aligned mobile header/card gutters. */
+.site-header .brand-symbol{
+ display:grid;
+ place-items:center;
+ width:34px;
+ height:34px;
+ flex:0 0 34px;
+ border:1px solid #173c51;
+ border-radius:9px;
+ background:#173c51;
+ color:#fff;
+ font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
+ font-size:19px;
+ font-weight:900;
+ line-height:1;
+ letter-spacing:0;
+ box-shadow:none;
+}
+@media screen and (max-width:899px){
+ /* Align the header wordmark and menu with the edges of the full-page
+    translucent home content card: 12px side gutters, 720px cap. */
+ body[data-page="home"] .site-header .nav-inner,
+ body[data-page="home"] .home-lead > .shell.home-lead-grid{
+  width:calc(100% - 24px)!important;
+  max-width:720px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+ }
+}
