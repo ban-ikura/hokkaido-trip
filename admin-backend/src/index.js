@@ -349,9 +349,16 @@ function simpleJpeg(bytes){
   if(at+2>n)return false;
   const length=(bytes[at]<<8)|bytes[at+1];
   if(length<2||at+length>n-2)return false;
-  if(marker===0xfe||marker>=0xe1&&marker<=0xef)return false;
+  // Canvas JPEG from Chromium and Safari may carry a standard ICC profile.
+  // ICC only describes colors; EXIF, XMP, comments and arbitrary APP markers
+  // still remain forbidden (including location/camera metadata).
+  if(marker===0xfe||marker>=0xe1&&marker<=0xef&&![0xe2,0xee].includes(marker))return false;
   if(marker===0xe0){
    if(length<7||String.fromCharCode(...bytes.subarray(at+2,at+7))!=='JFIF\0')return false;
+  }else if(marker===0xe2){
+   if(length<16||String.fromCharCode(...bytes.subarray(at+2,at+14))!=='ICC_PROFILE\0')return false;
+  }else if(marker===0xee){
+   if(length<14||String.fromCharCode(...bytes.subarray(at+2,at+8))!=='Adobe\0')return false;
   }
   if([0xc0,0xc1,0xc2].includes(marker)){
    if(frame||length<11)return false;
