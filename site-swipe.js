@@ -280,7 +280,7 @@
     await css('photo-ambient.css','20261026-mobile-full-page-trial-v1');
     if(typeof window.HOKKAIDO_NEWS_API_URL!=='string')
       await js('admin-config.js','20261021-worker-connected-1');
-    await js('photo-ambient.js','20261026-mobile-full-page-trial-v1');
+    await js('photo-ambient.js','20261026-mobile-no-flash-v2');
   })().catch(error=>console.warn('Optional photo decoration:',error));
   // Prefetch at most the neighbouring two HTML pages, not the full itinerary.
   const prefetch=()=>{
