@@ -1051,30 +1051,42 @@ body[data-page="home"] .home-next-loading{
 }
 
 
-/* Mobile: smaller glass NEXT card, leaving more scenery visible. */
+/* Mobile: tighter glass NEXT card with smaller footprint and less spacing. */
 @media screen and (max-width:899px){
  body[data-page="home"] .home-lead .next-card{
-  width:min(92%,385px)!important;
+  width:min(86%,315px)!important;
   max-width:100%!important;
   min-height:0!important;
   align-self:start;
-  padding:13px 15px!important;
-  border-radius:12px!important;
+  box-sizing:border-box;
+  padding:9px 12px!important;
+  border-radius:10px!important;
  }
  body[data-page="home"] .home-lead .next-label{
-  margin-bottom:9px!important;
+  margin:0 0 5px!important;
   font-size:10px!important;
  }
  body[data-page="home"] .home-lead .next-time{
-  font-size:32px!important;
-  line-height:1.13!important;
+  font-size:28px!important;
+  line-height:1.12!important;
+ }
+ body[data-page="home"] .home-lead .next-day{
+  margin:3px 0 0!important;
+  font-size:11px!important;
  }
  body[data-page="home"] .home-lead .next-title{
-  font-size:17px!important;
-  line-height:1.36!important;
-  margin:8px 0 10px!important;
+  font-size:15px!important;
+  line-height:1.32!important;
+  margin:5px 0 6px!important;
  }
  body[data-page="home"] .home-lead .next-bottom{
-  padding-top:8px!important;
+  padding-top:5px!important;
+  gap:5px!important;
+ }
+ body[data-page="home"] .home-lead .next-course,
+ body[data-page="home"] .home-lead .next-jump,
+ body[data-page="home"] .home-lead .next-wait{
+  font-size:10px!important;
+  line-height:1.4!important;
  }
 }
