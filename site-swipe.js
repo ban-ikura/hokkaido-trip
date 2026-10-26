@@ -277,10 +277,10 @@
   updateMenu();
   // Optional approved-photo decoration for public informational pages only.
   void (async()=>{
-    await css('photo-ambient.css','20261026-mobile-full-page-trial-v1');
+    await css('photo-ambient.css','20261026-photo-credit-top-right-v1');
     if(typeof window.HOKKAIDO_NEWS_API_URL!=='string')
       await js('admin-config.js','20261021-worker-connected-1');
-    await js('photo-ambient.js','20261026-mobile-no-flash-v2');
+    await js('photo-ambient.js','20261026-photo-credit-top-right-v1');
   })().catch(error=>console.warn('Optional photo decoration:',error));
   // Prefetch at most the neighbouring two HTML pages, not the full itinerary.
   const prefetch=()=>{
