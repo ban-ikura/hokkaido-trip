@@ -840,3 +840,72 @@ body[data-photo-page="gallery"] > .floating-post:focus-visible{
   bottom:max(16px,env(safe-area-inset-bottom))!important;
  }
 }
+
+
+/* Gallery photo-post links: reliable touch access on phones and desktops. */
+body[data-photo-page="gallery"] .album-header-actions{
+ position:relative;
+ z-index:10;
+ display:flex;
+ align-items:center;
+ justify-content:flex-end;
+ flex-wrap:wrap;
+ gap:8px;
+ flex:0 0 auto;
+}
+body[data-photo-page="gallery"] .album-post-link{
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ box-sizing:border-box;
+ min-height:44px;
+ padding:9px 13px;
+ border-radius:9px;
+ border:1px solid #1f6079;
+ background:#1f6079;
+ color:#fff;
+ font-weight:850;
+ font-size:12px;
+ line-height:1.3;
+ text-decoration:none;
+ white-space:nowrap;
+ pointer-events:auto!important;
+ touch-action:manipulation;
+ cursor:pointer;
+}
+body[data-photo-page="gallery"] .album-post-link:hover{background:#16485d}
+body[data-photo-page="gallery"] .album-post-link:focus-visible{
+ outline:3px solid #59aeca;
+ outline-offset:3px;
+}
+/* The original bottom-right button must stay above gallery cards, banners
+   and overlays, rather than inheriting a lower content stacking layer. */
+body[data-photo-page="gallery"] .floating-post{
+ position:fixed!important;
+ z-index:9999!important;
+ display:inline-flex!important;
+ visibility:visible!important;
+ pointer-events:auto!important;
+ touch-action:manipulation!important;
+ cursor:pointer;
+ -webkit-tap-highlight-color:rgba(255,255,255,.25);
+}
+body[data-photo-page="gallery"] .floating-post > span{
+ pointer-events:none;
+}
+@media (max-width:600px){
+ body[data-photo-page="gallery"] .album-content-head{gap:8px}
+ body[data-photo-page="gallery"] .album-header-actions{gap:5px}
+ body[data-photo-page="gallery"] .album-post-link{
+  font-size:11px;
+  padding:8px 9px;
+ }
+ body[data-photo-page="gallery"] .album-header-actions #photo-reload{
+  min-height:40px;
+  padding:8px;
+ }
+}
+@media (max-width:360px){
+ body[data-photo-page="gallery"] .album-content-head{flex-wrap:wrap}
+ body[data-photo-page="gallery"] .album-header-actions{margin-left:auto}
+}
