@@ -90,7 +90,7 @@
   async function prepare(name){
     await css('style.css','20261023-focus-v2');
     if(name==='photos.html'){
-      await css('photos.css','20261023-gallery-grid-v2');
+      await css('photos.css','20261027-gallery-post-click-v1');
       // Keep the common minimal theme after the optional gallery stylesheet.
       const theme=resource('link[rel="stylesheet"]','site-swipe.css');
       if(theme)document.head.append(theme);
