@@ -20,7 +20,8 @@
   const firstMain=document.querySelector('main');
   const firstFooter=document.querySelector('footer');
   if(!firstMain||!firstFooter)return;
-  cache.set(page,{main:firstMain,footer:firstFooter,title:document.title,ready:true});
+  cache.set(page,{main:firstMain,footer:firstFooter,title:document.title,ready:true,
+                  action:document.querySelector('body > a.floating-post')});
 
   function route(raw){
     let url;
@@ -42,7 +43,9 @@
       const markup=new DOMParser().parseFromString(await response.text(),'text/html');
       const main=markup.querySelector('main'),footer=markup.querySelector('footer');
       if(!main||!footer||!markup.title)throw Error('Incomplete public page');
+      const galleryAction=markup.querySelector('body > a.floating-post');
       const item={main:document.importNode(main,true),footer:document.importNode(footer,true),
+                  action:galleryAction?document.importNode(galleryAction,true):null,
                   title:markup.title,ready:false};
       cache.set(name,item);
       return item;
@@ -152,6 +155,9 @@
   function swap(name,item){
     document.querySelector('main').replaceWith(item.main);
     document.querySelector('footer').replaceWith(item.footer);
+    // Gallery upload link sits at body level, outside the main stacking context.
+    document.querySelector('body > a.floating-post')?.remove();
+    if(name==='photos.html'&&item.action)document.body.append(item.action);
     delete document.body.dataset.day;
     delete document.body.dataset.photoPage;
     delete document.body.dataset.page;
