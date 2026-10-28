@@ -1089,3 +1089,24 @@ body[data-page="home"] > .home-photo-floating-actions a:focus-visible{
 @media print{
  body > .home-photo-floating-actions{display:none!important}
 }
+
+
+/* Keep fixed photo actions tappable, but make them unobtrusive while scrolling. */
+body.photo-action-scrolling[data-page="home"] > .home-photo-floating-actions{
+ opacity:.36!important;
+ transition:opacity .16s ease;
+}
+body[data-page="home"] > .home-photo-floating-actions{
+ transition:opacity .2s ease;
+}
+body.photo-action-scrolling[data-photo-page="gallery"] > a.floating-post{
+ opacity:.36!important;
+ transition:opacity .16s ease;
+}
+body[data-photo-page="gallery"] > a.floating-post{
+ transition:opacity .2s ease;
+}
+@media(prefers-reduced-motion:reduce){
+ body[data-page="home"] > .home-photo-floating-actions,
+ body[data-photo-page="gallery"] > a.floating-post{transition:none!important}
+}
