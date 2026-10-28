@@ -1126,3 +1126,22 @@ body.site-header-scrolling .site-header:has(.site-menu[open]){
 @media(prefers-reduced-motion:reduce){
  .site-header{transition:none!important}
 }
+
+
+/* Faster scroll return and menu-safe photo actions: 2026-10-28 */
+/* The open navigation must be unobstructed; only the floating actions hide.
+   Album/post links elsewhere in the page remain usable when the menu closes. */
+body.site-menu-open[data-page="home"] > .home-photo-floating-actions,
+body.site-menu-open[data-photo-page="gallery"] > .floating-post,
+body:has(.site-menu[open])[data-page="home"] > .home-photo-floating-actions,
+body:has(.site-menu[open])[data-photo-page="gallery"] > .floating-post{
+ display:none!important;
+}
+/* Going back to the top must not wait for a fading header/post tab. */
+body:not(.site-header-scrolling) .site-header{
+ transition:none!important;
+}
+body:not(.photo-action-scrolling)[data-page="home"] > .home-photo-floating-actions,
+body:not(.photo-action-scrolling)[data-photo-page="gallery"] > .floating-post{
+ transition:none!important;
+}
