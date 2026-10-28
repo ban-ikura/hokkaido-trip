@@ -1095,3 +1095,67 @@ body[data-page="home"] .home-photo-upload:focus-visible{
 @media print{
  body[data-page="home"] main.home-page > .home-photo-shortcuts{display:none!important}
 }
+
+
+/* Floating photo actions: persistent viewport position, homepage only.
+   At body level rather than inside the scrolling main or hero. */
+body > .home-photo-floating-actions{display:none!important}
+body[data-page="home"] > .home-photo-floating-actions{
+ position:fixed!important;
+ top:calc(130px + env(safe-area-inset-top));
+ right:max(12px,env(safe-area-inset-right));
+ z-index:110;
+ display:flex!important;
+ flex-direction:column;
+ align-items:stretch;
+ gap:7px;
+ width:max-content;
+ max-width:calc(100vw - 24px);
+ pointer-events:auto!important;
+}
+body[data-page="home"] > .home-photo-floating-actions a{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:6px;
+ box-sizing:border-box;
+ min-height:43px;
+ padding:9px 13px;
+ border:1px solid rgba(255,255,255,.86);
+ border-radius:11px;
+ background:rgba(250,254,255,.96);
+ color:#17455a;
+ font-size:12px;
+ font-weight:850;
+ line-height:1.3;
+ white-space:nowrap;
+ text-decoration:none;
+ box-shadow:0 4px 19px rgba(3,23,38,.22);
+ pointer-events:auto!important;
+ touch-action:manipulation;
+ cursor:pointer;
+}
+body[data-page="home"] > .home-photo-floating-actions a.home-photo-floating-post{
+ background:rgba(23,83,109,.97);
+ color:#fff;
+}
+body[data-page="home"] > .home-photo-floating-actions a:hover{filter:brightness(1.08)}
+body[data-page="home"] > .home-photo-floating-actions a:focus-visible{
+ outline:3px solid #7fd6f4;
+ outline-offset:2px;
+}
+@media(max-width:680px){
+ body[data-page="home"] > .home-photo-floating-actions{
+  top:calc(121px + env(safe-area-inset-top));
+  right:max(10px,env(safe-area-inset-right));
+  gap:6px;
+ }
+ body[data-page="home"] > .home-photo-floating-actions a{
+  min-height:39px;
+  padding:7px 10px;
+  font-size:11px;
+ }
+}
+@media print{
+ body > .home-photo-floating-actions{display:none!important}
+}
