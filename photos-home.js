@@ -232,7 +232,9 @@
         const img=document.createElement('img');
         img.src=api+'/api/photos/'+item.id+'/image';
         img.alt='承認された北海道旅行の写真';
-        img.loading=index<3?'eager':'lazy';
+        // Gallery is far below the first viewport; prioritize the wallpaper on startup.
+        img.loading='lazy';
+        img.fetchPriority='low';
         img.decoding='async';
         img.referrerPolicy='no-referrer';
         const info=document.createElement('div');
