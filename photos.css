@@ -909,3 +909,58 @@ body[data-photo-page="gallery"] .floating-post > span{
  body[data-photo-page="gallery"] .album-content-head{flex-wrap:wrap}
  body[data-photo-page="gallery"] .album-header-actions{margin-left:auto}
 }
+
+
+/* Larger approved-photo tiles with minimal album margins, 2026-10-28.
+   Affects only the gallery grid; the upload actions and fullscreen reel stay intact. */
+body[data-photo-page="gallery"] .photos-main{
+ width:min(1440px,calc(100% - 16px))!important;
+ max-width:1440px!important;
+ margin:8px auto 24px!important;
+}
+body[data-photo-page="gallery"] .album-content{
+ padding:8px!important;
+ border-radius:11px!important;
+}
+body[data-photo-page="gallery"] .album-content-head{
+ margin-bottom:5px!important;
+ padding:5px 4px 9px!important;
+}
+body[data-photo-page="gallery"] .album-content .photo-grid.gallery-photo-grid{
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:6px!important;
+}
+body[data-photo-page="gallery"] .album-content .album-thumb,
+body[data-photo-page="gallery"] .album-content .album-thumb:hover{
+ border-radius:6px!important;
+}
+body[data-photo-page="gallery"] .album-content .album-notice{
+ margin-top:12px!important;
+}
+@media(max-width:1050px){
+ body[data-photo-page="gallery"] .album-content .photo-grid.gallery-photo-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:6px!important;
+ }
+}
+@media(max-width:600px){
+ body[data-photo-page="gallery"] .photos-main{
+  width:calc(100% - 8px)!important;
+  margin:4px auto 16px!important;
+ }
+ body[data-photo-page="gallery"] .album-content{
+  padding:4px!important;
+  border-radius:7px!important;
+ }
+ body[data-photo-page="gallery"] .album-content-head{
+  padding:5px 4px 8px!important;
+ }
+ body[data-photo-page="gallery"] .album-content .photo-grid.gallery-photo-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:4px!important;
+ }
+ body[data-photo-page="gallery"] .album-content .album-thumb,
+ body[data-photo-page="gallery"] .album-content .album-thumb:hover{
+  border-radius:4px!important;
+ }
+}
