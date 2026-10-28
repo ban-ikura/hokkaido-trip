@@ -44,6 +44,21 @@
   }
 
 
+  // Floating photo controls fade only while the page or album is moving.
+  // Never disable pointer events: tapping "写真を投稿" must keep working.
+  let photoScrollIdle=0;
+  function onPhotoScroll(){
+    if(document.body.dataset.page!=='home'&&document.body.dataset.photoPage!=='gallery')return;
+    document.body.classList.add('photo-action-scrolling');
+    clearTimeout(photoScrollIdle);
+    photoScrollIdle=setTimeout(()=>{
+      document.body.classList.remove('photo-action-scrolling');
+    },220);
+  }
+  document.addEventListener('scroll',onPhotoScroll,{capture:true,passive:true});
+  window.addEventListener('pagehide',()=>clearTimeout(photoScrollIdle),{once:true});
+
+
   function route(raw){
     let url;
     try{url=new URL(raw,location.href)}catch{return null}
