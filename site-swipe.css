@@ -1138,9 +1138,6 @@ body:has(.site-menu[open])[data-photo-page="gallery"] > .floating-post{
  display:none!important;
 }
 /* Going back to the top must not wait for a fading header/post tab. */
-body:not(.site-header-scrolling) .site-header{
- transition:none!important;
-}
 body:not(.photo-action-scrolling)[data-page="home"] > .home-photo-floating-actions,
 body:not(.photo-action-scrolling)[data-photo-page="gallery"] > .floating-post{
  transition:none!important;
@@ -1193,4 +1190,61 @@ body[data-page="home"] .home-lead{
   background:transparent!important;
   background-image:none!important;
  }
+}
+
+/* Public launch — scroll-aware header and consistent interface details. */
+.site-header{transition:opacity .24s ease,background-color .24s ease,border-color .24s ease,box-shadow .24s ease}
+body.site-header-scrolled .site-header{
+ opacity:.76;background:rgba(246,251,253,.68);
+ border-bottom-color:rgba(94,136,151,.2);
+ box-shadow:0 5px 22px rgba(15,45,59,.055);
+ -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+}
+body.site-header-scrolled.site-header-scrolling .site-header{opacity:.54}
+body.site-header-scrolled .site-header:hover,
+body.site-header-scrolled .site-header:focus-within,
+body.site-menu-open .site-header,
+body .site-header:has(.site-menu[open]){
+ opacity:1;background:rgba(252,254,255,.97);
+ border-bottom-color:var(--page-line);
+ box-shadow:0 4px 18px rgba(15,45,59,.09);
+}
+.site-header .nav-inner{gap:clamp(10px,2vw,22px)}
+.site-menu .menu-trigger{gap:9px;min-width:96px;transition:background-color .18s,border-color .18s}
+.site-header .site-menu nav{border-radius:16px;padding:12px}
+.site-header .site-menu nav a{line-height:1.45}
+.home-section-heading,.section-heading{gap:clamp(12px,2vw,22px)}
+.home-section-heading h2,.section-heading h2,.subhero h1,.day-hero h1{text-wrap:balance}
+.home-quick-links a,.home-post-link,.home-photos-all,.day-page-nav a{transition:background-color .2s,border-color .2s,transform .2s}
+@media(hover:hover){
+ .home-quick-links a:hover,.home-post-link:hover,.home-photos-all:hover,.day-page-nav a:hover{transform:translateY(-2px)}
+}
+body[data-photo-page="gallery"] .album-content-head{flex-wrap:wrap;row-gap:12px}
+body[data-photo-page="gallery"] .album-header-actions{flex-wrap:wrap;gap:8px}
+body[data-photo-page="gallery"] .album-content{min-width:0}
+.site-footer .footer-inner{max-width:1080px}
+.site-footer .footer-links{row-gap:10px}
+html{scroll-padding-top:86px}
+section[id],article[id]{scroll-margin-top:90px}
+@media(min-width:900px){
+ .home-day-list,.home-quick-links{gap:14px}
+ .day-facts,.content-grid{gap:16px}
+ .day-page .day-schedule-section .day-card{margin-bottom:20px}
+}
+@media(max-width:680px){
+ html{scroll-padding-top:75px}
+ section[id],article[id]{scroll-margin-top:77px}
+ .site-header .brand{letter-spacing:.035em}
+ .site-header .site-menu nav{width:min(330px,calc(100vw - 24px))}
+ .home-section-heading{align-items:flex-start}
+ .home-section-heading h2{line-height:1.24}
+ .home-quick-links a{min-height:56px;padding:14px 15px}
+ .day-page-nav{flex-wrap:wrap}
+ .day-page-nav a{flex:1 1 130px}
+ .site-footer .footer-links{gap:12px 18px}
+ body[data-photo-page="gallery"] .album-header-actions{width:100%}
+ body[data-photo-page="gallery"] .album-content-head{align-items:flex-start}
+}
+@media(prefers-reduced-motion:reduce){
+ .site-header,.site-menu .menu-trigger,.home-quick-links a,.home-post-link,.home-photos-all,.day-page-nav a{transition:none!important}
 }
