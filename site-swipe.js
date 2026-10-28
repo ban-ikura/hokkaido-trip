@@ -22,6 +22,27 @@
   if(!firstMain||!firstFooter)return;
   cache.set(page,{main:firstMain,footer:firstFooter,title:document.title,ready:true,
                   action:document.querySelector('body > a.floating-post')});
+  // Top-right shortcuts stay fixed while scrolling; CSS shows them on home only.
+  // Body-level placement avoids the main/hero stacking and clipping contexts.
+  let photoActions=document.querySelector('body > nav.home-photo-floating-actions');
+  if(!photoActions){
+    photoActions=document.createElement('nav');
+    photoActions.className='home-photo-floating-actions';
+    photoActions.setAttribute('aria-label','写真の操作');
+    const makeAction=(href,label,cls)=>{
+      const link=document.createElement('a');
+      link.href=href;
+      link.className=cls;
+      link.textContent=label;
+      return link;
+    };
+    photoActions.append(
+      makeAction('photos-post.html','＋ 写真を投稿','home-photo-floating-post'),
+      makeAction('photos.html','アルバムを見る ↗','home-photo-floating-album')
+    );
+    document.body.append(photoActions);
+  }
+
 
   function route(raw){
     let url;
