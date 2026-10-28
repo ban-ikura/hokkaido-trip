@@ -1266,3 +1266,43 @@ body[data-page] .ambient-photo-credit-author{
   padding-bottom:28px!important;
  }
 }
+
+/* Public launch: consistent section spacing and larger mobile day tiles. */
+@media(min-width:900px){
+ body[data-page="home"] .home-stack-card > section:not(:first-child),
+ body.ambient-desktop-page[data-page="home"] .home-stack-card > section:not(:first-child){padding:clamp(26px,3.1vw,38px) 0!important}
+ body[data-page="home"] .home-stack-card .home-section-heading{margin-bottom:18px}
+ body[data-page="home"] .home-stack-card > section > .shell{padding-inline:clamp(25px,4.1vw,48px)!important}
+ body[data-page="stay"] .guide-stack-card,
+ body[data-page="guide"] .guide-stack-card,
+ body[data-page="safety"] .guide-stack-card{margin-top:30px;margin-bottom:48px}
+}
+@media(max-width:899px){
+ body[data-page="home"] .home-stack-card > section:not(:first-child){padding:clamp(25px,4.5vw,34px) 0!important}
+ body[data-page="home"] .home-stack-card > section:first-child{padding:16px 0 25px!important}
+ body[data-page="home"] .home-stack-card > section > .shell{
+  width:calc(100% - 32px)!important;max-width:680px!important;
+  margin-inline:auto!important;padding-inline:0!important
+ }
+ body[data-page="home"] .home-stack-card > section + section{border-top:1px solid rgba(42,85,104,.14)}
+ body[data-page="home"] .home-stack-card .home-section-heading{margin-bottom:16px}
+ body[data-page="home"] .home-stack-card .home-next-detail-content{gap:14px}
+ body[data-page="home"] .home-lead-grid{gap:clamp(20px,4vw,30px)!important}
+ body[data-page="stay"] .guide-stack-card > .section-section > .shell,
+ body[data-page="guide"] .guide-stack-card > .section-section > .shell,
+ body[data-page="safety"] .guide-stack-card > .section-section > .shell{padding-bottom:18px}
+}
+@media(max-width:680px){
+ body[data-page="home"] .home-days-section .home-day-list{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+ body[data-page="home"] .home-days-section .home-day-link,
+ body[data-page="home"] .home-days-section .home-day-link:hover{
+  min-height:144px!important;padding:13px 12px!important;gap:5px!important;border-radius:11px!important
+ }
+ body[data-page="home"] .home-days-section .home-day-count{font-size:22px!important}
+ body[data-page="home"] .home-days-section .home-day-text strong{font-size:14px!important;line-height:1.4}
+ body[data-page="home"] .home-days-section .home-day-text small{font-size:10px;line-height:1.4}
+ body[data-page="home"] .home-days-section .home-day-arrow{font-size:15px;right:10px;top:9px}
+ body[data-page="home"] .home-stack-card > section > .shell{width:calc(100% - 28px)!important}
+ body[data-page="home"] .home-stack-card .home-section-heading{margin-bottom:14px}
+ body[data-page="home"] .home-photos-section .home-photo-grid{gap:12px}
+}
