@@ -1025,3 +1025,73 @@ body[data-page="home"] .home-photo-shortcut:focus-visible{
 @media print{
  body[data-page="home"] .home-photo-shortcuts{display:none!important}
 }
+
+
+/* Home-only photo shortcuts: beneath the upper-right wallpaper credit.
+   The links remain genuine anchors, above photo overlays and swipe layers. */
+body[data-page="home"] main.home-page{
+ position:relative;
+}
+body[data-page="home"] main.home-page > .home-photo-shortcuts{
+ position:absolute;
+ z-index:30;
+ top:75px;
+ right:clamp(12px,2.5vw,32px);
+ display:flex;
+ flex-direction:column;
+ align-items:stretch;
+ gap:7px;
+ width:max-content;
+ max-width:calc(100% - 24px);
+ pointer-events:auto;
+}
+body[data-page="home"] .home-photo-shortcut{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ min-height:40px;
+ padding:9px 13px;
+ border:1px solid rgba(255,255,255,.82);
+ border-radius:10px;
+ background:rgba(251,254,255,.92);
+ color:#153e52;
+ box-shadow:0 4px 17px rgba(3,21,34,.22);
+ -webkit-backdrop-filter:blur(6px);
+ backdrop-filter:blur(6px);
+ font-size:12px;
+ font-weight:850;
+ line-height:1.3;
+ text-decoration:none;
+ white-space:nowrap;
+ cursor:pointer;
+ touch-action:manipulation;
+}
+body[data-page="home"] .home-photo-shortcut:hover,
+body[data-page="home"] .home-photo-shortcut:focus-visible{
+ background:#fff;
+ color:#104e6a;
+}
+body[data-page="home"] .home-photo-upload{
+ background:rgba(21,77,100,.94);
+ color:#fff;
+}
+body[data-page="home"] .home-photo-upload:hover,
+body[data-page="home"] .home-photo-upload:focus-visible{
+ background:#0e465e;
+ color:#fff;
+}
+@media(max-width:899px){
+ body[data-page="home"] main.home-page > .home-photo-shortcuts{
+  top:72px;
+  right:12px;
+  gap:6px;
+ }
+ body[data-page="home"] .home-photo-shortcut{
+  min-height:37px;
+  padding:8px 10px;
+  font-size:11px;
+ }
+}
+@media print{
+ body[data-page="home"] main.home-page > .home-photo-shortcuts{display:none!important}
+}
