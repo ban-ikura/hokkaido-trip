@@ -1169,6 +1169,9 @@ body[data-page="home"] .home-lead{
  }
 }
 @media screen and (max-width:899px){
+ body[data-page="home"] .home-lead{
+  padding-bottom:28px!important;
+ }
  body[data-page="home"] .home-stack-card{
   display:block!important;
   position:relative;
@@ -1184,5 +1187,10 @@ body[data-page="home"] .home-lead{
   overflow:hidden;
   -webkit-backdrop-filter:none;
   backdrop-filter:none;
+ }
+ body[data-page="home"] .home-stack-card > section,
+ body[data-page="home"] .home-stack-card > section > .shell{
+  background:transparent!important;
+  background-image:none!important;
  }
 }
