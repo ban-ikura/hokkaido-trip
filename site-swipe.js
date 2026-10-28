@@ -177,7 +177,7 @@
         window.HOKKAIDO_REINIT_PUBLIC_PAGE();
       }
       if(name==='index.html'){
-        if(!item.ready)await js('photos-home.js','20261023-tap-zoom-v1');
+        if(!item.ready)await js('photos-home.js','20261028-lazy-home-reels-v2');
         else if(returning){
           window.HOKKAIDO_REFRESH_PUBLIC_HOME?.();
           window.HOKKAIDO_REFRESH_HOME_PHOTOS?.();
@@ -340,7 +340,7 @@
   updateMenu();
   // Optional approved-photo decoration for public informational pages only.
   void (async()=>{
-    await css('photo-ambient.css','20261026-niseko-credit-corner-v3');
+    await css('photo-ambient.css','20261028-scroll-stability-v8');
     if(typeof window.HOKKAIDO_NEWS_API_URL!=='string')
       await js('admin-config.js','20261021-worker-connected-1');
     await js('photo-ambient.js','20261026-niseko-credit-corner-v3');
