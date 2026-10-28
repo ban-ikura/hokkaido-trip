@@ -1247,3 +1247,14 @@ body[data-page] .ambient-photo-credit-author{
 @media print{
  body[data-page] main > .ambient-photo-credit{display:none!important}
 }
+
+
+/* Mobile fixed wallpaper performance: translucent card without full-height blur.
+   The same white-alpha glass surface remains, but scrolling no longer re-blurs
+   the entire tall card over the moving fixed background on each frame. */
+@media screen and (max-width:899px){
+ body.ambient-mobile-home-page[data-page="home"] .home-stack-card{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+ }
+}
