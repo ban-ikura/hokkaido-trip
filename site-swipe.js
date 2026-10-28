@@ -44,25 +44,38 @@
   }
 
 
-  // Header and floating photo controls gently fade while scrolling.
-  // Both remain clickable, and an open menu always stays fully readable.
+  // Scroll UI: ignore nested galleries, avoid constant class rewrites and
+  // immediately restore full opacity when the user arrives back at the top.
   let photoScrollIdle=0;
-  function onPhotoScroll(){
-    if(!menu?.open)document.body.classList.add('site-header-scrolling');
-    if(document.body.dataset.page==='home'||document.body.dataset.photoPage==='gallery')
-      document.body.classList.add('photo-action-scrolling');
+  function resetScrollChrome(){
     clearTimeout(photoScrollIdle);
-    photoScrollIdle=setTimeout(()=>{
-      document.body.classList.remove('photo-action-scrolling','site-header-scrolling');
-    },250);
-  }
-  document.addEventListener('scroll',onPhotoScroll,{capture:true,passive:true});
-  menu?.addEventListener('toggle',()=>{
-    if(menu.open)document.body.classList.remove('site-header-scrolling');
-  });
-  window.addEventListener('pagehide',()=>{
-    clearTimeout(photoScrollIdle);
+    photoScrollIdle=0;
     document.body.classList.remove('photo-action-scrolling','site-header-scrolling');
+  }
+  function onPhotoScroll(){
+    // A document-capture listener used to run for every nested photo swipe.
+    if(window.scrollY<12||menu?.open){resetScrollChrome();return}
+    const body=document.body;
+    if(!body.classList.contains('site-header-scrolling'))
+      body.classList.add('site-header-scrolling');
+    if((body.dataset.page==='home'||body.dataset.photoPage==='gallery')&&
+       !body.classList.contains('photo-action-scrolling'))
+      body.classList.add('photo-action-scrolling');
+    clearTimeout(photoScrollIdle);
+    photoScrollIdle=setTimeout(resetScrollChrome,160);
+  }
+  window.addEventListener('scroll',onPhotoScroll,{passive:true});
+  function syncMenuState(){
+    const isOpen=!!menu?.open;
+    document.body.classList.toggle('site-menu-open',isOpen);
+    if(isOpen)resetScrollChrome();
+  }
+  menu?.addEventListener('toggle',syncMenuState);
+  syncMenuState();
+  window.addEventListener('pageshow',resetScrollChrome,{passive:true});
+  window.addEventListener('pagehide',()=>{
+    resetScrollChrome();
+    document.body.classList.remove('site-menu-open');
   },{once:true});
 
 
@@ -187,6 +200,7 @@
   }
   function closeMenu(){
     if(menu?.open)menu.open=false;
+    document.body.classList.remove('site-menu-open');
   }
   function scrollTarget(hash){
     let target=null;
@@ -331,11 +345,18 @@
       await js('admin-config.js','20261021-worker-connected-1');
     await js('photo-ambient.js','20261026-niseko-credit-corner-v3');
   })().catch(error=>console.warn('Optional photo decoration:',error));
-  // Prefetch at most the neighbouring two HTML pages, not the full itinerary.
+  // Do not compete with the wallpaper or gallery for network/decoding at
+  // startup. Mobile fetches its tiny HTML pages only when they are opened.
   const prefetch=()=>{
+    if(!matchMedia('(min-width:900px)').matches||navigator.connection?.saveData)return;
     const at=order.indexOf(page);
     [order[at-1],order[at+1]].filter(Boolean).forEach(name=>getPage(name).catch(()=>{}));
   };
-  if('requestIdleCallback' in window)requestIdleCallback(prefetch,{timeout:2300});
-  else setTimeout(prefetch,1200);
+  const schedulePrefetch=()=>{
+    if('requestIdleCallback' in window)
+      requestIdleCallback(prefetch,{timeout:5000});
+    else setTimeout(prefetch,4000);
+  };
+  if(document.readyState==='complete')schedulePrefetch();
+  else window.addEventListener('load',schedulePrefetch,{once:true});
 })();
