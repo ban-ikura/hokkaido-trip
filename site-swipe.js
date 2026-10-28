@@ -44,19 +44,26 @@
   }
 
 
-  // Floating photo controls fade only while the page or album is moving.
-  // Never disable pointer events: tapping "写真を投稿" must keep working.
+  // Header and floating photo controls gently fade while scrolling.
+  // Both remain clickable, and an open menu always stays fully readable.
   let photoScrollIdle=0;
   function onPhotoScroll(){
-    if(document.body.dataset.page!=='home'&&document.body.dataset.photoPage!=='gallery')return;
-    document.body.classList.add('photo-action-scrolling');
+    if(!menu?.open)document.body.classList.add('site-header-scrolling');
+    if(document.body.dataset.page==='home'||document.body.dataset.photoPage==='gallery')
+      document.body.classList.add('photo-action-scrolling');
     clearTimeout(photoScrollIdle);
     photoScrollIdle=setTimeout(()=>{
-      document.body.classList.remove('photo-action-scrolling');
-    },220);
+      document.body.classList.remove('photo-action-scrolling','site-header-scrolling');
+    },250);
   }
   document.addEventListener('scroll',onPhotoScroll,{capture:true,passive:true});
-  window.addEventListener('pagehide',()=>clearTimeout(photoScrollIdle),{once:true});
+  menu?.addEventListener('toggle',()=>{
+    if(menu.open)document.body.classList.remove('site-header-scrolling');
+  });
+  window.addEventListener('pagehide',()=>{
+    clearTimeout(photoScrollIdle);
+    document.body.classList.remove('photo-action-scrolling','site-header-scrolling');
+  },{once:true});
 
 
   function route(raw){
