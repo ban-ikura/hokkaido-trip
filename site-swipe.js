@@ -44,27 +44,6 @@
   }
 
 
-  // Floating homepage-only photo actions live directly under body, outside
-  // SPA main transitions, so both controls remain fixed while scrolling.
-  function ensureHomeFloatingActions(){
-    let bar=document.querySelector('body > .home-photo-floating-actions');
-    if(bar)return;
-    bar=document.createElement('nav');
-    bar.className='home-photo-floating-actions';
-    bar.setAttribute('aria-label','写真の操作');
-    const links=[
-      ['photos-post.html','＋ 写真を投稿','home-photo-floating-post'],
-      ['photos.html','アルバムを見る ↗','home-photo-floating-album']
-    ];
-    for(const [href,label,kind] of links){
-      const a=document.createElement('a');
-      a.href=href;a.textContent=label;a.className=kind;
-      bar.append(a);
-    }
-    document.body.append(bar);
-  }
-  ensureHomeFloatingActions();
-
   function route(raw){
     let url;
     try{url=new URL(raw,location.href)}catch{return null}
