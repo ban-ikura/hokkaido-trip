@@ -1110,3 +1110,19 @@ body[data-photo-page="gallery"] > a.floating-post{
  body[data-page="home"] > .home-photo-floating-actions,
  body[data-photo-page="gallery"] > a.floating-post{transition:none!important}
 }
+
+
+/* Fade sticky header during scrolling without disabling its controls. */
+.site-header{
+ transition:opacity .2s ease;
+}
+body.site-header-scrolling .site-header{
+ opacity:.46;
+}
+body.site-header-scrolling .site-header:focus-within,
+body.site-header-scrolling .site-header:has(.site-menu[open]){
+ opacity:1;
+}
+@media(prefers-reduced-motion:reduce){
+ .site-header{transition:none!important}
+}
