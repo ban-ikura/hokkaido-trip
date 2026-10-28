@@ -1027,15 +1027,15 @@ body[data-page="home"] .home-photo-shortcut:focus-visible{
 }
 
 
-/* Home-only photo shortcuts: beneath the upper-right wallpaper credit.
-   The links remain genuine anchors, above photo overlays and swipe layers. */
+/* Home-only floating photo shortcuts: fixed beneath the top-right
+   wallpaper credit; scroll does not move these links. */
 body[data-page="home"] main.home-page{
  position:relative;
 }
 body[data-page="home"] main.home-page > .home-photo-shortcuts{
- position:absolute;
- z-index:30;
- top:75px;
+ position:fixed;
+ z-index:80;
+ top:160px;
  right:clamp(12px,2.5vw,32px);
  display:flex;
  flex-direction:column;
@@ -1082,7 +1082,7 @@ body[data-page="home"] .home-photo-upload:focus-visible{
 }
 @media(max-width:899px){
  body[data-page="home"] main.home-page > .home-photo-shortcuts{
-  top:72px;
+  top:148px;
   right:12px;
   gap:6px;
  }
