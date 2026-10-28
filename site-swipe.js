@@ -7,6 +7,20 @@
   const known=new Set(order);
   const base=location.pathname.slice(0,location.pathname.lastIndexOf('/')+1);
   const currentFile=location.pathname.split('/').pop()||'index.html';
+  // Keep the logo and menu subtly translucent at rest after the page is scrolled.
+  // This runs before routing checks so standalone photo upload has the effect too.
+  const sharedMenu=document.querySelector('.site-menu');
+  if(document.querySelector('.site-header')){
+    const syncHeaderPosition=()=>{
+      document.body.classList.toggle('site-header-scrolled',window.scrollY>18);
+    };
+    window.addEventListener('scroll',syncHeaderPosition,{passive:true});
+    window.addEventListener('pageshow',syncHeaderPosition,{passive:true});
+    sharedMenu?.addEventListener('toggle',()=>{
+      document.body.classList.toggle('site-menu-open',sharedMenu.open);
+    });
+    syncHeaderPosition();
+  }
   if(!known.has(currentFile))return;
   const nav=document.querySelector('.site-header nav');
   const menu=document.querySelector('.site-menu');
@@ -340,7 +354,7 @@
   updateMenu();
   // Optional approved-photo decoration for public informational pages only.
   void (async()=>{
-    await css('photo-ambient.css','20261028-scroll-stability-v8');
+    await css('photo-ambient.css','20261028-public-polish-v9');
     if(typeof window.HOKKAIDO_NEWS_API_URL!=='string')
       await js('admin-config.js','20261021-worker-connected-1');
     await js('photo-ambient.js','20261026-niseko-credit-corner-v3');
