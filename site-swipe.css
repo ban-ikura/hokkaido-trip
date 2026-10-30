@@ -1330,9 +1330,11 @@ section[id],article[id]{scroll-margin-top:90px}
  background:var(--purpose-trip-bg);
  border-color:var(--purpose-trip-border);
 }
-/* Same photo/album family: dark teal for posting, pale teal for browsing. */
+/* Photo-related buttons share one teal fill, border, and white text. */
 .home-post-link,
+.home-photos-all,
 body[data-page="home"] > .home-photo-floating-actions a.home-photo-floating-post,
+body[data-page="home"] > .home-photo-floating-actions a.home-photo-floating-album,
 body[data-photo-page="gallery"] .album-post-link,
 body[data-photo-page="gallery"] .album-upload-link,
 body[data-photo-page="gallery"] > .floating-post{
@@ -1341,24 +1343,15 @@ body[data-photo-page="gallery"] > .floating-post{
  color:#fff;
 }
 .home-post-link:hover,
+.home-photos-all:hover,
 body[data-page="home"] > .home-photo-floating-actions a.home-photo-floating-post:hover,
+body[data-page="home"] > .home-photo-floating-actions a.home-photo-floating-album:hover,
 body[data-photo-page="gallery"] .album-post-link:hover,
 body[data-photo-page="gallery"] .album-upload-link:hover,
 body[data-photo-page="gallery"] > .floating-post:hover{
  background:var(--purpose-photo-hover);
  border-color:var(--purpose-photo-hover);
  color:#fff;
-}
-.home-photos-all,
-body[data-page="home"] > .home-photo-floating-actions a.home-photo-floating-album{
- background:var(--purpose-photo-light);
- border:1px solid var(--purpose-photo-border);
- color:var(--purpose-photo-ink);
-}
-.home-photos-all:hover,
-body[data-page="home"] > .home-photo-floating-actions a.home-photo-floating-album:hover{
- background:#d3ece9;
- color:var(--purpose-photo-ink);
 }
 body[data-photo-page="gallery"] .floating-post-icon{
  color:var(--purpose-photo);
