@@ -482,7 +482,7 @@ function renderNextSchedule(){
   if(detailed)renderNextScheduleDetail(detailed,events,now,upcoming,current);
   if(!box)return;
   box.replaceChildren();
-  const label=node('span','next-label');label.append(node('span','pulse-dot'),document.createTextNode(upcoming?'NEXT / 次の行程':current?'NOW / 現在の行程':'TRIP / 全行程'));
+  const label=node('span','next-label');label.append(node('span','pulse-dot'),document.createTextNode(upcoming?'次の行程':current?'現在の行程':'全行程'));
   box.append(label);
   const event=upcoming||current;
   if(!event){
