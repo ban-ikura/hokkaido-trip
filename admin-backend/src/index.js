@@ -426,12 +426,12 @@ async function submitPhoto(request,env){
   if(!/^multipart\/form-data\s*;\s*boundary=[a-zA-Z0-9'()+_,.\/:=?-]{1,120}\s*$/i.test(contentType)){
     return json({error:'画像を選択してください。'},400,request);
   }
-  const bytes=await limitedBody(request,PHOTO_LIMIT_BYTES+100000);
-  if(!bytes)return json({error:'画像が大きすぎます。'},413,request);
+  const bodyBytes=await limitedBody(request,PHOTO_LIMIT_BYTES+100000);
+  if(!bodyBytes)return json({error:'画像が大きすぎます。'},413,request);
   let data;
   try{
     data=await new Request(request.url,{method:'POST',
-      headers:{'Content-Type':contentType},body:bytes}).formData();
+      headers:{'Content-Type':contentType},body:bodyBytes}).formData();
   }catch{return json({error:'送信形式が正しくありません。'},400,request)}
   if(!await verifyTurnstile(request,env,data.get('turnstile_token'),'photo_upload')){
     return json({error:'安全確認に失敗しました。再度確認して送信してください。'},403,request);
