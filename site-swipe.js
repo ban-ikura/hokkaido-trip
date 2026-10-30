@@ -354,10 +354,10 @@
   updateMenu();
   // Optional approved-photo decoration for public informational pages only.
   void (async()=>{
-    await css('photo-ambient.css','20261028-public-polish-v9');
+    await css('photo-ambient.css','20261030-ipad-photo-v1');
     if(typeof window.HOKKAIDO_NEWS_API_URL!=='string')
       await js('admin-config.js','20261021-worker-connected-1');
-    await js('photo-ambient.js','20261026-niseko-credit-corner-v3');
+    await js('photo-ambient.js','20261030-ipad-photo-v1');
   })().catch(error=>console.warn('Optional photo decoration:',error));
   // Do not compete with the wallpaper or gallery for network/decoding at
   // startup. Mobile fetches its tiny HTML pages only when they are opened.
