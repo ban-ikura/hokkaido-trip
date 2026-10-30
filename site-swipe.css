@@ -1245,3 +1245,250 @@ section[id],article[id]{scroll-margin-top:90px}
 @media(prefers-reduced-motion:reduce){
  .site-header,.site-menu .menu-trigger,.home-quick-links a,.home-post-link,.home-photos-all,.day-page-nav a{transition:none!important}
 }
+
+
+/* Purpose-based visual system (2026-10-30).
+   Travel/navigation = ice blue; photo = teal; utilities = slate;
+   safety/cautions = warm ivory. Keep image cards photographic. */
+:root{
+ --purpose-trip-bg:#e8f3f9;
+ --purpose-trip-hover:#d7eaf5;
+ --purpose-trip-border:#b8d7e7;
+ --purpose-trip-ink:#20546e;
+ --purpose-photo:#1d6270;
+ --purpose-photo-hover:#164e5a;
+ --purpose-photo-light:#e5f4f1;
+ --purpose-photo-border:#9acfc9;
+ --purpose-photo-ink:#205a5a;
+ --purpose-util:#f0f4f6;
+ --purpose-util-hover:#e2eaee;
+ --purpose-util-border:#c9d9e1;
+ --purpose-util-ink:#36596b;
+ --purpose-alert-bg:#fff8ed;
+ --purpose-alert-border:#e4c395;
+ --purpose-alert-ink:#765125;
+}
+/* Same destination action across pages. Small menus remain compact. */
+.home-lead .home-main-button,
+.home-lead .home-text-button,
+.home-quick-links a,
+.day-page-nav a,
+.day-fact .small-map-link,
+.day-fact .day-hotel-notes,
+.hotel-map-link,
+.home-next-primary-link{
+ background:var(--purpose-trip-bg);
+ border:1px solid var(--purpose-trip-border);
+ color:var(--purpose-trip-ink);
+ text-shadow:none;
+}
+.home-lead .home-main-button,
+.home-lead .home-text-button{
+ border-radius:7px;
+ min-height:44px;
+ padding:11px 15px;
+}
+.home-lead .home-main-button:hover,
+.home-lead .home-text-button:hover,
+.home-quick-links a:hover,
+.day-page-nav a:hover,
+.day-fact .small-map-link:hover,
+.day-fact .day-hotel-notes:hover,
+.hotel-map-link:hover,
+.home-next-primary-link:hover{
+ background:var(--purpose-trip-hover);
+ border-color:#91c4dd;
+ color:var(--purpose-trip-ink);
+}
+.home-next-later-link{
+ border:1px solid var(--purpose-trip-border);
+ border-radius:9px;
+ background:var(--purpose-trip-bg);
+ color:var(--purpose-trip-ink);
+}
+.home-next-later-link:hover{background:var(--purpose-trip-hover)}
+.site-header .site-menu nav a{
+ color:var(--purpose-trip-ink);
+}
+.site-header .site-menu nav a:hover,
+.site-header .site-menu nav a.swipe-current,
+.site-header .site-menu nav a[aria-current="page"]{
+ background:var(--purpose-trip-bg);
+ color:var(--purpose-trip-ink);
+}
+/* Schedule cards: the same pale-blue frame and accent, not tinted photos. */
+.home-lead .next-card,
+.day-fact,
+.day-schedule-section .day-card{
+ border-color:var(--purpose-trip-border);
+}
+.home-lead .next-card{border-left:4px solid #5596b6}
+.day-fact{border-top:3px solid #8ab6ce}
+.home-day-list .home-day-link{outline:1px solid rgba(146,194,214,.56);outline-offset:-1px}
+.home-day-list .home-day-count{color:#ddf2ff}
+.day-schedule-section .destination-card{
+ background:var(--purpose-trip-bg);
+ border-color:var(--purpose-trip-border);
+}
+/* Same photo/album family: dark teal for posting, pale teal for browsing. */
+.home-post-link,
+body[data-page="home"] > .home-photo-floating-actions a.home-photo-floating-post,
+body[data-photo-page="gallery"] .album-post-link,
+body[data-photo-page="gallery"] .album-upload-link,
+body[data-photo-page="gallery"] > .floating-post{
+ background:var(--purpose-photo);
+ border-color:var(--purpose-photo);
+ color:#fff;
+}
+.home-post-link:hover,
+body[data-page="home"] > .home-photo-floating-actions a.home-photo-floating-post:hover,
+body[data-photo-page="gallery"] .album-post-link:hover,
+body[data-photo-page="gallery"] .album-upload-link:hover,
+body[data-photo-page="gallery"] > .floating-post:hover{
+ background:var(--purpose-photo-hover);
+ border-color:var(--purpose-photo-hover);
+ color:#fff;
+}
+.home-photos-all,
+body[data-page="home"] > .home-photo-floating-actions a.home-photo-floating-album{
+ background:var(--purpose-photo-light);
+ border:1px solid var(--purpose-photo-border);
+ color:var(--purpose-photo-ink);
+}
+.home-photos-all:hover,
+body[data-page="home"] > .home-photo-floating-actions a.home-photo-floating-album:hover{
+ background:#d3ece9;
+ color:var(--purpose-photo-ink);
+}
+body[data-photo-page="gallery"] .floating-post-icon{
+ color:var(--purpose-photo);
+ background:#fff;
+}
+.home-photos-section .home-photo-card{
+ outline:1px solid var(--purpose-photo-border);
+ outline-offset:-1px;
+}
+body[data-photo-page="gallery"] .album-content .album-thumb{
+ outline:1px solid rgba(114,177,173,.53);
+ outline-offset:-1px;
+}
+/* Neutral utility controls: refresh, options, tabs, and disclosures. */
+.site-menu .menu-trigger,
+.home-news-section .news-history-toggle,
+.day-schedule-section .course-tab,
+.day-schedule-section .scroll-button,
+.day-schedule-section .collapse > summary,
+.day-notes > summary,
+.packing-disclosure > summary,
+.packing-reset,
+.allergy-details > summary,
+.compact-extra > summary,
+body[data-photo-page="gallery"] .refresh-button,
+body[data-photo-page="post"] .rules-summary{
+ background:var(--purpose-util);
+ border-color:var(--purpose-util-border);
+ color:var(--purpose-util-ink);
+}
+.site-menu .menu-trigger:hover,
+.site-menu[open] .menu-trigger,
+.home-news-section .news-history-toggle:hover,
+.day-schedule-section .course-tab:hover,
+.day-schedule-section .scroll-button:hover,
+.day-schedule-section .collapse > summary:hover,
+.day-notes > summary:hover,
+.packing-disclosure > summary:hover,
+.packing-reset:hover,
+.allergy-details > summary:hover,
+.compact-extra > summary:hover,
+body[data-photo-page="gallery"] .refresh-button:hover,
+body[data-photo-page="post"] .rules-summary:hover{
+ background:var(--purpose-util-hover);
+ border-color:#adc5d1;
+ color:var(--purpose-util-ink);
+}
+.day-schedule-section .course-tab.active{
+ background:#2b627d;
+ border-color:#2b627d;
+ color:#fff;
+}
+/* Photo form: same upload-and-submit hue as all other posting controls. */
+body[data-photo-page="post"] .upload-field{
+ background:var(--purpose-photo-light);
+ border-color:var(--purpose-photo-border);
+}
+body[data-photo-page="post"] .upload-field:hover{
+ background:#d4eeea;
+ border-color:#6bb0ab;
+}
+body[data-photo-page="post"] .upload-field-caption{color:var(--purpose-photo-ink)}
+body[data-photo-page="post"] .primary-submit:not(:disabled){
+ background:var(--purpose-photo);
+ border-color:var(--purpose-photo);
+ color:#fff;
+}
+body[data-photo-page="post"] .primary-submit:not(:disabled):hover{
+ background:var(--purpose-photo-hover);
+}
+body[data-photo-page="post"] .primary-submit:disabled{
+ background:#edf2f3;
+ border:1px solid #cad8dc;
+ color:#748793;
+ box-shadow:none;
+ opacity:1;
+}
+/* Warning/information cards remain separate from navigational controls. */
+body[data-page="safety"] .info-card,
+body[data-page="stay"] .allergy-card,
+body[data-photo-page="gallery"] .album-notice,
+body[data-photo-page="post"] .rules-panel,
+.home-news-section .news-item.important{
+ background:var(--purpose-alert-bg);
+ border-color:var(--purpose-alert-border);
+}
+body[data-page="safety"] .info-card,
+body[data-page="stay"] .allergy-card,
+.home-news-section .news-item.important{
+ border-left:3px solid #d09d5a;
+}
+body[data-photo-page="post"] .rules-panel{
+ border-left:3px solid #d09d5a;
+}
+body[data-photo-page="gallery"] .album-notice{
+ border-left:3px solid #d09d5a;
+}
+body[data-page="stay"] .hotel-card,
+body[data-page="guide"] .info-card{
+ border-color:#d2e1e8;
+ background:#fff;
+}
+@media print{
+ body[data-page="safety"] .info-card,
+ body[data-page="stay"] .allergy-card,
+ body[data-photo-page="gallery"] .album-notice,
+ .home-news-section .news-item.important{
+  background:#fff;
+ }
+}
+
+/* The optional photo-wallpaper sheet loads after this stylesheet.
+   Higher specificity keeps navigation in the same blue family on all devices. */
+body[data-page="home"] main.home-page .home-lead .home-main-button,
+body[data-page="home"] main.home-page .home-lead .home-text-button,
+body[data-page="home"] main.home-page .home-next-primary-link{
+ background:var(--purpose-trip-bg)!important;
+ color:var(--purpose-trip-ink)!important;
+ border:1px solid var(--purpose-trip-border)!important;
+ text-shadow:none!important;
+}
+body[data-page="home"] main.home-page .home-lead .home-main-button:hover,
+body[data-page="home"] main.home-page .home-lead .home-text-button:hover,
+body[data-page="home"] main.home-page .home-next-primary-link:hover{
+ background:var(--purpose-trip-hover)!important;
+ color:var(--purpose-trip-ink)!important;
+}
+body[data-page="home"] main.home-page .home-lead .next-card{
+ border-color:var(--purpose-trip-border)!important;
+}
+body[data-page="home"] main.home-page .home-days-section .home-day-link{
+ border-color:rgba(176,212,228,.92)!important;
+}

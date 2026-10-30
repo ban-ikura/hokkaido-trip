@@ -276,3 +276,105 @@ body{
 /* Authentication challenge spacing; keep the action accessible on narrow devices. */
 .admin-turnstile{min-height:65px;margin:15px 0 6px;max-width:100%;overflow:hidden}
 #login-button:disabled{cursor:not-allowed;opacity:.6}
+
+
+/* Purpose-based controls: navigation blue, posting teal, utility slate,
+   approval green, destructive red; passive cards stay white. */
+:root{
+ --admin-nav-bg:#e8f3f9;
+ --admin-nav-border:#b8d7e7;
+ --admin-nav-ink:#20546e;
+ --admin-post:#1d6270;
+ --admin-post-hover:#164e5a;
+ --admin-util:#f0f4f6;
+ --admin-util-hover:#e2eaee;
+ --admin-util-border:#c9d9e1;
+ --admin-util-ink:#36596b;
+}
+.admin-header .back-link,
+.published-link{
+ display:inline-flex;
+ align-items:center;
+ background:var(--admin-nav-bg);
+ border:1px solid var(--admin-nav-border);
+ border-radius:8px;
+ padding:8px 11px;
+ color:var(--admin-nav-ink);
+ text-decoration:none;
+}
+.admin-header .back-link:hover,.published-link:hover{
+ background:#d7eaf5;
+ color:var(--admin-nav-ink);
+}
+#publish-button:not(:disabled){
+ background:var(--admin-post);
+ color:#fff;
+ border-color:var(--admin-post);
+ box-shadow:none;
+}
+#publish-button:not(:disabled):hover{background:var(--admin-post-hover)}
+#login-button:not(:disabled){
+ background:#215879;
+ color:#fff;
+ box-shadow:none;
+}
+.logout-button,
+.admin-tab:not(.is-active),
+.photo-mod-tab:not(.selected){
+ background:var(--admin-util);
+ border:1px solid var(--admin-util-border);
+ color:var(--admin-util-ink);
+ box-shadow:none;
+}
+.logout-button:hover,
+.admin-tab:not(.is-active):hover,
+.photo-mod-tab:not(.selected):hover{
+ background:var(--admin-util-hover);
+ border-color:#adc5d1;
+ color:var(--admin-util-ink);
+}
+.admin-tab.is-active,
+.photo-mod-tab.selected{
+ background:#2b627d;
+ border-color:#2b627d;
+ color:#fff;
+ box-shadow:none;
+}
+.admin-tab.is-active .admin-tab-icon{
+ color:#2b627d;
+ background:#fff;
+}
+.admin-tab:not(.is-active) .admin-tab-icon{
+ color:var(--admin-util-ink);
+ background:#e2eaee;
+}
+.photo-mod-card{
+ background:#fff;
+ border-color:#9acfc9;
+ box-shadow:0 7px 20px rgba(17,78,76,.06);
+}
+.photo-mod-buttons .approve:not(:disabled){
+ background:#22765d;
+ color:#fff;
+ border-color:#22765d;
+}
+.photo-mod-buttons .reject:not(:disabled),
+.photo-mod-buttons .unpublish:not(:disabled){
+ background:#fff1ef;
+ color:#963c34;
+ border-color:#e6bbb6;
+}
+.photo-moderation .mod-rule{
+ background:#fff8ed;
+ border-color:#d09d5a;
+ color:#765125;
+}
+.primary-button:disabled,
+.photo-mod-buttons button:disabled{
+ background:#edf2f3;
+ color:#748793;
+ border:1px solid #cad8dc;
+ box-shadow:none;
+ opacity:1;
+ cursor:not-allowed;
+}
