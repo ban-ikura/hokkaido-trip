@@ -27,7 +27,7 @@
     preview.hidden=true;preview.removeAttribute('src');
     if(previewUrl)URL.revokeObjectURL(previewUrl);
     previewUrl='';
-    uploader.textContent='写真・動画を選択する';
+    uploader.textContent='写真・動画を追加';
   }
   fileInput.addEventListener('change',()=>{
     clearPreview();

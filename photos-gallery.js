@@ -147,7 +147,7 @@ async function load(){
  const call=++requestId;
  dismiss();
  grid.replaceChildren();viewport.replaceChildren();photos=[];
- count.textContent='';status.textContent='アルバムを読み込み中…';
+ count.textContent='';status.textContent='読み込み中…';
  refresh.disabled=true;
  if(!api){status.textContent='写真アルバムは準備中です。';refresh.disabled=false;return}
  try{

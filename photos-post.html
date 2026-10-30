@@ -12,11 +12,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800;900&amp;display=swap">
-<link rel="stylesheet" href="site-swipe.css?v=20261028-public-polish-v9">
+<link rel="stylesheet" href="site-swipe.css?v=20261030-clear-ui-v1">
 <script src="site-swipe.js?v=20261028-public-polish-v9" defer></script>
 <script src="admin-config.js?v=20261021-worker-connected-1" defer></script>
 <script src="photos-config.js?v=20261022-nocode-1" defer></script>
-<script src="photos-submit.js?v=20261026-server-match-v4" defer></script>
+<script src="photos-submit.js?v=20261030-clear-ui-v1" defer></script>
 </head>
 <body data-photo-page="post">
 <header class="site-header">
@@ -43,18 +43,18 @@
   </div>
 </header>
 <main class="photos-main post-main">
-  <div class="post-intro"><h1>思い出をシェア。</h1></div>
+  <div class="post-intro"><h1>写真投稿</h1></div>
   <div class="post-columns">
     <section class="post-form-panel" aria-labelledby="post-heading">
       <div class="post-panel-top"><span class="step-label">01</span><span class="approval-chip">承認制</span></div>
-      <h2 id="post-heading">写真を投稿する</h2>
+      <h2 id="post-heading">投稿フォーム</h2>
       <p class="post-panel-sub">投稿コード・ログインは不要です。<br>写真またはMP4・MOV動画を選べます。動画は静止画1枚に変換します。顔や個人情報が写っていないものだけを選んでください。</p>
       <div id="photo-setup" class="notice" role="status">投稿システムを確認しています…</div>
       <form id="photo-form">
-        <label for="student-photo">写真を選ぶ <span class="required">必須</span></label>
+        <label for="student-photo">写真・動画 <span class="required">必須</span></label>
         <div class="upload-field">
           <input type="file" id="student-photo" accept="image/*,.jpg,.jpeg,.png,.webp,.heic,.heif,.avif,video/mp4,video/quicktime,.mp4,.mov,.mp5" required aria-describedby="photo-size-hint">
-          <div class="upload-field-caption"><span aria-hidden="true">＋</span> カメラロールから写真を選択</div>
+          <div class="upload-field-caption"><span aria-hidden="true">＋</span> 写真・動画を追加</div>
         </div>
         <p id="photo-size-hint" class="hint">JPEG・PNG・WebP・HEICなどの写真に対応。MP4・MOV動画からは静止画1コマを取り出します（動画そのものは投稿されません）。MP5はMP4として再生可能なファイルのみ試せます。画像は最大300KBのWebPまたはJPEGに自動圧縮し、撮影位置情報などの元画像メタデータを除去します。動画は50MB以下、写真は30MB以下を選んでください。</p>
         <img id="photo-preview" alt="投稿する写真のプレビュー" hidden>
@@ -67,7 +67,7 @@
         <div class="form-divider"></div>
         <label class="agree"><input id="photo-permission" type="checkbox" required><span><strong>投稿ルールをすべて確認しました。</strong> 顔（小さな写り込み・反射を含む）、個人情報、無断転載、誹謗中傷、危険・迷惑行為を含まない写真です。承認後はインターネットに公開されることを理解しています。</span></label>
         <div class="captcha-area"><div id="photo-turnstile" aria-label="投稿の安全確認"></div><p class="hint">投稿コードは不要です。スパム対策の安全確認を行います。</p></div>
-        <button type="submit" id="photo-submit" class="primary-submit" disabled>管理者の確認に送る <span aria-hidden="true">↗</span></button>
+        <button type="submit" id="photo-submit" class="primary-submit" disabled>承認申請</button>
         <p id="photo-status" class="message" role="status" aria-live="polite"></p>
       </form>
     </section>
@@ -81,7 +81,7 @@
               <strong id="rules-heading">投稿の注意事項</strong>
               <span class="rules-summary-note">顔写真・個人情報は投稿禁止</span>
             </span>
-            <span class="rules-summary-action" aria-hidden="true"><span class="rules-action-open">詳細を見る</span><span class="rules-action-close">閉じる</span><span class="rules-summary-arrow">⌄</span></span>
+            <span class="rules-summary-action" aria-hidden="true"><span class="rules-action-open">詳細</span><span class="rules-action-close">閉じる</span><span class="rules-summary-arrow">⌄</span></span>
           </summary>
           <div class="rules-content">
             <p class="rule-emphasis">顔写真は投稿禁止です。</p>
@@ -102,5 +102,5 @@
   <p class="privacy">投稿写真は承認されるまで一般公開されず、審査担当者のみ閲覧できます。問題のある投稿は却下されます。公開後の取り消しは学校の管理者へ。安全確認は本人確認ではありません。</p>
   <section class="how-it-works" aria-label="投稿の流れ"><span>投稿の流れ</span><p><b>写真を送る</b> <span>→</span> <b>管理者が確認</b> <span>→</span> <b>承認後に公開</b></p><small>投稿しただけでは公開されません。承認されない場合もあります。</small></section>
 </main>
-<footer class="photos-footer"><span>HOKKAIDO 2026 · MEMORIES</span><a href="photos.html">アルバムへ戻る ↗</a></footer>
+<footer class="photos-footer"><span>HOKKAIDO 2026</span><a href="photos.html">アルバム ↗</a></footer>
 </body></html>

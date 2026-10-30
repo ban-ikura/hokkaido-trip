@@ -352,7 +352,7 @@
         const buttons=document.createElement('div');
         buttons.className='photo-mod-buttons';
         const actions=photoFilter==='pending'?
-          [['approve','承認して公開'],['reject','却下']]:
+          [['approve','承認・公開'],['reject','却下']]:
           [['unpublish','掲載取り消し']];
         for(const [action,label] of actions){
           const button=document.createElement('button');

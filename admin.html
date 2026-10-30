@@ -9,19 +9,19 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self'; img-src 'self' blob:; connect-src 'self' https://hokkaido-trip-news-api.banse-oji.workers.dev https://challenges.cloudflare.com; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src https://challenges.cloudflare.com; upgrade-insecure-requests; script-src-attr 'none'; worker-src 'none'">
   <title>管理者ダッシュボード｜北海道研修旅行 2026</title>
   <link rel="icon" type="image/png" href="hokkaido-island-logo.png">
-  <link rel="stylesheet" href="admin.css?v=20261023-full-menu-v2">
+  <link rel="stylesheet" href="admin.css?v=20261030-clear-ui-v1">
   <script src="admin-config.js?v=20261021-worker-connected-1" defer></script>
   <script src="photos-config.js?v=20261022-nocode-1" defer></script>
-  <script src="admin.js?v=20261030-auth-v1" defer></script>
+  <script src="admin.js?v=20261030-clear-ui-v1" defer></script>
 </head>
 <body>
   <header class="admin-header">
-    <a href="index.html" class="back-link">← サイトに戻る</a>
+    <a href="index.html" class="back-link">← ホーム</a>
     <span>HOKKAIDO <strong>2026</strong></span>
   </header>
   <main class="admin-main">
     
-    <h1>管理者ダッシュボード</h1>
+    <h1>管理画面</h1>
     <p class="admin-intro">共通パスワードでログインし、「お知らせ投稿」と「写真の承認」を切り替えて操作できます。既存のお知らせや行程表の編集・削除はできません。</p>
     <div id="setup-status" class="setup-status" hidden role="status">
       認証用サーバーの初期設定がまだ完了していません。設定担当者が接続先を登録するとログインできます。
@@ -50,7 +50,7 @@
       </div>
       <p class="admin-swipe-hint">左右にスワイプしてタブを切り替えられます</p>
       <section id="admin-news-panel" class="admin-tab-panel" role="tabpanel" aria-labelledby="admin-tab-news" tabindex="0">
-      <h2 id="post-heading">新しいお知らせを投稿</h2>
+      <h2 id="post-heading">お知らせ投稿</h2>
       <p>送信すると公開サイトに追加され、前のお知らせは履歴に残ります。</p>
       <form id="post-form">
         <label for="notice-title">タイトル <small>必須・120文字以内</small></label>
@@ -58,17 +58,17 @@
         <label for="notice-body">本文 <small>必須・1500文字以内</small></label>
         <textarea id="notice-body" name="body" maxlength="1500" required rows="7" placeholder="お知らせの内容を入力"></textarea>
         <label class="checkbox-row"><input type="checkbox" id="notice-important">重要なお知らせとして表示</label>
-        <button id="publish-button" class="primary-button" type="submit">お知らせを投稿</button>
+        <button id="publish-button" class="primary-button" type="submit">投稿</button>
       </form>
       <p id="post-status" class="form-status" role="status" aria-live="polite"></p>
-      <a id="published-link" class="published-link" href="index.html#news" hidden>公開サイトで確認する →</a>
+      <a id="published-link" class="published-link" href="index.html#news" hidden>公開ページ →</a>
       <p class="admin-small">投稿済みお知らせの編集・削除機能はありません。内容をよく確認してから送信してください。</p>
       </section>
 
       <section id="admin-photos-panel" class="admin-tab-panel photo-moderation" role="tabpanel" aria-labelledby="admin-tab-photos" tabindex="0" hidden>
         <div class="photo-mod-title">
           <div><h2 id="photo-moderation-heading">生徒の写真を承認</h2></div>
-          <button type="button" id="photo-mod-reload" class="logout-button">再読み込み ↻</button>
+          <button type="button" id="photo-mod-reload" class="logout-button">更新 ↻</button>
         </div>
         <p>承認した写真だけが公開アルバムに表示されます。公開後も掲載を取り消せます。お知らせの編集・削除はできません。</p>
         <p class="mod-rule"><strong>承認前のチェック：</strong> 顔（自撮り・集合写真・反射を含む）や個人を特定できるものがないか確認。氏名・名札・学生証・部屋番号・連絡先・車のナンバー、誹謗中傷・いじめ・差別・危険行為・迷惑行為・無断転載は承認しないでください。判断できない場合は却下してください。</p>
@@ -78,7 +78,7 @@
         </div>
         <p id="photo-mod-status" class="form-status" role="status" aria-live="polite"></p>
         <div id="photo-mod-list" class="photo-mod-list"></div>
-        <a href="photos.html" class="published-link">公開アルバムを確認する →</a>
+        <a href="photos.html" class="published-link">公開アルバム →</a>
       </section>
     </section>
   </main>

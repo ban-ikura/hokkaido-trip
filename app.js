@@ -153,7 +153,7 @@ async function loadAnnouncements(){
     const current=node('div','news-current');
     current.append(renderItem(items[0]));host.append(current);
     const history=node('details','news-history');
-    const summary=node('summary','news-history-toggle','過去のお知らせの履歴（'+(items.length-1)+'件）を見る');
+    const summary=node('summary','news-history-toggle','過去のお知らせ（'+(items.length-1)+'件）');
     const older=node('div','news-history-list');
     items.slice(1).forEach(item=>older.append(renderItem(item)));
     if(items.length===1)older.append(node('p','news-empty','過去のお知らせはまだありません。'));
@@ -325,7 +325,7 @@ function renderTimeline(day,course){
   canvas.append(axis,track);viewport.append(canvas);wrapper.append(viewport);
   wrapper.append(detail);
   const list=node('details','collapse');
-  list.append(node('summary','','全予定の時刻一覧'));
+  list.append(node('summary','','時刻一覧'));
   const agenda=node('div','agenda-grid');
   course.events.forEach(event=>{
     const row=node('button','agenda-row agenda-event');
@@ -422,7 +422,7 @@ function renderNextScheduleDetail(host,events,now,upcoming,current){
     finished.append(node('h3','home-next-event-title','研修旅行の全日程'));
     finished.append(node('p','home-next-note',
       now<dateOf(0,'00:00')?'行程データを確認できません。':'予定されている全行程が終了しました。'));
-    const link=node('a','home-next-primary-link','4日間の行程を確認する ↗');
+    const link=node('a','home-next-primary-link','4日間の行程 ↗');
     link.href='day1.html#schedule';
     finished.append(link);
     host.append(finished);
@@ -431,7 +431,7 @@ function renderNextScheduleDetail(host,events,now,upcoming,current){
   const link='day'+(event.index+1)+'.html#schedule';
   const summary=node('div','home-next-summary');
   summary.append(node('span','home-next-status',upcoming?'次の予定':'現在の行程'));
-  summary.append(node('p','home-next-date',dateNames[event.index]+' · DAY '+String(event.index+1).padStart(2,'0')));
+  summary.append(node('p','home-next-date',dateNames[event.index]+' · '+String(event.index+1)+'日目'));
   const row=node('div','home-next-event-row');
   row.append(node('strong','home-next-event-time',
     event.start+(event.end!==event.start?' 〜 '+event.end:'')));
@@ -489,7 +489,7 @@ function renderNextSchedule(){
     box.href='day1.html#schedule';
     box.setAttribute('aria-label','4日間の行程表を開く');
     box.append(node('p','next-title','全日程終了'),node('p','next-day','2026年12月7日〜10日の行程を掲載。'));
-    box.append(node('span','next-jump','行程表を見る ↗'));
+    box.append(node('span','next-jump','行程表 ↗'));
     return;
   }
   box.append(node('div','next-time',event.start));
@@ -498,7 +498,7 @@ function renderNextSchedule(){
   box.href='day'+(event.index+1)+'.html#schedule';
   box.setAttribute('aria-label',dateNames[event.index]+'の行程表を開く：'+event.title);
   const bottom=node('div','next-bottom');bottom.append(node('span','next-course',event.course));
-  bottom.append(node('span','next-jump','タップして行程表へ ↗'));box.append(bottom);
+  bottom.append(node('span','next-jump','行程表 ↗'));box.append(bottom);
 }
 const packingList=['学生証・学校指定の書類','財布・現金','スマートフォン','充電器・モバイルバッテリー','着替え・下着・靴下','防寒着・手袋・帽子','滑りにくい靴','洗面用具・タオル','常備薬（必要な人）','筆記用具・旅行のしおり','スキー用品・防寒小物（該当者）','その他学校指定の持ち物'];
 const checklistKey='hokkaido26-checklist-public-v3';
