@@ -36,8 +36,8 @@
   if(!firstMain||!firstFooter)return;
   cache.set(page,{main:firstMain,footer:firstFooter,title:document.title,ready:true,
                   action:document.querySelector('body > a.floating-post')});
-  // Top-right shortcuts stay fixed while scrolling; CSS shows them on home only.
-  // Body-level placement avoids the main/hero stacking and clipping contexts.
+  // Top-right shortcuts stay at their document position and scroll away.
+  // Body-level placement avoids main/hero stacking and clipping contexts.
   let photoActions=document.querySelector('body > nav.home-photo-floating-actions');
   if(!photoActions){
     photoActions=document.createElement('nav');

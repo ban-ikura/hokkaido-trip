@@ -1027,11 +1027,11 @@ body[data-page="home"] .home-photo-shortcut:focus-visible{
 }
 
 
-/* Floating photo actions: persistent viewport position, homepage only.
-   At body level rather than inside the scrolling main or hero. */
+/* Photo actions are positioned at the top-right of the home document,
+   not fixed to the viewport: they scroll away with the page. */
 body > .home-photo-floating-actions{display:none!important}
 body[data-page="home"] > .home-photo-floating-actions{
- position:fixed!important;
+ position:absolute!important;
  top:calc(130px + env(safe-area-inset-top));
  right:max(12px,env(safe-area-inset-right));
  z-index:110;
@@ -1091,8 +1091,7 @@ body[data-page="home"] > .home-photo-floating-actions a:focus-visible{
 }
 
 
-/* Keep homepage photo shortcuts fully visible at their existing fixed top-right position.
-   Scrolling must not dim or shift them. */
+/* Keep homepage photo shortcuts visible at their original page-top position. */
 body[data-page="home"] > .home-photo-floating-actions{
  opacity:1!important;
  transition:none!important;
