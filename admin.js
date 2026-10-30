@@ -24,6 +24,9 @@
   let activeManagementTab='news';
   let accessToken='';
   let expiresAt=0;
+  const siteKey=typeof window.HOKKAIDO_PHOTO_TURNSTILE_SITE_KEY==='string'?
+    window.HOKKAIDO_PHOTO_TURNSTILE_SITE_KEY.trim():'';
+  let challengeToken='',challengeWidget=null;
   let photoFilter='pending';
   let photoGeneration=0;
   let photoObserver=null;
@@ -40,12 +43,44 @@
     }catch{return ''}
   }
   const api=configuredApi();
+  function challengeReady(){loginButton.disabled=!api||!challengeToken}
+  function resetChallenge(){
+    challengeToken='';
+    if(challengeWidget!==null&&window.turnstile){
+      try{window.turnstile.reset(challengeWidget)}catch{}
+    }
+    challengeReady();
+  }
+  function initLoginChallenge(){
+    if(!siteKey){status(loginStatus,'安全確認の設定が必要です。','error');return}
+    const script=document.createElement('script');
+    script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+    script.async=true;
+    script.onload=()=>{
+      try{
+        challengeWidget=window.turnstile.render('#admin-turnstile',{
+          sitekey:siteKey,theme:'light',action:'admin_login',
+          callback:value=>{challengeToken=value;challengeReady()},
+          'expired-callback':resetChallenge,
+          'error-callback':()=>{
+            resetChallenge();
+            status(loginStatus,'安全確認に失敗しました。再読み込みしてください。','error');
+          }
+        });
+      }catch{
+        status(loginStatus,'安全確認を起動できませんでした。','error');
+      }
+    };
+    script.onerror=()=>status(loginStatus,'安全確認を読み込めませんでした。','error');
+    document.head.append(script);
+  }
   function status(element,message,type){
     element.textContent=message||'';
     element.dataset.kind=type||'';
   }
   function showLogin(message,type){
     accessToken='';expiresAt=0;
+    resetChallenge();
     passwordInput.value='';
     postForm.reset();
     publishedLink.hidden=true;
@@ -80,19 +115,20 @@
     setupStatus.hidden=false;
     status(loginStatus,'認証サーバー接続先を設定すると利用できます。','error');
   }else{
-    loginButton.disabled=false;
+    initLoginChallenge();
   }
   loginForm.addEventListener('submit',async event=>{
     event.preventDefault();
-    if(!api||loginButton.disabled||!loginForm.reportValidity())return;
+    if(!api||!challengeToken||loginButton.disabled||!loginForm.reportValidity())return;
     const password=passwordInput.value;
+    const turnstileToken=challengeToken;
     loginButton.disabled=true;
     status(loginStatus,'確認中…','');
     try{
       const response=await fetch(api+'/api/login',{
         method:'POST',mode:'cors',credentials:'omit',cache:'no-store',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({password})
+        body:JSON.stringify({password,turnstile_token:turnstileToken})
       });
       const data=await readResponse(response);
       if(typeof data.token!=='string'||!Number.isInteger(data.expires_at)){
@@ -105,7 +141,7 @@
       status(loginStatus,error instanceof TypeError?'接続できません。管理担当者に認証サーバーの設定を確認してください。':error.message,'error');
     }finally{
       passwordInput.value='';
-      loginButton.disabled=false;
+      resetChallenge();
     }
   });
   postForm.addEventListener('submit',async event=>{
