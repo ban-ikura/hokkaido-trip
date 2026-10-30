@@ -109,6 +109,28 @@ function decorate(main,items){
  schedulePlacement();
 }
 
+/* iPad Safari does not consistently paint fixed CSS body/pseudo backgrounds.
+   Reuse the already loaded image as a real, fixed, non-interactive layer. */
+function isTabletViewport(){
+ return (navigator.maxTouchPoints>1||
+         window.matchMedia('(pointer:coarse)').matches)&&
+        window.matchMedia('(min-width:700px) and (max-width:1366px)').matches;
+}
+function clearTabletWallpaper(){
+ document.body.classList.remove('ambient-tablet-wallpaper');
+ document.querySelectorAll('body > img.ambient-tablet-photo').forEach(img=>img.remove());
+}
+function installTabletWallpaper(image){
+ if(!isTabletViewport())return;
+ clearTabletWallpaper();
+ image.className='ambient-tablet-photo';
+ image.alt='';
+ image.setAttribute('aria-hidden','true');
+ image.draggable=false;
+ document.body.prepend(image);
+ document.body.classList.add('ambient-tablet-wallpaper');
+}
+
 /* On desktop the approved photo covers the page background itself, instead of
  * inserting a separate full-height photo-only section between information. */
 function clearDesktopBackground(){
@@ -122,10 +144,15 @@ function desktopBackground(items,ticket){
   if(index>=chosen.length||ticket!==serial)return;
   const test=new Image();
   test.referrerPolicy='no-referrer';
-  test.onload=()=>{
+  test.onload=async()=>{
+   if(isTabletViewport()&&typeof test.decode==='function'){
+    try{await test.decode()}catch{}
+   }
    if(ticket!==serial||!document.querySelector('main'))return;
+   if(!test.naturalWidth){attempt(index+1);return}
    document.body.style.setProperty('--ambient-desktop-photo','url("'+url(chosen[index])+'")');
    document.body.classList.add('ambient-desktop-page');
+   installTabletWallpaper(test);
    showBackgroundCredit(chosen[index],ticket);
   };
   test.onerror=()=>attempt(index+1);
@@ -157,6 +184,7 @@ function mobileHomeBackground(items,ticket){
    if(!img.naturalWidth){attempt(i+1);return}
    document.body.style.setProperty('--ambient-mobile-home-photo','url("'+url(choices[i])+'")');
    document.body.classList.add('ambient-mobile-home-page');
+   installTabletWallpaper(img);
    showBackgroundCredit(choices[i],ticket);
   };
   img.onerror=()=>attempt(i+1);
@@ -321,6 +349,7 @@ function heroSlides(main,photos){
 async function render(){
  const ticket=++serial;
  clearBackgroundCredit();
+ clearTabletWallpaper();
  clearDesktopBackground();
  clearMobileHomeBackground();
  if(layoutObserver)layoutObserver.disconnect();
@@ -354,6 +383,6 @@ async function render(){
  }catch{/* Decorative photos must not affect essential travel information. */}
 }
 document.addEventListener('hokkaido:pagechange',render);
-window.addEventListener('pagehide',()=>{++serial;clearBackgroundCredit();clearDesktopBackground();clearMobileHomeBackground();if(timer)clearInterval(timer);timer=null;if(layoutObserver)layoutObserver.disconnect();if(placementFrame)cancelAnimationFrame(placementFrame)});
+window.addEventListener('pagehide',()=>{++serial;clearBackgroundCredit();clearTabletWallpaper();clearDesktopBackground();clearMobileHomeBackground();if(timer)clearInterval(timer);timer=null;if(layoutObserver)layoutObserver.disconnect();if(placementFrame)cancelAnimationFrame(placementFrame)});
 render();
 })();
