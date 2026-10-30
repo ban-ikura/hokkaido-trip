@@ -72,7 +72,7 @@
     const body=document.body;
     if(!body.classList.contains('site-header-scrolling'))
       body.classList.add('site-header-scrolling');
-    if((body.dataset.page==='home'||body.dataset.photoPage==='gallery')&&
+    if(body.dataset.photoPage==='gallery'&&
        !body.classList.contains('photo-action-scrolling'))
       body.classList.add('photo-action-scrolling');
     clearTimeout(photoScrollIdle);

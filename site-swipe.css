@@ -1091,13 +1091,11 @@ body[data-page="home"] > .home-photo-floating-actions a:focus-visible{
 }
 
 
-/* Keep fixed photo actions tappable, but make them unobtrusive while scrolling. */
-body.photo-action-scrolling[data-page="home"] > .home-photo-floating-actions{
- opacity:.36!important;
- transition:opacity .16s ease;
-}
+/* Keep homepage photo shortcuts fully visible at their existing fixed top-right position.
+   Scrolling must not dim or shift them. */
 body[data-page="home"] > .home-photo-floating-actions{
- transition:opacity .2s ease;
+ opacity:1!important;
+ transition:none!important;
 }
 body.photo-action-scrolling[data-photo-page="gallery"] > a.floating-post{
  opacity:.36!important;
