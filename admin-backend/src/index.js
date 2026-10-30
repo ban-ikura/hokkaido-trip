@@ -127,9 +127,9 @@ async function postAnnouncement(request,env){
   if(!env.SESSION_SECRET||env.SESSION_SECRET.length<32){
     return json({error:'管理者認証の初期設定が終わっていません。'},503,request);
   }
-  const header=request.headers.get('Authorization')||'';
-  if(!header.startsWith('Bearer ')||
-     !await verifySession(header.slice(7),env.SESSION_SECRET)){
+  // hidden/disabled等のHTML表示状態には依存せず、署名付きセッションを検証する。
+  // 写真承認APIと同じサーバー側の権限チェックを必ず通す。
+  if(!await adminAuthorized(request,env)){
     return json({error:'ログインが必要です。もう一度ログインしてください。'},401,request);
   }
   const data=await requestData(request);
