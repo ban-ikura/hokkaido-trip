@@ -33,6 +33,14 @@
 - 管理担当者による有効化の手順：[admin-backend/SETUP.md](admin-backend/SETUP.md)。
 - 共通パスワードをGitHubやチャットに貼り付けないでください。
 
+## 投稿権限の保護（2026年10月30日）
+
+- **写真の新規投稿は引き続き許可**。通常の投稿はCloudflare Turnstileによるサーバー側検証を通り、D1に「承認待ち」として保存されます。
+- **管理者のお知らせ投稿・写真承認／却下はログイン必須**。Cloudflare Worker が署名済みセッションを検証するため、`admin.html` の `hidden` や `disabled` を開発者ツールで削除しても管理者権限は得られません。
+- ブラウザーの表示設定をセキュリティ境界として扱わないこと。投稿APIに直接アクセスしても、同じサーバー側検証を通します。
+- 回帰テスト: `cd admin-backend && npm test`（Node.js 20以上）。未認証管理操作の拒否、Turnstile不備の拒否、正常な新規投稿の許可を検証します。
+- **Workerの修正はGitHub Pagesへの反映だけでは本番適用されません**。公開Workerは `admin-backend/PHOTOS-SETUP.md` の手順に従って再デプロイしてください。
+
 ## 生徒写真の投稿・管理者承認（コード実装済み、D1の画像保存設定待ち）
 
 - 写真アルバム：**[photos.html](photos.html)**（承認済み写真だけ表示）。右下の「写真を投稿」から **[photos-post.html](photos-post.html)** に移動する。アルバムと投稿フォームは別ページ。
