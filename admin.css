@@ -272,3 +272,7 @@ body{
   .photo-mod-tab{flex:1}
   .photo-mod-meta{padding:14px}
 }
+
+/* Authentication challenge spacing; keep the action accessible on narrow devices. */
+.admin-turnstile{min-height:65px;margin:15px 0 6px;max-width:100%;overflow:hidden}
+#login-button:disabled{cursor:not-allowed;opacity:.6}
