@@ -7,4 +7,9 @@
 □ GitHubアカウントの2段階認証を有効化した。
 □ PCとスマートフォンで見た目を確認した。
 
-本サイトは誰でもアクセス可能な静的サイトであり、ログイン機能・アクセス制限はありません。
+旅行案内と写真アルバムは一般公開の静的ページです。管理画面と投稿APIは別途Worker上の認証・承認処理が必要です。noindexはアクセス制限ではありません。
+
+□ 管理画面にTurnstileが表示され、パスワードのみのAPIログインが拒否される。
+□ 最新WorkerをCloudflareへDeployして、30分セッションとリクエストサイズ上限を確認した。
+□ GitHub ActionsのWorker authorization testsに成功している。
+詳細: admin-backend/SECURITY-DEPLOY.md
