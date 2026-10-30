@@ -5,7 +5,7 @@
  * No editing, deleting, itinerary mutation, password exposure, or GitHub token.
  */
 const SITE_ORIGIN = 'https://ban-ikura.github.io';
-const SESSION_SECONDS = 2 * 60 * 60;
+const SESSION_SECONDS = 30 * 60;
 const WINDOW_SECONDS = 15 * 60;
 const MAX_FAILURES = 5;
 const encoder = new TextEncoder();
@@ -16,6 +16,10 @@ function json(data, status=200, request=null, extra={}) {
     'Cache-Control':'no-store',
     'X-Content-Type-Options':'nosniff',
     'Referrer-Policy':'no-referrer',
+    'Content-Security-Policy':"default-src 'none'; base-uri 'none'; frame-ancestors 'none'",
+    'X-Frame-Options':'DENY',
+    'Permissions-Policy':'camera=(), microphone=(), geolocation=()',
+    'Pragma':'no-cache',
     ...extra
   });
   if(request && request.headers.get('Origin')===SITE_ORIGIN){
@@ -65,13 +69,35 @@ async function safeCompare(a,b){
   for(let i=0;i<x.length;i++)diff|=x[i]^y[i];
   return diff===0;
 }
+// Bound memory usage, including requests without a Content-Length header.
+async function limitedBody(request,limit){
+  const length=request.headers.get('Content-Length');
+  if(length!==null&&(!/^\d+$/.test(length)||Number(length)>limit))return null;
+  if(!request.body)return null;
+  const reader=request.body.getReader(),chunks=[];
+  let total=0;
+  try{
+    while(true){
+      const {done,value}=await reader.read();
+      if(done)break;
+      total+=value.byteLength;
+      if(total>limit){await reader.cancel().catch(()=>{});return null}
+      chunks.push(value);
+    }
+  }catch{await reader.cancel().catch(()=>{});return null}
+  const bytes=new Uint8Array(total);
+  let offset=0;
+  for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength}
+  return bytes;
+}
 async function requestData(request){
-  if(!/application\/json/i.test(request.headers.get('Content-Type')||''))return null;
-  if(Number(request.headers.get('Content-Length')||'0')>8000)return null;
-  const text=await request.text();
-  if(text.length>6000)return null;
-  try{const obj=JSON.parse(text);return obj && typeof obj==='object'&&!Array.isArray(obj)?obj:null}
-  catch{return null}
+  if(!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers.get('Content-Type')||''))return null;
+  const bytes=await limitedBody(request,8000);
+  if(!bytes)return null;
+  try{
+    const obj=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));
+    return obj&&typeof obj==='object'&&!Array.isArray(obj)?obj:null;
+  }catch{return null}
 }
 function todayInJapan(){
   const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Tokyo',
@@ -85,8 +111,9 @@ async function clientKey(request,secret){
   return encodeBase64Url(digest);
 }
 async function login(request,env){
-  if(!env.ADMIN_PASSWORD||env.ADMIN_PASSWORD.length<12||
-     !env.SESSION_SECRET||env.SESSION_SECRET.length<32){
+  if(!env.DB||!env.ADMIN_PASSWORD||env.ADMIN_PASSWORD.length<12||
+     !env.SESSION_SECRET||env.SESSION_SECRET.length<32||
+     !env.TURNSTILE_SECRET||env.TURNSTILE_SECRET.length<12){
     return json({error:'管理者認証の初期設定が終わっていません。'},503,request);
   }
   const data=await requestData(request);
@@ -99,6 +126,9 @@ async function login(request,env){
     .bind(key).first();
   if(row&&now-Number(row.window_start)<WINDOW_SECONDS&&Number(row.failures)>=MAX_FAILURES){
     return json({error:'ログイン試行回数の上限です。15分ほど後にお試しください。'},429,request);
+  }
+  if(!await verifyTurnstile(request,env,data.turnstile_token,'admin_login')){
+    return json({error:'安全確認を完了してからログインしてください。'},403,request);
   }
   if(!await safeCompare(data.password,env.ADMIN_PASSWORD)){
     await env.DB.prepare(
@@ -371,9 +401,10 @@ function simpleJpeg(bytes){
  }
  return false;
 }
-// Cloudflare Turnstileトークンを必ずサーバーで照合。無効なら保存しない。
-async function verifyPhotoTurnstile(request,env,token){
-  if(typeof token!=='string'||token.length<10||token.length>2048)return false;
+// Verify the challenge at the server and bind each token to its specific action.
+async function verifyTurnstile(request,env,token,expectedAction){
+  if(typeof env.TURNSTILE_SECRET!=='string'||env.TURNSTILE_SECRET.length<12||
+     typeof token!=='string'||token.length<10||token.length>2048)return false;
   const form=new FormData();
   form.append('secret',env.TURNSTILE_SECRET);
   form.append('response',token);
@@ -385,19 +416,24 @@ async function verifyPhotoTurnstile(request,env,token){
     });
     if(!result.ok)return false;
     const verdict=await result.json();
-    return !!(verdict && verdict.success===true &&
-      verdict.hostname==='ban-ikura.github.io' && verdict.action==='photo_upload');
+    return !!(verdict&&verdict.success===true&&
+      verdict.hostname==='ban-ikura.github.io'&&verdict.action===expectedAction);
   }catch{return false}
 }
 async function submitPhoto(request,env){
   if(!photoReady(env))return photoError(request);
-  const declaredSize=Number(request.headers.get('Content-Length')||0);
-  if(declaredSize>PHOTO_LIMIT_BYTES+100000)return json({error:'画像が大きすぎます。'},413,request);
-  if(!/multipart\/form-data/i.test(request.headers.get('Content-Type')||'')){
+  const contentType=request.headers.get('Content-Type')||'';
+  if(!/^multipart\/form-data\s*;\s*boundary=[a-zA-Z0-9'()+_,.\/:=?-]{1,120}\s*$/i.test(contentType)){
     return json({error:'画像を選択してください。'},400,request);
   }
-  const data=await request.formData();
-  if(!await verifyPhotoTurnstile(request,env,data.get('turnstile_token'))){
+  const bytes=await limitedBody(request,PHOTO_LIMIT_BYTES+100000);
+  if(!bytes)return json({error:'画像が大きすぎます。'},413,request);
+  let data;
+  try{
+    data=await new Request(request.url,{method:'POST',
+      headers:{'Content-Type':contentType},body:bytes}).formData();
+  }catch{return json({error:'送信形式が正しくありません。'},400,request)}
+  if(!await verifyTurnstile(request,env,data.get('turnstile_token'),'photo_upload')){
     return json({error:'安全確認に失敗しました。再度確認して送信してください。'},403,request);
   }
   if(!await uploadQuota(request,env)){
