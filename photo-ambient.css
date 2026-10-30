@@ -1355,3 +1355,10 @@ body.ambient-tablet-wallpaper[data-page] > footer{
 @media print{
  body > img.ambient-tablet-photo{display:none!important}
 }
+
+/* Keep the travel title shadow-free even with an approved-photo wallpaper. */
+body[data-page="home"] main.home-page .home-lead .home-lead-copy h1,
+body[data-page="home"] main.home-page .home-lead .home-lead-copy h1 span{
+ text-shadow:none!important;
+ filter:none!important;
+}

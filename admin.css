@@ -378,3 +378,12 @@ body{
  opacity:1;
  cursor:not-allowed;
 }
+
+/* Destination links use the same small ↗ cue as the public pages. */
+a[href] > .page-link-arrow{
+ display:inline-block;
+ margin-left:.35em;
+ font-size:1.04em;
+ font-weight:900;
+ text-decoration:none;
+}

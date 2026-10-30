@@ -1485,3 +1485,26 @@ body[data-page="home"] main.home-page .home-lead .next-card{
 body[data-page="home"] main.home-page .home-days-section .home-day-link{
  border-color:rgba(176,212,228,.92)!important;
 }
+
+/* Page-link direction cue: arrows are decorative and keep link labels concise. */
+a[href] > .page-link-arrow{
+ display:inline-block;
+ flex:0 0 auto;
+ margin-left:.35em;
+ font-size:1.04em;
+ font-weight:900;
+ line-height:1;
+ vertical-align:baseline;
+ text-decoration:none;
+}
+.site-header .site-menu nav a > .page-link-arrow,
+.home-quick-links a > .page-link-arrow{
+ margin-left:auto;
+ padding-left:5px;
+}
+/* No drop shadow on the Hokkaido trip hero title or its year. */
+body[data-page="home"] main.home-page .home-lead .home-lead-copy h1,
+body[data-page="home"] main.home-page .home-lead .home-lead-copy h1 span{
+ text-shadow:none!important;
+ filter:none!important;
+}

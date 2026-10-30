@@ -354,7 +354,7 @@
   updateMenu();
   // Optional approved-photo decoration for public informational pages only.
   void (async()=>{
-    await css('photo-ambient.css','20261030-ipad-photo-v1');
+    await css('photo-ambient.css','20261031-shadowless-title-v1');
     if(typeof window.HOKKAIDO_NEWS_API_URL!=='string')
       await js('admin-config.js','20261021-worker-connected-1');
     await js('photo-ambient.js','20261030-ipad-photo-v1');
