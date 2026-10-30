@@ -1,8 +1,8 @@
 # 管理者共通パスワード・お知らせ投稿機能の有効化
 
 ## 状態
-サイトには [admin.html](../admin.html)（お知らせ新規投稿のみ）を追加済みです。
-**認証／保存サーバーを未接続のため、ログインはまだ利用できません。**
+サイトには [admin.html](../admin.html) があり、お知らせ投稿と写真承認に共通の管理者ログインを使います。
+**最新版のセキュリティ変更を有効にするには、[SECURITY-DEPLOY.md](SECURITY-DEPLOY.md) に従って既存Workerを更新してください。**
 このフォルダーにある Cloudflare Worker + D1 を管理担当者が一度だけ設定すると使えます。
 
 ## なぜ外部サーバーが必要？
@@ -36,7 +36,7 @@ Worker のURL以外のリソースや権限をブラウザで設定する必要�
 `workers.dev` 以外の独自ドメインを使用する場合は、`admin.html` と `index.html` の CSP `connect-src` にその HTTPS ドメインを追加してください。
 
 ## 管理者ができること
-- 共通パスワードでログイン（2時間有効、ページを閉じるとログイン状態は破棄）
+- 共通パスワード＋Cloudflare Turnstileでログイン（30分有効、ページを閉じるとログイン状態は破棄）
 - **新しいお知らせを追加することだけ**
 - タイトル2〜120文字、本文1〜1500文字、重要フラグ
 - 投稿は自動的に日本時間の日付となり、トップページの最新表示・過去履歴へ追加
@@ -48,7 +48,7 @@ Cloudflareアカウントの所有者には基盤の管理権限が残ります�
 ## セキュリティ
 - パスワードは Worker Secret に保持し、GitHub Pages や公開リポジトリには含めない。
 - ログインに5回失敗すると、その送信元からの試行を15分間停止（D1にIPのハッシュのみ記録）。
-- HTTPS / サイトOrigin検証 / 署名付き有効期限2時間のトークン / 文字数制限。
+- HTTPS / サイトOrigin検証 / 署名付き有効期限30分のトークン / 文字数制限。
 - ログイン状態はメモリーにのみ保存。localStorage、Cookie、GitHubリポジトリにセッションを書き込まない。
 - 端末や他人と共有するパスワードなので、離任者が出たら `ADMIN_PASSWORD` を変更する。既存セッションも直ちに無効化するには `SESSION_SECRET` も変更する。
 - 適宜CloudflareのWAF／レート制限を追加することを推奨。
@@ -66,3 +66,7 @@ Cloudflare の料金・無料枠・制限・必要条件は契約プランおよ
 - https://developers.cloudflare.com/d1/get-started/
 - https://developers.cloudflare.com/d1/worker-api/
 - https://developers.cloudflare.com/workers/configuration/secrets/
+
+## 2026-10-30 セキュリティ更新
+
+管理者ログインでも既存Turnstile Site key（公開）と `TURNSTILE_SECRET`（Worker Secret）が必須です。CloudflareのWorkerとGitHub Pagesは別々に公開されるため、[SECURITY-DEPLOY.md](SECURITY-DEPLOY.md) を読んでAPI側も更新してください。
