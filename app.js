@@ -444,7 +444,7 @@ function renderNextScheduleDetail(host,events,now,upcoming,current){
   summary.append(row);
   if(event.note)summary.append(node('p','home-next-note',event.note));
   const actions=node('div','home-next-actions');
-  const open=node('a','home-next-primary-link','この日の行程表を詳しく見る ↗');
+  const open=node('a','home-next-primary-link','この行程表を詳しく');
   open.href=link;
   actions.append(open,node('span','home-next-guidance','集合場所・時刻は学校の最新案内を優先してください。'));
   summary.append(actions);

@@ -51,8 +51,8 @@
       return link;
     };
     photoActions.append(
-      makeAction('photos-post.html','＋ 写真を投稿','home-photo-floating-post'),
-      makeAction('photos.html','アルバムを見る ↗','home-photo-floating-album')
+      makeAction('photos-post.html','投稿','home-photo-floating-post'),
+      makeAction('photos.html','アルバム','home-photo-floating-album')
     );
     document.body.append(photoActions);
   }
