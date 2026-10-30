@@ -104,3 +104,7 @@ GitHubの `admin-backend/src/index.js` の**全文**をコード編集画面に�
 - ストレージ不足：D1の容量を確認し、不要な写真は管理者画面から掲載取り消しするか、上限内に写真を収める。
 
 公式情報：https://developers.cloudflare.com/d1/platform/limits/
+
+## 2026年10月30日：管理者ログインの安全確認
+
+Turnstile Site keyとSecret keyを写真投稿・管理者ログインの双方で使用します。管理者ログイン時には `admin_login` アクションをサーバーで照合します。GitHub Pagesの変更だけではAPIの認証は更新されないため、最新版の `src/index.js` をCloudflare Workerに反映してください。詳しくは [SECURITY-DEPLOY.md](SECURITY-DEPLOY.md)。
