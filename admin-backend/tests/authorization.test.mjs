@@ -95,11 +95,22 @@ test('photo submissions require server-verified Turnstile, not just an enabled b
 test('an authenticated administrator can still create a new announcement', async () => {
   const db = fakeDB();
   const env = makeEnv(db);
-  const login = await worker.fetch(request('/api/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password: env.ADMIN_PASSWORD })
-  }), env);
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url, options) => {
+    assert.equal(String(url), 'https://challenges.cloudflare.com/turnstile/v0/siteverify');
+    assert.equal(options.body.get('response'), 'admin-valid-token');
+    return Response.json({ success: true, hostname: 'ban-ikura.github.io', action: 'admin_login' });
+  };
+  let login;
+  try {
+    login = await worker.fetch(request('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: env.ADMIN_PASSWORD, turnstile_token: 'admin-valid-token' })
+    }), env);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
   assert.equal(login.status, 200);
   const { token } = await login.json();
   const post = await worker.fetch(request('/api/announcements', {
@@ -142,5 +153,99 @@ test('a normal photo submission remains permitted with valid Turnstile', async (
     assert.ok(db.writes.includes('PHOTO_BATCH:2'));
   } finally {
     globalThis.fetch = originalFetch;
+  }
+});
+
+test('password alone cannot log in without a server-verified challenge', async () => {
+  const env=makeEnv();
+  const response=await worker.fetch(request('/api/login',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({password:env.ADMIN_PASSWORD})
+  }),env);
+  assert.equal(response.status,403);
+  assert.equal((await response.json()).token,undefined);
+});
+
+test('a challenge for photo upload is not valid for administrator login', async () => {
+  const env=makeEnv();
+  const originalFetch=globalThis.fetch;
+  globalThis.fetch=async()=>Response.json({
+    success:true,hostname:'ban-ikura.github.io',action:'photo_upload'
+  });
+  try{
+    const response=await worker.fetch(request('/api/login',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({password:env.ADMIN_PASSWORD,turnstile_token:'admin-valid-token'})
+    }),env);
+    assert.equal(response.status,403);
+  }finally{globalThis.fetch=originalFetch}
+});
+
+test('cross-origin requests cannot obtain an administrator session', async () => {
+  const env=makeEnv();
+  const response=await worker.fetch(request('/api/login',{
+    method:'POST',headers:{Origin:'https://untrusted.example','Content-Type':'application/json'},
+    body:JSON.stringify({password:env.ADMIN_PASSWORD,turnstile_token:'admin-valid-token'})
+  }),env);
+  assert.equal(response.status,403);
+  assert.equal(response.headers.get('Access-Control-Allow-Origin'),null);
+});
+
+test('oversized JSON bodies are rejected even without Content-Length', async () => {
+  const env=makeEnv();
+  const response=await worker.fetch(request('/api/login',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({password:'x'.repeat(10000),turnstile_token:'admin-valid-token'})
+  }),env);
+  assert.equal(response.status,400);
+});
+
+test('oversized multipart uploads are rejected before parsing', async () => {
+  const env=makeEnv();
+  const form=new FormData();
+  form.append('turnstile_token','admin-valid-token');
+  form.append('image',new Blob([new Uint8Array(450000)],{type:'image/webp'}),'over.webp');
+  const response=await worker.fetch(request('/api/photos/submissions',{
+    method:'POST',body:form
+  }),env);
+  assert.equal(response.status,413);
+  assert.equal(env.DB.writes.length,0);
+});
+
+test('API responses prohibit content sniffing and inline document execution', async () => {
+  const response=await worker.fetch(request('/api/announcements'),makeEnv());
+  assert.equal(response.status,200);
+  assert.equal(response.headers.get('X-Content-Type-Options'),'nosniff');
+  assert.match(response.headers.get('Content-Security-Policy'),/default-src 'none'/);
+  assert.equal(response.headers.get('Cache-Control'),'no-store');
+});
+
+test('admin sessions expire within thirty minutes', async () => {
+  const env=makeEnv();
+  const originalFetch=globalThis.fetch;
+  const originalNow=Date.now;
+  const at=originalNow();
+  globalThis.fetch=async()=>Response.json({
+    success:true,hostname:'ban-ikura.github.io',action:'admin_login'
+  });
+  try{
+    Date.now=()=>at;
+    const login=await worker.fetch(request('/api/login',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({password:env.ADMIN_PASSWORD,turnstile_token:'admin-valid-token'})
+    }),env);
+    assert.equal(login.status,200);
+    const {token,expires_at}=await login.json();
+    assert.ok(expires_at-Math.floor(at/1000)<=1800);
+    Date.now=()=>at+31*60*1000;
+    const response=await worker.fetch(request('/api/announcements',{
+      method:'POST',
+      headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+      body:JSON.stringify({title:'expired',body:'denied',important:false})
+    }),env);
+    assert.equal(response.status,401);
+  }finally{
+    globalThis.fetch=originalFetch;
+    Date.now=originalNow;
   }
 });
