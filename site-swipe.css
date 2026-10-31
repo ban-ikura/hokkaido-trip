@@ -1682,3 +1682,57 @@ body[data-page="home"] main.home-page .home-days-section .home-day-text strong{
   min-height:0!important;
  }
 }
+
+
+/* Text-free hamburger menu. Keep the entire 46px tap target accessible,
+   but remove the button's visible pill, label and borders. */
+.site-header .site-menu .menu-trigger{
+ box-sizing:border-box;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ flex:0 0 46px;
+ width:46px;
+ min-width:46px;
+ height:46px;
+ min-height:46px;
+ padding:0;
+ gap:0;
+ border:0;
+ border-radius:0;
+ background:transparent;
+ color:var(--page-ink);
+ box-shadow:none;
+ -webkit-tap-highlight-color:transparent;
+}
+.site-header .site-menu .menu-trigger:hover,
+.site-header .site-menu[open] .menu-trigger{
+ border:0;
+ background:transparent;
+ box-shadow:none;
+}
+.site-header .site-menu .hamburger{
+ width:26px;
+ height:24px;
+ gap:5px;
+ align-items:center;
+ justify-content:center;
+}
+.site-header .site-menu .hamburger i{
+ width:26px;
+ height:2px;
+ flex:0 0 2px;
+ border-radius:3px;
+ background:#173747;
+}
+.site-header .site-menu[open] .hamburger i:first-child{
+ transform:translateY(7px) rotate(45deg);
+}
+.site-header .site-menu[open] .hamburger i:last-child{
+ transform:translateY(-7px) rotate(-45deg);
+}
+.site-header .site-menu .menu-trigger:focus-visible{
+ outline:2px solid #4196b2;
+ outline-offset:1px;
+ border-radius:7px;
+}
