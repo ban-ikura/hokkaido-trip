@@ -1508,3 +1508,42 @@ body[data-page="home"] main.home-page .home-lead .home-lead-copy h1 span{
  text-shadow:none!important;
  filter:none!important;
 }
+
+/* Bold editorial homepage headline: enlarge the title, not the header logo.
+   A natural break after 北海道 prevents clipping on narrow screens. */
+body[data-page="home"] main.home-page .home-lead .home-lead-copy h1{
+ font-family:var(--trip-pop-font)!important;
+ font-weight:900!important;
+ line-height:1.06!important;
+ letter-spacing:-.088em!important;
+ text-shadow:none!important;
+ filter:none!important;
+ max-width:100%;
+ overflow-wrap:normal;
+ word-break:keep-all;
+}
+body[data-page="home"] main.home-page .home-lead .home-lead-copy h1 span{
+ font-size:.34em!important;
+ letter-spacing:.12em!important;
+ line-height:1.15!important;
+ margin-top:15px;
+ text-shadow:none!important;
+}
+@media(min-width:900px){
+ body[data-page="home"] main.home-page .home-lead .home-lead-copy h1{
+  font-size:clamp(70px,8vw,112px)!important;
+ }
+}
+@media(min-width:681px) and (max-width:899px){
+ body[data-page="home"] main.home-page .home-lead .home-lead-copy h1{
+  font-size:clamp(68px,10.8vw,88px)!important;
+  max-width:min(100%,480px);
+ }
+}
+@media(max-width:680px){
+ body[data-page="home"] main.home-page .home-lead .home-lead-copy h1{
+  font-size:clamp(56px,15.4vw,78px)!important;
+  max-width:min(100%,350px);
+  line-height:1.09!important;
+ }
+}
