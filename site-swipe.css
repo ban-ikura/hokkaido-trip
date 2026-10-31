@@ -1547,3 +1547,118 @@ body[data-page="home"] main.home-page .home-lead .home-lead-copy h1 span{
   line-height:1.09!important;
  }
 }
+
+/* First-screen itinerary: always visible in the opening hero, even before JS.
+   Four compact day links complement the large title without hiding the photo. */
+body[data-page="home"] .home-first-days{
+ width:100%;
+ max-width:100%;
+ min-width:0;
+ margin:12px 0 14px;
+}
+body[data-page="home"] .home-first-days-title{
+ display:inline-block;
+ padding:4px 9px;
+ background:rgba(20,62,82,.9);
+ border-radius:6px;
+ margin:0 0 10px;
+ color:#fff;
+ font-family:var(--trip-pop-font);
+ font-size:clamp(14px,1.5vw,17px);
+ font-weight:900;
+ letter-spacing:.01em;
+ line-height:1.35;
+ text-shadow:none;
+}
+body[data-page="home"] .home-first-days-grid{
+ display:grid;
+ grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:7px;
+ width:100%;
+}
+body[data-page="home"] .home-first-days-link{
+ position:relative;
+ display:flex;
+ flex-direction:column;
+ justify-content:center;
+ gap:4px;
+ min-width:0;
+ min-height:70px;
+ padding:9px 24px 9px 10px;
+ border:1px solid var(--purpose-trip-border,#b8d7e7);
+ border-radius:9px;
+ background:rgba(237,247,252,.94);
+ color:var(--purpose-trip-ink,#20546e);
+ text-decoration:none;
+ box-shadow:0 3px 12px rgba(10,37,53,.10);
+ transition:background-color .15s,border-color .15s;
+}
+body[data-page="home"] .home-first-days-link small{
+ display:block;
+ font-size:10px;
+ font-weight:800;
+ white-space:nowrap;
+ color:#466d80;
+}
+body[data-page="home"] .home-first-days-link strong{
+ display:block;
+ font-size:clamp(11px,1.1vw,13px);
+ line-height:1.35;
+ font-weight:900;
+ overflow-wrap:anywhere;
+}
+body[data-page="home"] .home-first-days-link > span[aria-hidden="true"]{
+ position:absolute;
+ top:9px;
+ right:9px;
+ font-size:13px;
+ font-weight:900;
+}
+body[data-page="home"] .home-first-days-link:hover{
+ background:var(--purpose-trip-hover,#d7eaf5);
+ border-color:#8cbed6;
+}
+body[data-page="home"] .home-first-days-link:focus-visible{
+ outline:3px solid #6bc4e7;
+ outline-offset:3px;
+}
+@media(max-width:899px){
+ body[data-page="home"] .home-first-days{
+  margin-top:8px;
+  margin-bottom:12px;
+ }
+ body[data-page="home"] .home-first-days-title{
+  font-size:14px;
+  margin-bottom:8px;
+ }
+ body[data-page="home"] .home-first-days-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:7px;
+ }
+ body[data-page="home"] .home-first-days-link{
+  min-height:60px;
+  padding:8px 22px 8px 10px;
+ }
+ body[data-page="home"] .home-first-days-link strong{font-size:12px}
+}
+@media(max-width:360px){
+ body[data-page="home"] .home-first-days-grid{gap:6px}
+ body[data-page="home"] .home-first-days-link{
+  min-height:56px;
+  padding:7px 20px 7px 8px;
+ }
+ body[data-page="home"] .home-first-days-link small{font-size:9px}
+ body[data-page="home"] .home-first-days-link strong{font-size:11px}
+ body[data-page="home"] .home-first-days-link > span[aria-hidden="true"]{right:7px}
+}
+@media(prefers-reduced-motion:reduce){
+ body[data-page="home"] .home-first-days-link{transition:none}
+}
+@media print{
+ body[data-page="home"] .home-first-days-title{color:#173747}
+ body[data-page="home"] .home-first-days-link{
+  background:#fff;
+  color:#173747;
+  box-shadow:none;
+ }
+}
