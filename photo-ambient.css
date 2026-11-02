@@ -680,7 +680,7 @@ body[data-page="home"] .home-next-later-item{
 }
 body[data-page="home"] .home-next-later-link{
  display:grid;grid-template-columns:53px minmax(0,1fr) 15px;
- gap:9px;align-items:center;padding:15px 1px;
+ gap:9px;align-items:center;padding:15px 12px;
  text-decoration:none;color:#173a4d;
 }
 body[data-page="home"] .home-next-later-link:hover{
