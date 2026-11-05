@@ -9,6 +9,12 @@
   const publishButton=document.querySelector('#publish-button');
   const passwordInput=document.querySelector('#admin-password');
   const loginStatus=document.querySelector('#login-status');
+  const loginRickroll=document.querySelector('#login-rickroll');
+  let wrongPasswordCount=0;
+  function resetLoginEasterEgg(){
+    wrongPasswordCount=0;
+    loginRickroll.hidden=true;
+  }
   const postStatus=document.querySelector('#post-status');
   const setupStatus=document.querySelector('#setup-status');
   const publishedLink=document.querySelector('#published-link');
@@ -79,6 +85,7 @@
     element.dataset.kind=type||'';
   }
   function showLogin(message,type){
+    resetLoginEasterEgg();
     accessToken='';expiresAt=0;
     resetChallenge();
     passwordInput.value='';
@@ -93,6 +100,7 @@
     switchManagementTab('news');
   }
   function showPost(){
+    resetLoginEasterEgg();
     passwordInput.value='';
     loginPanel.hidden=true;
     postPanel.hidden=false;
@@ -138,7 +146,17 @@
       expiresAt=data.expires_at;
       showPost();
     }catch(error){
-      status(loginStatus,error instanceof TypeError?'接続できません。管理担当者に認証サーバーの設定を確認してください。':error.message,'error');
+      // Count only genuine wrong-password responses, never captcha,
+      // network, server or rate-limit errors.
+      if(error.status===401){
+        wrongPasswordCount++;
+        if(wrongPasswordCount>=3)loginRickroll.hidden=false;
+      }
+      const message=error instanceof TypeError?
+        '接続できません。管理担当者に認証サーバーの設定を確認してください。':
+        error.message;
+      status(loginStatus,wrongPasswordCount>=3&&error.status===401?
+        message+' 本当に管理者ですか？':message,'error');
     }finally{
       passwordInput.value='';
       resetChallenge();
