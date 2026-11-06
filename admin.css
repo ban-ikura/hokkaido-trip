@@ -387,28 +387,3 @@ a[href] > .page-link-arrow{
  font-weight:900;
  text-decoration:none;
 }
-
-
-/* Playful third-failure link. Never changes authentication or its rate limit. */
-#login-panel .login-rickroll{
- margin:6px 0 13px;
- padding:10px 13px;
- border-left:3px solid #7daaba;
- border-radius:7px;
- background:#edf5f8;
- color:#355b6d;
- font-size:12px;
- font-weight:750;
- line-height:1.7;
-}
-#login-panel .login-rickroll a{
- color:#175e80;
- font-weight:900;
- text-decoration:underline;
- text-underline-offset:3px;
-}
-#login-panel .login-rickroll a:hover{color:#0d405a}
-#login-panel .login-rickroll a:focus-visible{
- outline:2px solid #368db0;
- outline-offset:3px;
-}

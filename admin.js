@@ -9,11 +9,10 @@
   const publishButton=document.querySelector('#publish-button');
   const passwordInput=document.querySelector('#admin-password');
   const loginStatus=document.querySelector('#login-status');
-  const loginRickroll=document.querySelector('#login-rickroll');
+  const rickrollUrl='https://www.youtube.com/watch?v=dQw4w9WgXcQ';
   let wrongPasswordCount=0;
   function resetLoginEasterEgg(){
     wrongPasswordCount=0;
-    loginRickroll.hidden=true;
   }
   const postStatus=document.querySelector('#post-status');
   const setupStatus=document.querySelector('#setup-status');
@@ -146,17 +145,21 @@
       expiresAt=data.expires_at;
       showPost();
     }catch(error){
-      // Count only genuine wrong-password responses, never captcha,
-      // network, server or rate-limit errors.
+      // Redirect only after three consecutive incorrect passwords.
+      // Captcha, network, rate-limit and server errors are not password failures.
       if(error.status===401){
         wrongPasswordCount++;
-        if(wrongPasswordCount>=3)loginRickroll.hidden=false;
+        if(wrongPasswordCount>=3){
+          passwordInput.value='';
+          window.location.assign(rickrollUrl);
+          return;
+        }
+      }else{
+        wrongPasswordCount=0;
       }
-      const message=error instanceof TypeError?
+      status(loginStatus,error instanceof TypeError?
         '接続できません。管理担当者に認証サーバーの設定を確認してください。':
-        error.message;
-      status(loginStatus,wrongPasswordCount>=3&&error.status===401?
-        message+' 本当に管理者ですか？':message,'error');
+        error.message,'error');
     }finally{
       passwordInput.value='';
       resetChallenge();
