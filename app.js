@@ -500,8 +500,9 @@ function renderNextSchedule(){
   const bottom=node('div','next-bottom');bottom.append(node('span','next-course',event.course));
   bottom.append(node('span','next-jump','行程表 ↗'));box.append(bottom);
 }
-const packingList=['学生証・学校指定の書類','財布・現金','スマートフォン','充電器・モバイルバッテリー','着替え・下着・靴下','防寒着・手袋・帽子','滑りにくい靴','洗面用具・タオル','常備薬（必要な人）','筆記用具・旅行のしおり','スキー用品・防寒小物（該当者）','その他学校指定の持ち物'];
-const checklistKey='hokkaido26-checklist-public-v3';
+// 2026-11-15 しおり5ページの「必須」「任意」を順番どおりに反映。
+const packingList=["【必須】学生証","【必須】荷物用リュック","【必須】観光用リュック","【必須】着替え（4泊分＋予備）","【必須】パジャマ（3泊分）","【必須】靴下・厚め（3日分＋予備）","【必須】下着（3泊分＋予備）","【必須】雪に対応する防寒上着","【必須】常備薬（必要な人）","【必須】生理用品（必要な人）","【必須】スマートフォン","【必須】現金（非常時用を含む）","【必須】筆記用具","【必須】折り畳み傘","【必須】ビニール袋","【必須】タオル","【必須】ハンカチ","【必須】マイナンバーカード（原本／取扱いは学校に確認）","【必須】コンタクト・眼鏡（必要な人）","【任意】腕時計","【任意】カイロ","【任意】イヤホン","【任意】ウェットティッシュ","【任意】日焼け止め","【任意】ドライヤー（持参可否要確認）","【任意】マスク","【任意】ヘアアイロン（持参可否要確認）","【任意】モバイルバッテリー（しおりでは2個まで／航空会社規定を確認）"];
+const checklistKey='hokkaido26-checklist-booklet-v4';
 function renderChecklist(){
   const host=$('#checklist-root');if(!host)return;
   let checks=[];try{checks=JSON.parse(getStored(checklistKey)||'[]');if(!Array.isArray(checks))checks=[]}catch(_){checks=[]}
