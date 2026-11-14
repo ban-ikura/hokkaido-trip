@@ -72,15 +72,6 @@ const venuePhotos = {
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
     "year": "2026年"
   },
-  "beer": {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/9/90/Sapporo_beer_garden.jpg",
-    "label": "サッポロビール園",
-    "source": "https://commons.wikimedia.org/wiki/File:Sapporo_beer_garden.jpg",
-    "author": "Nissy-KITAQ",
-    "license": "CC BY-SA 3.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
-    "year": "2006年"
-  },
   "asahiyama": {
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Asahiyama_Memorial_Park.jpg/960px-Asahiyama_Memorial_Park.jpg",
     "label": "旭山記念公園",
@@ -204,7 +195,6 @@ function getPhotoKey(title){
  if(/洞爺湖/.test(title))return 'lake';
  if(/地獄谷|登別/.test(title))return 'jigokudani';
  if(/白い恋人/.test(title))return 'shiroi';
- if(/サッポロビール園|札幌ビール園/.test(title))return 'beer';
  if(/旭山記念/.test(title))return 'asahiyama';
  if(/ニューオータニイン/.test(title))return 'newotani';
  if(/新千歳空港/.test(title))return 'airport';
@@ -835,4 +825,4 @@ const days=dayRows.map(day=>({
 // 画像CDNが利用できない環境向けの、ファイルに依存しない風景イメージ。
 // 実際のホテル・観光地の写真ではありません（画面でも明示）。
 const offlineSceneData = {};
-const offlineSceneForVenue = {"airport":"landscape","otaru":"forest","glass":"sunrise","music":"sunrise","hilton":"mountains","niseko":"mountains","lake":"landscape","jigokudani":"mountains","shiroi":"sunrise","beer":"forest","asahiyama":"landscape","newotani":"sunrise"};
+const offlineSceneForVenue = {"airport":"landscape","otaru":"forest","glass":"sunrise","music":"sunrise","hilton":"mountains","niseko":"mountains","lake":"landscape","jigokudani":"mountains","shiroi":"sunrise","asahiyama":"landscape","newotani":"sunrise"};
