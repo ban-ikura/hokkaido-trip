@@ -12,10 +12,12 @@
   <link rel="icon" type="image/png" href="hokkaido-island-logo.png">
   <link rel="stylesheet" href="style.css?v=20261023-focus-v2">
   <link rel="stylesheet" href="allergy-link.css?v=20261022-clickable-docs-2">
+  <link rel="stylesheet" href="allergy-index.css?v=20261115-v1">
   <title>宿泊・食事 | 北海道研修旅行 2026</title>
   <script src="trip-data.js?v=20261026-niseko-thumb-v2" defer></script>
   <script src="app.js?v=20261030-clear-ui-v1" defer></script>
   <script src="allergy-link.js?v=20261022-2" defer></script>
+  <script src="allergy-index.js?v=20261115-v1" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800;900&amp;display=swap">
@@ -55,7 +57,11 @@
 <article class="info-card span-2" id="hotel-facilities"><div class="card-number">しおり13ページ / ヒルトン館内施設</div><h2>館内設備・客室アメニティ</h2><div class="two-info"><div><b>館内施設</b><ul class="clear-list"><li>総客室数500、学生受け入れ可能人数1,500名、基本客室タイプは洋室（4名）</li><li>客室ドアはオートロック、マスターキーは使用不可</li><li>食事会場3箇所（掲載可能人数：420名／160名／100名）</li><li>エレベーター5基（各20名）、売店・宅配便あり</li><li>AED設置あり、ゲームコーナーなし、館内放送使用不可</li><li>自動販売機：ジュースあり、酒類・たばこなし</li><li>夕食時の水筒回収〜翌朝の受渡しは不可</li></ul></div><div><b>客室にあるもの・ないもの</b><ul class="clear-list"><li>あり：テレビ、電話（外線・内線）、空の冷蔵庫、石鹸、歯ブラシ、フェイスタオル、バスタオル、シャンプー、お茶セット、金庫</li><li>なし：寝具（ゆかた等）、有料チャンネル、貴重品袋、インターネット（Wi-Fi）</li></ul><p class="muted small">しおりの施設・備品表の記載です。実際の利用条件はホテル・学校の最新説明を確認してください。</p></div></div></article>
 <article class="info-card span-2" id="hotel-rules"><div class="card-number">しおり14ページ</div><h2>ホテルで守ること</h2><ul class="clear-list"><li>ホテル内の備品は丁寧に扱い、破損しないようにする。</li><li>非常口をあらかじめ確認する。</li><li>講習へ行く際は部屋の鍵を必ずツアーデスクへ返す。</li><li>スリッパはホテルの部屋でのみ使用する。</li><li>夕食・朝食は各部屋ごとに一緒に移動する。</li><li>お風呂は各部屋で入浴する。生徒は大浴場を使えない。</li><li>22:00就寝。それ以降は部屋の外へ出ず、別の部屋へ移動しない。</li><li>ツアーデスクのホワイトボードに記載される情報を自分で確認する。</li></ul></article>
 <article class="info-card span-2" id="room-memo"><div class="card-number">しおり11ページ / 個人用メモ</div><h2>自分の部屋番号・飛行機のメモ</h2><p>しおりと同様に、本人が書き込める空欄です。氏名・部屋割り名簿は公開していません。</p><p><label>1・2日目：ヒルトンニセコビレッジ　部屋番号 <input type="text" maxlength="12" autocomplete="off" aria-label="1・2日目の部屋番号"></label></p><p><label>3日目：ニューオータニイン札幌　部屋番号 <input type="text" maxlength="12" autocomplete="off" aria-label="3日目の部屋番号"></label></p><p><label>行き飛行機の座席 <input type="text" maxlength="24" autocomplete="off" aria-label="行き飛行機の座席"></label>　<label>帰り飛行機の座席 <input type="text" maxlength="24" autocomplete="off" aria-label="帰り飛行機の座席"></label></p><p class="muted small">入力内容は送信・保存されません。画面を閉じると消えるので、必要なことは手元のしおりへ記入してください。</p></article>
-<article class="info-card span-2 allergy-card"><h2>食事・アレルギー</h2><p class="muted small">今回のしおりには食事メニュー・アレルギーの詳細は掲載されていません。以下は別途公開されていた参考資料であり、最新の献立を保証するものではありません。</p>
+<article class="info-card span-2 allergy-card" id="allergy"><h2>アレルギー別・該当料理一覧</h2>
+<p class="allergy-index-explanation">「卵」「小麦」「ピーナッツ」などの<strong>アレルギー項目を選ぶと、参考資料に該当する食事・料理名</strong>をまとめて確認できます。料理ごとにPDFの原表へ移動できます。</p>
+<div class="allergy-index-alert"><strong>提供日・献立は未確定です</strong><p>ヒルトンの夕食A/B・朝食A/B、ニューオータニの朝食A/Bが何日目に提供されるかは資料から確定できません。たとえば「2日目朝食のフレンチトースト」「ピーナッツを含む料理」とは確認できないため、記載していません。<strong>表示のない料理も安全とは限りません。</strong>実際の提供内容、原材料の変更・交差接触は学校とホテルへ確認してください。</p></div>
+<div id="allergy-index-root"><p>アレルギー項目別の一覧を読み込んでいます。表示できない場合は以下の原表PDFをご確認ください。</p></div>
+<h3>元の食事・アレルギー成分表</h3><p class="muted small">しおりVer3に献立・詳細なアレルギー表はないため、以下の別途提供された6ページの参考資料を利用しています。資料の一部は2024〜2026年版で、2026年12月の確定献立ではありません。</p>
   <a id="allergy-pdf-link" class="allergy-pdf-link" href="hokkaido_allergy_guide.pdf" target="_blank" rel="noopener noreferrer" type="application/pdf" hidden><span class="allergy-pdf-icon" aria-hidden="true">PDF</span><span class="allergy-pdf-label"><strong>アレルギー資料（PDF）</strong><small>夕食A・B、昼食、札幌の朝食／全6ページ</small></span><span class="allergy-pdf-arrow" aria-hidden="true">↗</span></a>
   <p id="allergy-pdf-status" class="allergy-pdf-status" role="status">PDF資料を確認しています…</p>
   <div class="attention"><strong>アレルギーのある生徒へ</strong><p>料理名や写真のみで判断せず、原材料・交差接触・メニュー変更について学校とホテルの最新案内を必ず確認してください。</p></div>
