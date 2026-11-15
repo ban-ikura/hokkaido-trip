@@ -173,6 +173,7 @@
       await css('home-video.css','20261023-compact-toggle-v2');
     }
     if(name==='stay.html')await css('allergy-link.css','20261022-clickable-docs-2');
+    if(name==='stay.html')await css('allergy-index.css','20261115-v1');
   }
 
   async function hydrate(name,item,returning){
@@ -197,8 +198,10 @@
           window.HOKKAIDO_REFRESH_HOME_PHOTOS?.();
         }
       }
-      if(name==='stay.html'&&!item.ready)
+      if(name==='stay.html'&&!item.ready){
         await js('allergy-link.js','20261022-2');
+        await js('allergy-index.js','20261115-v1');
+      }
     }
     item.ready=true;
   }
