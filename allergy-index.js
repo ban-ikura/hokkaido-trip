@@ -2,44 +2,101 @@
 (()=>{'use strict';
 const RAW=[{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"道産ポークスペアリブ炙り焼き","allergens":["小麦","ごま","大豆","りんご","豚肉"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"北海道ザンギ","allergens":["小麦","卵","大豆","鶏肉"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"道産ポテトのジャーマン風","allergens":["乳","豚肉"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"ジンギスカン焼うどん","allergens":["小麦","大豆","もも","鶏肉","りんご","羊肉"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"じゃがバター","allergens":["乳"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"サスティナブルフィッシュのちゃんちゃん焼き風","allergens":["小麦","大豆","ほたて","魚（赤魚）"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"道産チーズのピッツァマルゲリータ","allergens":["小麦","乳","大豆"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"醤油（グルテンフリー）","allergens":["大豆"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"焙煎胡麻ドレッシング","allergens":["卵","小麦","ごま","大豆"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"豆サラダ","allergens":["小麦","ごま","大豆"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"ラーメンサラダ","allergens":["小麦","卵","ごま"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"石狩汁","allergens":["さけ","大豆","豚肉"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"北海道スープカレー","allergens":["小麦","大豆","鶏肉","豚肉","りんご"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"カボチャプリン","allergens":["乳","大豆","ゼラチン"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"ショコラードパリ","allergens":["乳","卵","小麦","ゼラチン","大豆"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"ストロベリームース","allergens":["乳","卵","小麦","ゼラチン","大豆"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"北海道メロンロールケーキ","allergens":["乳","卵","小麦","ゼラチン","大豆"]},{"id":"dinnerA","meal":"ヒルトン・夕食A","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":1,"dish":"杏仁豆腐","allergens":["乳","大豆","もも"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"スクランブルエッグ","allergens":["卵","乳","大豆"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"ソーセージ","allergens":["豚肉","牛肉"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"チキン団子の甘酢あんかけ","allergens":["小麦","卵","ごま","大豆","鶏肉"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"スパゲティーナポリタン","allergens":["小麦","乳","大豆","豚肉"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"さばの塩焼き","allergens":["さば","大豆"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"じゃがいもコロッケ","allergens":["小麦","卵","乳","大豆"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"おろし醤油ドレッシング","allergens":["小麦","大豆"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"かぼちゃサラダ","allergens":["大豆"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"クロワッサン","allergens":["卵","小麦","乳","大豆"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"バター","allergens":["乳"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"味噌汁","allergens":["大豆","豚肉"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"ひじき炒め煮","allergens":["小麦","大豆"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"小松菜お浸し","allergens":["小麦","大豆"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"納豆（たれ・からしを含む）","allergens":["小麦","大豆","りんご","さば"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"醤油（グルテンフリー）","allergens":["大豆"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"焼きたてパンケーキ","allergens":["小麦","乳","大豆","卵"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"チョコレートソース","allergens":["乳"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"オレンジジュース","allergens":["オレンジ"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"アップルジュース","allergens":["りんご"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"グレープフルーツジュース","allergens":["グレープフルーツ"]},{"id":"breakfastA","meal":"ヒルトン・朝食A","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":2,"dish":"牛乳","allergens":["乳"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"豚肉の生姜焼き","allergens":["小麦","大豆","豚肉"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"チキンのカチャトーラ","allergens":["鶏肉"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"道産ポテトのチーズ焼","allergens":["小麦","卵","乳","大豆"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"スパゲティーカルボナーラ","allergens":["卵","乳","小麦","大豆","鶏肉","豚肉"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"水ギョーザ","allergens":["小麦","卵","乳","ごま","大豆","鶏肉","豚肉","ゼラチン"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"サスティナブルフィッシュのフィッシュフリッター","allergens":["小麦","魚（たら）"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"皮付きポテトフライ","allergens":["小麦"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"タルタルソース","allergens":["小麦","卵","大豆"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"グルテンフリー醤油","allergens":["大豆"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"和風しょうゆ胡麻ドレッシング","allergens":["小麦","大豆","ごま"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"春雨サラダ","allergens":["小麦","ごま","大豆"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"バンバンジーサラダ","allergens":["鶏肉"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"バンバンジーサラダ用タレ","allergens":["卵","小麦","ごま","大豆"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"ポテトスープ","allergens":["大豆"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"ホテル特製キーマカレー","allergens":["鶏肉"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"オレンジゼリー","allergens":["オレンジ","ゼラチン"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"ラズベリーシャンティ","allergens":["乳","卵","小麦","ゼラチン","大豆"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"レアチーズケーキ","allergens":["乳","卵","小麦","ゼラチン","大豆"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"抹茶ロールケーキ","allergens":["乳","卵","小麦","ゼラチン","大豆"]},{"id":"dinnerB","meal":"ヒルトン・夕食B","when":"1・2日目の夕食候補／A・Bの割当日未確認","page":3,"dish":"杏仁豆腐","allergens":["乳","大豆","もも"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"ベーコン","allergens":["豚肉"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"照り焼きソースハンバーグ","allergens":["小麦","乳","牛肉","大豆","鶏肉","豚肉","りんご"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"焼きそば","allergens":["えび","小麦","大豆","鶏肉","豚肉","もも","りんご"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"サスティナブルフィッシュ 鮭の塩焼き","allergens":["さけ"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"コーンクリームコロッケ","allergens":["小麦","乳","大豆","鶏肉","ゼラチン"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"厚焼き玉子","allergens":["小麦","卵","大豆"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"おろし醤油ドレッシング","allergens":["小麦","大豆"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"ポテトサラダ","allergens":["小麦","卵","乳","大豆"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"クリームデニッシュ","allergens":["小麦","卵","乳"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"バター","allergens":["乳"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"味噌汁","allergens":["大豆","豚肉"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"切り干し大根","allergens":["小麦","大豆"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"菜の花わさび和え","allergens":["小麦","大豆","さば"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"納豆（たれ・からしを含む）","allergens":["小麦","大豆","りんご","さば"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"醤油（グルテンフリー）","allergens":["大豆"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"焼きたてパンケーキ","allergens":["小麦","乳","大豆","卵"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"チョコレートソース","allergens":["乳"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"オレンジジュース","allergens":["オレンジ"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"アップルジュース","allergens":["りんご"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"グレープフルーツジュース","allergens":["グレープフルーツ"]},{"id":"breakfastB","meal":"ヒルトン・朝食B","when":"2・3日目の朝食候補／A・Bの割当日未確認","page":4,"dish":"牛乳","allergens":["乳"]},{"id":"lunch","meal":"ヒルトン・昼食4種","when":"昼食／提供日・選択メニュー未確認","page":5,"dish":"ポテトカレー","allergens":["小麦","大豆","鶏肉","豚肉","りんご","バナナ"]},{"id":"lunch","meal":"ヒルトン・昼食4種","when":"昼食／提供日・選択メニュー未確認","page":5,"dish":"ポテトカレー用フレンチドレッシング","allergens":["小麦","卵","ゼラチン"]},{"id":"lunch","meal":"ヒルトン・昼食4種","when":"昼食／提供日・選択メニュー未確認","page":5,"dish":"ポテトカレー用福神漬","allergens":["大豆"]},{"id":"lunch","meal":"ヒルトン・昼食4種","when":"昼食／提供日・選択メニュー未確認","page":5,"dish":"ハンバーグステーキのハンバーグ","allergens":["小麦","卵","乳","牛肉","大豆","鶏肉","豚肉"]},{"id":"lunch","meal":"ヒルトン・昼食4種","when":"昼食／提供日・選択メニュー未確認","page":5,"dish":"ハンバーグステーキのおろしソース","allergens":["小麦","大豆","りんご"]},{"id":"lunch","meal":"ヒルトン・昼食4種","when":"昼食／提供日・選択メニュー未確認","page":5,"dish":"ハンバーグステーキのガルニ","allergens":["小麦","乳"]},{"id":"lunch","meal":"ヒルトン・昼食4種","when":"昼食／提供日・選択メニュー未確認","page":5,"dish":"ハンバーグステーキ用ドレッシング","allergens":["小麦","卵","ゼラチン"]},{"id":"lunch","meal":"ヒルトン・昼食4種","when":"昼食／提供日・選択メニュー未確認","page":5,"dish":"豚丼","allergens":["豚肉"]},{"id":"lunch","meal":"ヒルトン・昼食4種","when":"昼食／提供日・選択メニュー未確認","page":5,"dish":"豚丼のたれ","allergens":["小麦","さば","大豆"]},{"id":"lunch","meal":"ヒルトン・昼食4種","when":"昼食／提供日・選択メニュー未確認","page":5,"dish":"豚丼の味噌汁","allergens":["大豆"]},{"id":"lunch","meal":"ヒルトン・昼食4種","when":"昼食／提供日・選択メニュー未確認","page":5,"dish":"牛丼","allergens":["牛肉"]},{"id":"lunch","meal":"ヒルトン・昼食4種","when":"昼食／提供日・選択メニュー未確認","page":5,"dish":"牛丼の味噌汁","allergens":["大豆"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"フレンチドレッシング","allergens":["卵"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"和風ドレッシング","allergens":["小麦"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"カボチャサラダ","allergens":["卵","乳","小麦"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"プレーンヨーグルト","allergens":["乳"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"フルーツグラノーラ","allergens":["乳","小麦"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"クリームコーンスープ","allergens":["乳","小麦"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"プレーンオムレツ","allergens":["卵","乳"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"ソーセージ","allergens":["卵","乳","小麦"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"鶏肉とキャベツ・ピーマンのガーリックバター醤油","allergens":["卵","乳","小麦","鶏肉"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"厚焼き玉子","allergens":["卵","小麦"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"焼き海苔","allergens":["えび"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"ふりかけ（かつお）","allergens":["小麦"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"クロワッサン","allergens":["卵","乳","小麦"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"マーブルブレッド","allergens":["卵","乳","小麦"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"デニッシュペストリー","allergens":["卵","乳","小麦"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"北海道牛乳","allergens":["乳"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"カツゲン","allergens":["乳"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"フレンチドレッシング","allergens":["卵"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"和風ドレッシング","allergens":["小麦"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"ポテトサラダ","allergens":["卵","乳","小麦"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"プレーンヨーグルト","allergens":["乳"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"チョコクリスピー","allergens":["乳","小麦"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"具沢山な野菜のブイヨンスープ","allergens":["卵","乳","小麦"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"スクランブルエッグ","allergens":["卵","乳"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"ベーコン","allergens":["卵","乳"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"薄切りポークと野菜の生姜焼き風","allergens":["小麦","豚肉"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"厚焼き玉子","allergens":["卵","小麦"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"白飯・お吸い物","allergens":["小麦"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"焼き海苔","allergens":["えび"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"ふりかけ（かつお）","allergens":["小麦"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"クロワッサン","allergens":["卵","乳","小麦"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"ミニメロンパン","allergens":["卵","乳","小麦"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"デニッシュペストリー","allergens":["卵","乳","小麦"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"北海道牛乳","allergens":["乳"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"カツゲン","allergens":["乳"]},{"id":"otaniA","meal":"ニューオータニイン札幌・朝食A","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"焼き魚（鮭）","allergens":["さけ"]},{"id":"otaniB","meal":"ニューオータニイン札幌・朝食B","when":"4日目の朝食候補／A・B未確定","page":6,"dish":"焼き魚（さば）","allergens":["さば"]}];
 const ALL=["卵","乳","小麦","えび","かに","そば","落花生（ピーナッツ）","くるみ","カシューナッツ","大豆","ごま","鶏肉","豚肉","牛肉","りんご","もも","ゼラチン","さけ","さば","オレンジ","バナナ","グレープフルーツ","ほたて","羊肉","魚（赤魚）","魚（たら）"];
-const root=document.getElementById('allergy-index-root');if(!root)return;root.replaceChildren();
+
+const root=document.getElementById('allergy-index-root');
+if(!root)return;
+root.replaceChildren();
 const notes=[
-{a:'落花生（ピーナッツ）',title:'植物油脂に含まれる可能性',body:'ヒルトンの夕食A・朝食A・昼食4種の欄外に「食用植物油脂＝大豆、小麦、ピーナッツが使われている可能性があります」と記載。どの料理に含まれるかを確定できません。',pages:[1,2,5]},
-{a:'えび',title:'資料内の表示に食い違い',body:'ヒルトン朝食Bの「焼きそば」にはえびを含むと記載されていますが、同じページの欄外には「えび不使用」とあります。ニューオータニの「焼き海苔」は原表のえび欄に〇があります。学校・ホテルへ要確認。',pages:[4,6]},
-{a:'小麦',title:'植物油脂についての注記',body:'ヒルトンの昼食4種の欄外に、植物油脂へ小麦が使われる可能性の注記があります。',pages:[5]},
-{a:'大豆',title:'植物油脂についての注記',body:'ヒルトンの昼食4種の欄外に、植物油脂へ大豆が使われる可能性の注記があります。',pages:[5]}
+{a:'落花生（ピーナッツ）',title:'植物油脂に含まれる可能性',body:'ヒルトンの夕食A・朝食A・昼食4種の欄外に、食用植物油脂にピーナッツが使われている可能性があると記載されています。該当する料理は特定できません。',pages:[1,2,5]},
+{a:'えび',title:'資料内の表記が矛盾しています',body:'ヒルトン朝食Bの焼きそばは「えびを含む」と記載されていますが、同じページの欄外には「えび不使用」とあります。ニューオータニの焼き海苔は原表のえび欄に〇印があります。どちらも学校・ホテルに直接確認してください。',pages:[4,6]},
+{a:'小麦',title:'植物油脂の追加注意',body:'ヒルトンの夕食A・朝食A・昼食4種の欄外では、食用植物油脂に小麦が使われている可能性があると記載されています。対象料理は特定できません。',pages:[1,2,5]},
+{a:'大豆',title:'植物油脂の追加注意',body:'ヒルトンの夕食A・朝食A・昼食4種の欄外では、食用植物油脂に大豆が使われている可能性があると記載されています。対象料理は特定できません。',pages:[1,2,5]}
 ];
-function el(tag,cls,txt){const x=document.createElement(tag);if(cls)x.className=cls;if(txt!==undefined)x.textContent=txt;return x}
-function pageLink(n){const x=el('a','allergen-source','原表 p.'+n);x.href='hokkaido_allergy_guide.pdf#page='+n;x.target='_blank';x.rel='noopener noreferrer';return x}
-const controls=el('div','allergen-controls'), label=el('label','','アレルギー項目'), select=el('select'),search=el('input');
-select.setAttribute('aria-label','アレルギー項目を選択');
-const first=el('option','','すべての項目');first.value='';select.append(first);
-ALL.forEach(a=>{const o=el('option','',a);o.value=a;select.append(o)});
-label.append(select);search.type='search';search.placeholder='アレルゲン・料理名を検索';search.setAttribute('aria-label','アレルゲン・料理名を検索');
-controls.append(label,search);root.append(controls);
-const status=el('p','allergen-status');status.setAttribute('role','status');root.append(status);
-const results=el('div','allergen-results');root.append(results);
-function render(){
-results.replaceChildren();const filter=select.value,q=search.value.trim().toLowerCase();let total=0;
-for(const a of ALL){
-if(filter&&filter!==a)continue;
-const items=RAW.filter(x=>x.allergens.includes(a)&&(!q||a.toLowerCase().includes(q)||x.dish.toLowerCase().includes(q)||x.meal.toLowerCase().includes(q)));
-const risks=notes.filter(x=>x.a===a&&(!q||a.toLowerCase().includes(q)||x.title.includes(q)||x.body.includes(q)));
-if(q&&!items.length&&!risks&&a.toLowerCase().indexOf(q)===-1)continue;
-total++;
-const details=el('details','allergen-group');details.open=!!filter||!!q;
-const summary=el('summary','allergen-summary');summary.append(el('strong','',a),el('span','',RAW.filter(x=>x.allergens.includes(a)).length+'品目'+(notes.some(n=>n.a===a)?'・注意あり':'')));details.append(summary);
-const by=new Map();for(const x of items){if(!by.has(x.id))by.set(x.id,[]);by.get(x.id).push(x)}
-for(const [,rows] of by){const m=rows[0];const block=el('div','allergen-meal');
-const heading=el('div','allergen-meal-heading');heading.append(el('strong','',m.meal),pageLink(m.page));block.append(heading,el('p','allergen-when',m.when));
-const ul=el('ul','allergen-food-list');rows.forEach(x=>ul.append(el('li','',x.dish)));block.append(ul);details.append(block)}
-if(!items.length&&!q)details.append(el('p','allergen-none','資料で該当原材料・〇印を確認できた料理はありません。「安全」や「不使用」を意味しません。'));
-for(const risk of risks){const box=el('div','allergen-risk');box.append(el('strong','',risk.title),el('p','',risk.body));risk.pages.forEach(n=>box.append(pageLink(n)));details.append(box)}
-if(['そば','かに','落花生（ピーナッツ）'].includes(a))details.append(el('p','allergen-risk','欄外の「不使用」は提供時点の説明です。原材料変更や交差接触を含め、必ず現場で確認してください。'));
-results.append(details)
+const PRIMARY=['卵','乳','小麦','えび','かに','そば','落花生（ピーナッツ）','くるみ','カシューナッツ'];
+const secondary=ALL.filter(a=>!PRIMARY.includes(a));
+const componentList=[...PRIMARY,...secondary];
+const ingredientsByName=new Map(componentList.map(a=>[a,RAW.filter(x=>x.allergens.includes(a))]));
+const make=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node};
+function pdf(page){const a=make('a','allergen-source','成分表 p.'+page);a.href='hokkaido_allergy_guide.pdf#page='+page;a.target='_blank';a.rel='noopener noreferrer';a.setAttribute('aria-label','アレルギー成分表PDFの'+page+'ページを開く');return a}
+function heading(label){return make('h3','allergen-category-title',label)}
+const intro=make('p','allergen-index-instruction','成分名を押すと、対応する食事と料理の一覧へ移動します。未掲載の成分も「含まれていない」とは判断できません。');
+root.append(intro);
+const searchWrap=make('div','allergen-ingredient-search');
+const searchLabel=make('label','','料理名・成分名で検索');
+const search=make('input');
+search.type='search';search.placeholder='例：卵、落花生、パンケーキ';search.setAttribute('aria-label','成分名または料理名で絞り込む');
+searchLabel.append(search);searchWrap.append(searchLabel);root.append(searchWrap);
+const jump=make('nav','allergen-jump-list');jump.setAttribute('aria-label','成分から探す');root.append(jump);
+const status=make('p','allergen-status');status.setAttribute('role','status');root.append(status);
+const listing=make('div','allergen-component-sections');root.append(listing);
+function showSection(a,section){const detail=section.querySelector('details');if(detail)detail.open=true;section.scrollIntoView({behavior:'smooth',block:'start'})}
+const sections=new Map();
+function group(label,items){
+ const container=make('section','allergen-category');
+ container.append(heading(label));
+ const grid=make('div','allergen-category-list');container.append(grid);
+ for(const component of items){
+  const groupSection=make('article','allergen-ingredient');
+  const anchor='ingredient-'+componentList.indexOf(component);
+  groupSection.id=anchor;
+  const details=make('details','allergen-group');
+  const summary=make('summary','allergen-summary');
+  const hits=ingredientsByName.get(component);
+  summary.append(make('strong','',component),make('span','',hits.length+'件'+(notes.some(n=>n.a===component)?' / 注意あり':'')));
+  details.append(summary);
+  const by=new Map();
+  for(const item of hits){if(!by.has(item.id))by.set(item.id,[]);by.get(item.id).push(item)}
+  for(const dishes of by.values()){
+   const first=dishes[0],block=make('div','allergen-meal');
+   const h=make('div','allergen-meal-heading');
+   h.append(make('strong','',first.meal),pdf(first.page));
+   block.append(h,make('p','allergen-when',first.when));
+   const ul=make('ul','allergen-food-list');
+   dishes.forEach(d=>ul.append(make('li','',d.dish)));
+   block.append(ul);details.append(block);
+  }
+  if(!hits.length)details.append(make('p','allergen-none','参考成分表で該当料理を特定できません。使用なし・安全という意味ではありません。'));
+  for(const note of notes.filter(n=>n.a===component)){
+   const box=make('div','allergen-risk');
+   box.append(make('strong','',note.title),make('p','',note.body));
+   note.pages.forEach(page=>box.append(pdf(page)));
+   details.append(box);
+  }
+  if(['そば','かに','落花生（ピーナッツ）'].includes(component))details.append(make('p','allergen-risk','原表の「不使用」は掲載時点の注記です。使用原材料の変更・交差接触について最新の確認が必要です。'));
+  groupSection.append(details);grid.append(groupSection);sections.set(component,groupSection);
+ }
+ listing.append(container);
 }
-status.textContent=total+'項目を表示。表示中の料理・原材料は参考資料に基づくもので、提供日の確定情報ではありません。';
-if(!total)results.append(el('p','allergen-none','該当する料理は見つかりません。元の成分表を確認してください。'));
+group('資料の9大アレルギー成分',PRIMARY);
+group('その他の原材料・成分',secondary);
+for(const component of componentList){
+ const chip=make('button','allergen-jump-chip',component);
+ chip.type='button';
+ chip.setAttribute('aria-label',component+'の料理一覧を開く');
+ chip.addEventListener('click',()=>{
+   search.value='';
+   refresh();
+   const section=sections.get(component);
+   if(section)showSection(component,section);
+ });
+ jump.append(chip);
 }
-search.addEventListener('input',render);select.addEventListener('change',render);render();
+function refresh(){
+ const q=search.value.trim().toLowerCase();
+ let count=0;
+ for(const component of componentList){
+  const section=sections.get(component);
+  const meals=ingredientsByName.get(component);
+  const matching=component.toLowerCase().includes(q)||meals.some(x=>x.dish.toLowerCase().includes(q)||x.meal.toLowerCase().includes(q));
+  section.hidden=!!q&&!matching;
+  if(!section.hidden){count++;if(q)section.querySelector('details').open=true}
+ }
+ for(const section of listing.querySelectorAll('.allergen-category')){
+  section.hidden=![...section.querySelectorAll('.allergen-ingredient')].some(x=>!x.hidden);
+ }
+ status.textContent=q?count+'成分に該当する情報があります。該当する成分の料理一覧を表示しています。':'全'+componentList.length+'成分を掲載。各成分名を押して該当する料理を確認してください。';
+ if(!q){for(const sec of listing.querySelectorAll('.allergen-category'))sec.hidden=false}
+}
+search.addEventListener('input',refresh);
+refresh();
 })();
