@@ -1736,3 +1736,25 @@ body[data-page="home"] main.home-page .home-days-section .home-day-text strong{
  outline-offset:1px;
  border-radius:7px;
 }
+
+/* Page-menu deep links: visually nest section shortcuts beneath page links. */
+.site-header .site-menu nav a.menu-sub-link{
+  width:calc(100% - 18px);
+  margin-left:18px;
+  min-height:38px;
+  padding:7px 10px;
+  font-size:12px;
+  color:#416572;
+}
+.site-header .site-menu nav a.menu-sub-link .menu-num{
+  width:27px;
+  height:25px;
+  flex-basis:27px;
+  background:#f4f8fa;
+  color:#60808d;
+  font-size:13px;
+}
+#hilton,#newotani{scroll-margin-top:0}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+}
