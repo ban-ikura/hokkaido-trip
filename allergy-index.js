@@ -28,7 +28,7 @@ const risks=notes.filter(x=>x.a===a&&(!q||a.toLowerCase().includes(q)||x.title.i
 if(q&&!items.length&&!risks&&a.toLowerCase().indexOf(q)===-1)continue;
 total++;
 const details=el('details','allergen-group');details.open=!!filter||!!q;
-const summary=el('summary','allergen-summary');summary.append(el('strong','',a),el('span','',RAW.filter(x=>x.allergens.includes(a)).length+'品目'));details.append(summary);
+const summary=el('summary','allergen-summary');summary.append(el('strong','',a),el('span','',RAW.filter(x=>x.allergens.includes(a)).length+'品目'+(notes.some(n=>n.a===a)?'・注意あり':'')));details.append(summary);
 const by=new Map();for(const x of items){if(!by.has(x.id))by.set(x.id,[]);by.get(x.id).push(x)}
 for(const [,rows] of by){const m=rows[0];const block=el('div','allergen-meal');
 const heading=el('div','allergen-meal-heading');heading.append(el('strong','',m.meal),pageLink(m.page));block.append(heading,el('p','allergen-when',m.when));
