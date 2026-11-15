@@ -207,24 +207,43 @@
   }
 
   function updateMenu(){
-    for(const a of nav.querySelectorAll('a[href]')){
-      const target=route(a.getAttribute('href'));
-      const selected=target?.name===page;
-      a.classList.toggle('swipe-current',!!selected);
-      if(selected)a.setAttribute('aria-current','page');
+    const links=[...nav.querySelectorAll('a[href]')];
+    const current=route(location.href);
+    // When several links go to different sections on one page,
+    // highlight only the exact section (or the main page entry).
+    const samePage=links.filter(a=>route(a.getAttribute('href'))?.name===page);
+    const exact=samePage.find(a=>route(a.getAttribute('href'))?.hash===(current?.hash||''));
+    const active=exact||samePage.find(a=>!a.classList.contains('menu-sub-link'))||null;
+    links.forEach(a=>{
+      const selected=a===active;
+      a.classList.toggle('swipe-current',selected);
+      if(selected)a.setAttribute('aria-current','location');
       else a.removeAttribute('aria-current');
-    }
+    });
   }
   function closeMenu(){
     if(menu?.open)menu.open=false;
     document.body.classList.remove('site-menu-open');
   }
-  function scrollTarget(hash){
+  function scrollTarget(hash,{smooth=false}={}){
     let target=null;
     if(hash){try{target=document.getElementById(decodeURIComponent(hash.slice(1)))}catch{}}
-    if(target)target.scrollIntoView({behavior:'instant',block:'start'});
-    else window.scrollTo({top:0,behavior:'instant'});
+    const behavior=smooth&&!reduced()?'smooth':'instant';
+    if(target){
+      // Reveal an anchor even if a future section is inside a collapsed panel.
+      for(let ancestor=target.parentElement;ancestor;ancestor=ancestor.parentElement){
+        if(ancestor.tagName==='DETAILS')ancestor.open=true;
+      }
+      const headerHeight=document.querySelector('.site-header')?.getBoundingClientRect().height||0;
+      const top=window.scrollY+target.getBoundingClientRect().top-headerHeight-16;
+      window.scrollTo({top:Math.max(0,Math.round(top)),behavior});
+    }else{
+      window.scrollTo({top:0,behavior});
+    }
   }
+  const afterLayout=()=>new Promise(resolve=>{
+    requestAnimationFrame(()=>requestAnimationFrame(resolve));
+  });
 
   function swap(name,item){
     document.querySelector('main').replaceWith(item.main);
@@ -260,8 +279,10 @@
     if(!info||busy)return;
     if(info.name===page){
       closeMenu();
-      if(push)history.pushState({tab:page},'',info.url.href);
-      scrollTarget(info.hash);
+      if(push&&location.href!==info.url.href)history.pushState({tab:page},'',info.url.href);
+      updateMenu();
+      await afterLayout();
+      scrollTarget(info.hash,{smooth:push&&!!info.hash});
       return;
     }
     busy=true;
@@ -272,11 +293,13 @@
       const dir=direction||(next>=previous?'left':'right');
       const returning=item.ready;
       document.documentElement.dataset.tabDirection=dir;
-      // Swap content immediately; remote image and data fetching never holds the slide open.
+      // Keep the new page at the top until the route change has finished;
+      // then scroll to the requested section (not the previous page's position).
       const perform=()=>{
         swap(info.name,item);
         if(push)history.pushState({tab:page},'',info.url.href);
-        scrollTarget(info.hash);
+        updateMenu();
+        window.scrollTo({top:0,behavior:'instant'});
         void hydrate(info.name,item,returning).catch(error=>console.warn('Page module:',error));
       };
       if(document.startViewTransition&&!reduced()){
@@ -290,6 +313,8 @@
           main.addEventListener('animationend',()=>main.classList.remove('tab-enter-'+dir),{once:true});
         }
       }
+      await afterLayout();
+      scrollTarget(info.hash,{smooth:push&&!!info.hash});
     }catch(error){
       if(push)location.assign(info.url.href);
       else console.warn('Navigation restore:',error);
@@ -355,6 +380,17 @@
   },{passive:true});
 
   updateMenu();
+  // Make directly opened URL hashes reliable after fonts, images and static
+  // page modules have settled; browsers' initial native anchor jump can be early.
+  if(location.hash){
+    const alignInitialHash=()=>{
+      void afterLayout().then(()=>{
+        if(route(location.href)?.name===page)scrollTarget(location.hash);
+      });
+    };
+    if(document.readyState==='complete')alignInitialHash();
+    else window.addEventListener('load',alignInitialHash,{once:true});
+  }
   // Optional approved-photo decoration for public informational pages only.
   void (async()=>{
     await css('photo-ambient.css','20261031-shadowless-title-v1');
