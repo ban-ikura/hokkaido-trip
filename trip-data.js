@@ -202,7 +202,7 @@ function getPhotoKey(title){
 }
 const place=(name,desc)=>({name,desc,photo:getPhotoKey(name)});
 const ev=(start,end,title,type='activity',note='')=>({start,end,title,type,note});
-// 2026-11-15：提供された「北海道2026しおり Ver3」（20ページ）を優先。未記入の00:00は時刻として採用しない。
+// 2026-11-18：提供された「北海道2026しおり Ver3」（18ページ）を優先。未記入の時刻は推測して補わない。
 const dayRows=[
   {
     "id": "day1",
