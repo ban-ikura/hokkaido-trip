@@ -57,7 +57,7 @@
 - 初回の有効化：**[admin-backend/PHOTOS-SETUP.md](admin-backend/PHOTOS-SETUP.md)**。
 
 ## 公開先
-- https://ban-ikura.github.io/hokkaido-trip/
+- https://hokkaido2026.ysnets.org/
 - https://github.com/ban-ikura/hokkaido-trip
 
 非公開情報（生徒氏名・部屋割り・個人連絡先・学校の非公開資料）はサイトに掲載していません。写真の撮影地と利用条件を確認するため、`PHOTO-MAPPING.md` も参照してください。
