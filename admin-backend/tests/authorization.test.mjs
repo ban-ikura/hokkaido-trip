@@ -5,7 +5,7 @@ import worker from '../src/index.js';
 
 if (!globalThis.crypto) globalThis.crypto = webcrypto;
 
-const SITE_ORIGIN = 'https://ban-ikura.github.io';
+const SITE_ORIGIN = 'https://hokkaido2026.ysnets.org';
 const API_URL = 'https://example.workers.dev';
 
 function fakeDB() {
@@ -99,7 +99,7 @@ test('an authenticated administrator can still create a new announcement', async
   globalThis.fetch = async (url, options) => {
     assert.equal(String(url), 'https://challenges.cloudflare.com/turnstile/v0/siteverify');
     assert.equal(options.body.get('response'), 'admin-valid-token');
-    return Response.json({ success: true, hostname: 'ban-ikura.github.io', action: 'admin_login' });
+    return Response.json({ success: true, hostname: 'hokkaido2026.ysnets.org', action: 'admin_login' });
   };
   let login;
   try {
@@ -141,7 +141,7 @@ test('a normal photo submission remains permitted with valid Turnstile', async (
     assert.equal(String(url), 'https://challenges.cloudflare.com/turnstile/v0/siteverify');
     return Response.json({
       success: true,
-      hostname: 'ban-ikura.github.io',
+      hostname: 'hokkaido2026.ysnets.org',
       action: 'photo_upload'
     });
   };
@@ -170,7 +170,7 @@ test('a challenge for photo upload is not valid for administrator login', async 
   const env=makeEnv();
   const originalFetch=globalThis.fetch;
   globalThis.fetch=async()=>Response.json({
-    success:true,hostname:'ban-ikura.github.io',action:'photo_upload'
+    success:true,hostname:'hokkaido2026.ysnets.org',action:'photo_upload'
   });
   try{
     const response=await worker.fetch(request('/api/login',{
@@ -226,7 +226,7 @@ test('admin sessions expire within thirty minutes', async () => {
   const originalNow=Date.now;
   const at=originalNow();
   globalThis.fetch=async()=>Response.json({
-    success:true,hostname:'ban-ikura.github.io',action:'admin_login'
+    success:true,hostname:'hokkaido2026.ysnets.org',action:'admin_login'
   });
   try{
     Date.now=()=>at;
