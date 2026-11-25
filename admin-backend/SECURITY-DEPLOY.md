@@ -18,7 +18,7 @@ APIはCloudflareの **`hokkaido-trip-news-api` Worker** です。
 2. Cloudflare → Workers & Pages → `hokkaido-trip-news-api` → Settingsで、次の**Secret**とD1 Bindingを確認する。
    - `ADMIN_PASSWORD`（12文字以上、リポジトリには書かない）
    - `SESSION_SECRET`（32文字以上のランダム値）
-   - `TURNSTILE_SECRET`（`ban-ikura.github.io` に対応したTurnstile Secret）
+   - `TURNSTILE_SECRET`（`hokkaido2026.ysnets.org` に対応したTurnstile Secret）
    - D1 Binding `DB`（既存の `hokkaido-trip-news`）
 3. CloudflareのWorker編集画面に `admin-backend/src/index.js` の最新版を貼り付けて **Deploy** する。GitHubの `wrangler.toml` にはD1 UUIDのプレースホルダーがあるため、UUIDを設定していないローカル環境からそのまま `wrangler deploy` しないこと。
 4. 公開中の `admin.html` には `photos-config.js` の既存Turnstile Site keyを使用したログイン安全確認が表示される。安全確認を完了後に、共通パスワードでログインする。
