@@ -36,6 +36,8 @@ Cloudflare → **Turnstile** → **Add widget / Create widget**。
 - Hostname：`hokkaido2026.ysnets.org`（後ろに `/hokkaido-trip` は付けない）
 - Widget mode：**Managed（推奨）**
 
+既存のTurnstileウィジェットを使っている場合は、新規作成ではなく既存ウィジェットのHostnameに `hokkaido2026.ysnets.org` を追加してください。既存のSite keyは `photos-config.js` に設定済みなので、ウィジェットを作り直した場合だけ新しいSite keyへの差し替えが必要です。
+
 作成後、Site keyとSecret keyが表示されます。
 
 **Site key（公開用）**：
@@ -58,7 +60,7 @@ Settings → Runtime variables and secrets → Add variable。
 
 Cloudflare → Workers & Pages → **hokkaido-trip-news-api** → **Edit code**。
 
-GitHubの `admin-backend/src/index.js` の**全文**をコード編集画面に貼り付けて **Deploy**。
+GitHubの `admin-backend/src/index.js` の**全文**をコード編集画面に貼り付けて **Deploy**。新ドメイン対応のCORS・Turnstile hostname検証は、このWorkerの再デプロイ後に有効になります。
 
 既存Workerを削除したり、新しいWorkerを作ったりする必要はありません。
 既存のお知らせ機能はそのまま維持します。
