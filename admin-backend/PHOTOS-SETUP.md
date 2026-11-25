@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS photo_images (
 Cloudflare → **Turnstile** → **Add widget / Create widget**。
 
 - Widget name：`hokkaido-trip-photos`（任意の名前でも可）
-- Hostname：`ban-ikura.github.io`（後ろに `/hokkaido-trip` は付けない）
+- Hostname：`hokkaido2026.ysnets.org`（後ろに `/hokkaido-trip` は付けない）
 - Widget mode：**Managed（推奨）**
 
 作成後、Site keyとSecret keyが表示されます。
@@ -80,9 +80,9 @@ GitHubの `admin-backend/src/index.js` の**全文**をコード編集画面に�
 
 1. `https://hokkaido-trip-news-api.banse-oji.workers.dev/api/announcements` で従来のお知らせを確認。
 2. `https://hokkaido-trip-news-api.banse-oji.workers.dev/api/photos` で、写真がなければ `{"items":[]}` と表示。
-3. `https://ban-ikura.github.io/hokkaido-trip/photos.html` の右下「写真を投稿」から `photos-post.html` へ。
+3. `https://hokkaido2026.ysnets.org/photos.html` の右下「写真を投稿」から `photos-post.html` へ。
 4. 顔や個人情報が写らないテスト画像を選んで投稿。Turnstileの安全確認が必要。送信後は「承認待ち」。
-5. `https://ban-ikura.github.io/hokkaido-trip/admin.html` でログインして「生徒の写真を承認」から承認。
+5. `https://hokkaido2026.ysnets.org/admin.html` でログインして「生徒の写真を承認」から承認。
 6. アルバムに承認済み写真だけが表示されることを確認。掲載取り消しもテスト。
 
 ## 無料プランの制約・安全管理
