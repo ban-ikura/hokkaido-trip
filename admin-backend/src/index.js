@@ -4,7 +4,7 @@
  * Administrator: POST /api/login, POST /api/announcements
  * No editing, deleting, itinerary mutation, password exposure, or GitHub token.
  */
-const SITE_ORIGIN = 'https://ban-ikura.github.io';
+const SITE_ORIGIN = 'https://hokkaido2026.ysnets.org';
 const SESSION_SECONDS = 30 * 60;
 const WINDOW_SECONDS = 15 * 60;
 const MAX_FAILURES = 5;
@@ -417,7 +417,7 @@ async function verifyTurnstile(request,env,token,expectedAction){
     if(!result.ok)return false;
     const verdict=await result.json();
     return !!(verdict&&verdict.success===true&&
-      verdict.hostname==='ban-ikura.github.io'&&verdict.action===expectedAction);
+      verdict.hostname==='hokkaido2026.ysnets.org'&&verdict.action===expectedAction);
   }catch{return false}
 }
 async function submitPhoto(request,env){
